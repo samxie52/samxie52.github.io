@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="macOS Rust 完整开发环境安装指南">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mac_rust_complete_guide.md">
+<meta property="og:url" content="http://example.com/2025/09/04/mac-rust-complete-guide-md/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="macOS Rust 完整开发环境安装指南">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-04T08:25:45.000Z">
+<meta property="article:modified_time" content="2025-09-04T08:27:10.993Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/04/mac-rust-complete-guide-md/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/04/mac-rust-complete-guide-md/","path":"2025/09/04/mac-rust-complete-guide-md/","title":"mac_rust_complete_guide.md"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>mac_rust_complete_guide.md | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#macOS-Rust-%E5%AE%8C%E6%95%B4%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">macOS Rust 完整开发环境安装指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">系统要求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Xcode-Command-Line-Tools"><span class="nav-number">1.2.1.</span> <span class="nav-text">安装 Xcode Command Line Tools</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Rust"><span class="nav-number">1.3.</span> <span class="nav-text">安装 Rust</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E4%BD%BF%E7%94%A8-rustup%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">方法一：使用 rustup（推荐）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8-Homebrew"><span class="nav-number">1.3.2.</span> <span class="nav-text">方法二：使用 Homebrew</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="nav-number">1.4.</span> <span class="nav-text">验证安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7"><span class="nav-number">1.5.</span> <span class="nav-text">配置开发工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Shell-%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8"><span class="nav-number">1.5.1.</span> <span class="nav-text">配置 Shell 自动补全</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E-Zsh%EF%BC%88macOS-%E9%BB%98%E8%AE%A4%EF%BC%89%EF%BC%9A"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">对于 Zsh（macOS 默认）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E-Bash%EF%BC%9A"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">对于 Bash：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-VS-Code-%E5%92%8C%E6%89%A9%E5%B1%95"><span class="nav-number">1.5.2.</span> <span class="nav-text">安装 VS Code 和扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BC%96%E8%BE%91%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.3.</span> <span class="nav-text">其他编辑器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vim-Neovim"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">Vim&#x2F;Neovim</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA-Rust-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.6.</span> <span class="nav-text">第一个 Rust 程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%AE%80%E5%8D%95%E7%9A%84-Hello-World"><span class="nav-number">1.6.1.</span> <span class="nav-text">创建简单的 Hello World</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Cargo-%E7%AE%A1%E7%90%86%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.7.</span> <span class="nav-text">使用 Cargo 管理项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.7.1.</span> <span class="nav-text">创建新项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%A7%A3-Cargo-toml"><span class="nav-number">1.7.2.</span> <span class="nav-text">理解 Cargo.toml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%92%8C%E8%BF%90%E8%A1%8C%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.7.3.</span> <span class="nav-text">构建和运行项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96%E9%A1%B9"><span class="nav-number">1.7.4.</span> <span class="nav-text">添加依赖项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E9%A1%B9%E7%9B%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.5.</span> <span class="nav-text">实际项目示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.8.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rustup-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.8.1.</span> <span class="nav-text">rustup 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cargo-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.8.2.</span> <span class="nav-text">Cargo 常用命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.9.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.9.1.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9D%83%E9%99%90%E9%94%99%E8%AF%AF"><span class="nav-number">1.9.1.1.</span> <span class="nav-text">1. 权限错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="nav-number">1.9.1.2.</span> <span class="nav-text">2. 网络连接问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%BC%96%E8%AF%91%E9%94%99%E8%AF%AF"><span class="nav-number">1.9.1.3.</span> <span class="nav-text">3. 编译错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-VS-Code-%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98"><span class="nav-number">1.9.1.4.</span> <span class="nav-text">4. VS Code 配置问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.9.2.</span> <span class="nav-text">环境变量</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/04/mac-rust-complete-guide-md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="mac_rust_complete_guide.md | samxie52">
+      <meta itemprop="description" content="macOS Rust 完整开发环境安装指南">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mac_rust_complete_guide.md
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-04 16:25:45 / 修改时间：16:27:10" itemprop="dateCreated datePublished" datetime="2025-09-04T16:25:45+08:00">2025-09-04</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">macOS Rust 完整开发环境安装指南</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="macOS-Rust-完整开发环境安装指南"><a href="#macOS-Rust-完整开发环境安装指南" class="headerlink" title="macOS Rust 完整开发环境安装指南"></a>macOS Rust 完整开发环境安装指南</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82">系统要求</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-rust">安装 Rust</a></li>
+<li><a href="#%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85">验证安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7">配置开发工具</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%80%E4%B8%AA-rust-%E7%A8%8B%E5%BA%8F">第一个 Rust 程序</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8-cargo-%E7%AE%A1%E7%90%86%E9%A1%B9%E7%9B%AE">使用 Cargo 管理项目</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4">常用命令</a></li>
+<li><a href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4">故障排除</a></li>
+</ol>
+<h2 id="系统要求"><a href="#系统要求" class="headerlink" title="系统要求"></a>系统要求</h2><ul>
+<li>macOS 10.12 (Sierra) 或更高版本</li>
+<li>至少 1GB 可用磁盘空间</li>
+<li>网络连接（用于下载安装包）</li>
+<li>已安装 Xcode Command Line Tools</li>
+</ul>
+<h3 id="安装-Xcode-Command-Line-Tools"><a href="#安装-Xcode-Command-Line-Tools" class="headerlink" title="安装 Xcode Command Line Tools"></a>安装 Xcode Command Line Tools</h3><p>如果尚未安装，请先运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-Rust"><a href="#安装-Rust" class="headerlink" title="安装 Rust"></a>安装 Rust</h2><h3 id="方法一：使用-rustup（推荐）"><a href="#方法一：使用-rustup（推荐）" class="headerlink" title="方法一：使用 rustup（推荐）"></a>方法一：使用 rustup（推荐）</h3><p>rustup 是 Rust 的官方安装和版本管理工具。</p>
+<ol>
+<li>打开终端应用程序</li>
+<li>运行安装命令：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>安装过程中会出现选项提示，通常选择默认安装（输入 <code>1</code> 或直接按回车）</p>
+</li>
+<li><p>安装完成后，重启终端或运行：</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.cargo/env</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法二：使用-Homebrew"><a href="#方法二：使用-Homebrew" class="headerlink" title="方法二：使用 Homebrew"></a>方法二：使用 Homebrew</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install rust</span><br></pre></td></tr></table></figure>
+
+<p>注意：使用 Homebrew 安装的 Rust 可能不是最新版本，且无法轻松切换版本。</p>
+<h2 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h2><p>运行以下命令检查安装是否成功：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 Rust 编译器版本</span></span><br><span class="line">rustc --version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 Cargo 包管理器版本</span></span><br><span class="line">cargo --version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 rustup 版本</span></span><br><span class="line">rustup --version</span><br></pre></td></tr></table></figure>
+
+<p>预期输出类似：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rustc 1.75.0 (82e1608df 2023-12-21)</span><br><span class="line">cargo 1.75.0 (1d8b05cdd 2023-11-20)</span><br><span class="line">rustup 1.26.0 (5af9b9484 2023-04-05)</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置开发工具"><a href="#配置开发工具" class="headerlink" title="配置开发工具"></a>配置开发工具</h2><h3 id="配置-Shell-自动补全"><a href="#配置-Shell-自动补全" class="headerlink" title="配置 Shell 自动补全"></a>配置 Shell 自动补全</h3><h4 id="对于-Zsh（macOS-默认）："><a href="#对于-Zsh（macOS-默认）：" class="headerlink" title="对于 Zsh（macOS 默认）："></a>对于 Zsh（macOS 默认）：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建补全目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p ~/.zfunc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 rustup 补全</span></span><br><span class="line">rustup completions zsh &gt; ~/.zfunc/_rustup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 cargo 补全</span></span><br><span class="line">rustup completions zsh cargo &gt; ~/.zfunc/_cargo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 ~/.zshrc 中添加以下行</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;fpath+=~/.zfunc&#x27;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;autoload -U compinit &amp;&amp; compinit&#x27;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新加载配置</span></span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<h4 id="对于-Bash："><a href="#对于-Bash：" class="headerlink" title="对于 Bash："></a>对于 Bash：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># macOS Homebrew 用户</span></span><br><span class="line">rustup completions bash &gt; $(brew --prefix)/etc/bash_completion.d/rustup.bash-completion</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用本地目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p ~/.local/share/bash-completion/completions</span><br><span class="line">rustup completions bash &gt; ~/.local/share/bash-completion/completions/rustup</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装-VS-Code-和扩展"><a href="#安装-VS-Code-和扩展" class="headerlink" title="安装 VS Code 和扩展"></a>安装 VS Code 和扩展</h3><ol>
+<li><p>下载并安装 <a target="_blank" rel="noopener" href="https://code.visualstudio.com/">Visual Studio Code</a></p>
+</li>
+<li><p>安装推荐的 Rust 扩展：</p>
+<ul>
+<li><strong>rust-analyzer</strong>（官方推荐的语言服务器）</li>
+<li><strong>Even Better TOML</strong>（改善 TOML 文件支持）</li>
+<li><strong>crates</strong>（Cargo.toml 依赖管理）</li>
+<li><strong>Error Lens</strong>（行内错误显示）</li>
+</ul>
+</li>
+</ol>
+<p>VS Code 扩展安装命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">code --install-extension rust-lang.rust-analyzer</span><br><span class="line">code --install-extension tamasfe.even-better-toml</span><br><span class="line">code --install-extension serayuzgur.crates</span><br><span class="line">code --install-extension usernamehw.errorlens</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他编辑器配置"><a href="#其他编辑器配置" class="headerlink" title="其他编辑器配置"></a>其他编辑器配置</h3><h4 id="Vim-Neovim"><a href="#Vim-Neovim" class="headerlink" title="Vim&#x2F;Neovim"></a>Vim&#x2F;Neovim</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 vim-plug（如果尚未安装）</span></span><br><span class="line">curl -fLo ~/.vim/autoload/plug.vim --create-dirs \</span><br><span class="line">    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 ~/.vimrc 中添加</span></span><br><span class="line"><span class="comment"># Plug &#x27;rust-lang/rust.vim&#x27;</span></span><br><span class="line"><span class="comment"># Plug &#x27;prabirshrestha/vim-lsp&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="第一个-Rust-程序"><a href="#第一个-Rust-程序" class="headerlink" title="第一个 Rust 程序"></a>第一个 Rust 程序</h2><h3 id="创建简单的-Hello-World"><a href="#创建简单的-Hello-World" class="headerlink" title="创建简单的 Hello World"></a>创建简单的 Hello World</h3><ol>
+<li>创建项目目录：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> ~/rust_projects</span><br><span class="line"><span class="built_in">cd</span> ~/rust_projects</span><br><span class="line"><span class="built_in">mkdir</span> hello_world</span><br><span class="line"><span class="built_in">cd</span> hello_world</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>创建源文件：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> main.rs</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>编辑 <code>main.rs</code> 文件：</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Hello, macOS!&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Rust 正在运行！&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>编译并运行：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line">rustc main.rs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">./main</span><br></pre></td></tr></table></figure>
+
+<p>预期输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hello, macOS!</span><br><span class="line">Rust 正在运行！</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用-Cargo-管理项目"><a href="#使用-Cargo-管理项目" class="headerlink" title="使用 Cargo 管理项目"></a>使用 Cargo 管理项目</h2><h3 id="创建新项目"><a href="#创建新项目" class="headerlink" title="创建新项目"></a>创建新项目</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回项目根目录</span></span><br><span class="line"><span class="built_in">cd</span> ~/rust_projects</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新的 Cargo 项目</span></span><br><span class="line">cargo new my_first_project</span><br><span class="line"><span class="built_in">cd</span> my_first_project</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看项目结构</span></span><br><span class="line">tree .</span><br></pre></td></tr></table></figure>
+
+<p>项目结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">my_first_project/</span><br><span class="line">├── Cargo.toml</span><br><span class="line">└── src/</span><br><span class="line">    └── main.rs</span><br></pre></td></tr></table></figure>
+
+<h3 id="理解-Cargo-toml"><a href="#理解-Cargo-toml" class="headerlink" title="理解 Cargo.toml"></a>理解 Cargo.toml</h3><p>查看生成的 <code>Cargo.toml</code>：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[package]</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;my_first_project&quot;</span></span><br><span class="line"><span class="attr">version</span> = <span class="string">&quot;0.1.0&quot;</span></span><br><span class="line"><span class="attr">edition</span> = <span class="string">&quot;2021&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="comment"># 在这里添加项目依赖</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="构建和运行项目"><a href="#构建和运行项目" class="headerlink" title="构建和运行项目"></a>构建和运行项目</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查代码（不生成可执行文件）</span></span><br><span class="line">cargo check</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建项目（debug 模式）</span></span><br><span class="line">cargo build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接构建并运行</span></span><br><span class="line">cargo run</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建发布版本（优化）</span></span><br><span class="line">cargo build --release</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行测试</span></span><br><span class="line">cargo <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成文档</span></span><br><span class="line">cargo doc --open</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加依赖项"><a href="#添加依赖项" class="headerlink" title="添加依赖项"></a>添加依赖项</h3><p>编辑 <code>Cargo.toml</code>，在 <code>[dependencies]</code> 部分添加：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">serde</span> = <span class="string">&quot;1.0&quot;</span></span><br><span class="line"><span class="attr">tokio</span> = &#123; version = <span class="string">&quot;1.0&quot;</span>, features = [<span class="string">&quot;full&quot;</span>] &#125;</span><br><span class="line"><span class="attr">clap</span> = <span class="string">&quot;4.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo build</span><br></pre></td></tr></table></figure>
+
+<h3 id="实际项目示例"><a href="#实际项目示例" class="headerlink" title="实际项目示例"></a>实际项目示例</h3><p>创建一个简单的命令行工具：</p>
+<ol>
+<li>修改 <code>Cargo.toml</code>：</li>
+</ol>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[package]</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;my_first_project&quot;</span></span><br><span class="line"><span class="attr">version</span> = <span class="string">&quot;0.1.0&quot;</span></span><br><span class="line"><span class="attr">edition</span> = <span class="string">&quot;2021&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">clap</span> = &#123; version = <span class="string">&quot;4.0&quot;</span>, features = [<span class="string">&quot;derive&quot;</span>] &#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>修改 <code>src/main.rs</code>：</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> clap::Parser;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Parser)]</span></span><br><span class="line"><span class="meta">#[command(name = <span class="string">&quot;my_first_project&quot;</span>)]</span></span><br><span class="line"><span class="meta">#[command(about = <span class="string">&quot;我的第一个 Rust CLI 工具&quot;</span>)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Cli</span> &#123;</span><br><span class="line">    <span class="meta">#[arg(short, long)]</span></span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    </span><br><span class="line">    <span class="meta">#[arg(short, long, default_value_t = 1)]</span></span><br><span class="line">    count: <span class="type">u8</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">cli</span> = Cli::<span class="title function_ invoke__">parse</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..cli.count &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Hello, &#123;&#125;! 来自 Rust on macOS&quot;</span>, cli.name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>构建并测试：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cargo build</span><br><span class="line">cargo run -- --name <span class="string">&quot;张三&quot;</span> --count 3</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="rustup-命令"><a href="#rustup-命令" class="headerlink" title="rustup 命令"></a>rustup 命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新 Rust 工具链</span></span><br><span class="line">rustup update</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看已安装的工具链</span></span><br><span class="line">rustup show</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装特定版本</span></span><br><span class="line">rustup install stable</span><br><span class="line">rustup install beta</span><br><span class="line">rustup install nightly</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换默认工具链</span></span><br><span class="line">rustup default stable</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为特定项目设置工具链</span></span><br><span class="line">rustup override <span class="built_in">set</span> nightly</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加目标平台</span></span><br><span class="line">rustup target add x86_64-pc-windows-gnu</span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载 Rust</span></span><br><span class="line">rustup self uninstall</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开离线文档</span></span><br><span class="line">rustup doc</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cargo-常用命令"><a href="#Cargo-常用命令" class="headerlink" title="Cargo 常用命令"></a>Cargo 常用命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建新项目</span></span><br><span class="line">cargo new project_name</span><br><span class="line">cargo new --lib library_name</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化现有目录</span></span><br><span class="line">cargo init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建相关</span></span><br><span class="line">cargo check          <span class="comment"># 快速检查代码</span></span><br><span class="line">cargo build          <span class="comment"># 构建 debug 版本</span></span><br><span class="line">cargo build --release <span class="comment"># 构建 release 版本</span></span><br><span class="line">cargo run            <span class="comment"># 构建并运行</span></span><br><span class="line">cargo clean          <span class="comment"># 清理构建文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试相关</span></span><br><span class="line">cargo <span class="built_in">test</span>           <span class="comment"># 运行测试</span></span><br><span class="line">cargo <span class="built_in">test</span> --release <span class="comment"># 运行优化的测试</span></span><br><span class="line">cargo bench          <span class="comment"># 运行基准测试</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文档相关</span></span><br><span class="line">cargo doc            <span class="comment"># 生成文档</span></span><br><span class="line">cargo doc --open     <span class="comment"># 生成并打开文档</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 依赖管理</span></span><br><span class="line">cargo update         <span class="comment"># 更新依赖</span></span><br><span class="line">cargo tree           <span class="comment"># 显示依赖树</span></span><br><span class="line">cargo audit          <span class="comment"># 检查安全漏洞</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发布相关</span></span><br><span class="line">cargo publish        <span class="comment"># 发布到 crates.io</span></span><br><span class="line">cargo package        <span class="comment"># 打包项目</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><h4 id="1-权限错误"><a href="#1-权限错误" class="headerlink" title="1. 权限错误"></a>1. 权限错误</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果出现权限问题，检查 Cargo 目录权限</span></span><br><span class="line"><span class="built_in">ls</span> -la ~/.cargo</span><br><span class="line"><span class="built_in">chmod</span> -R u+rw ~/.cargo</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-网络连接问题"><a href="#2-网络连接问题" class="headerlink" title="2. 网络连接问题"></a>2. 网络连接问题</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置国内镜像源（可选）</span></span><br><span class="line"><span class="built_in">mkdir</span> -p ~/.cargo</span><br><span class="line"><span class="built_in">cat</span> &gt;&gt; ~/.cargo/config.toml &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[source.crates-io]</span></span><br><span class="line"><span class="string">registry = &quot;https://github.com/rust-lang/crates.io-index&quot;</span></span><br><span class="line"><span class="string">replace-with = &#x27;ustc&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[source.ustc]</span></span><br><span class="line"><span class="string">registry = &quot;git://mirrors.ustc.edu.cn/crates.io-index&quot;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-编译错误"><a href="#3-编译错误" class="headerlink" title="3. 编译错误"></a>3. 编译错误</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查编译器版本</span></span><br><span class="line">rustc --version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新到最新版本</span></span><br><span class="line">rustup update</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理并重新构建</span></span><br><span class="line">cargo clean</span><br><span class="line">cargo build</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-VS-Code-配置问题"><a href="#4-VS-Code-配置问题" class="headerlink" title="4. VS Code 配置问题"></a>4. VS Code 配置问题</h4><p>在 VS Code 设置中添加：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;rust-analyzer.checkOnSave.command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;clippy&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;rust-analyzer.cargo.loadOutDirsFromCheck&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;rust-analyzer.procMacro.enable&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>将以下内容添加到 <code>~/.zshrc</code> 或 <code>~/.bash_profile</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Rust 环境变量</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$HOME</span>/.cargo/bin:<span class="variable">$PATH</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Rust 编译优化（可选）</span></span><br><span class="line"><span class="built_in">export</span> RUSTFLAGS=<span class="string">&quot;-C target-cpu=native&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加编译速度（可选）</span></span><br><span class="line"><span class="built_in">export</span> CARGO_INCREMENTAL=1</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/03/hello/" rel="prev" title="hello">
+                  <i class="fa fa-angle-left"></i> hello
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
