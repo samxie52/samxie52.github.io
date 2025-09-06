@@ -129,7 +129,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -147,6 +147,199 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/06/Rust%E5%9F%BA%E7%A1%80-%E7%BB%93%E6%9E%84%E4%BD%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | samxie52">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/09/06/Rust%E5%9F%BA%E7%A1%80-%E7%BB%93%E6%9E%84%E4%BD%93/" class="post-title-link" itemprop="url">Rust基础-结构体</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-06 11:24:45 / 修改时间：12:47:37" itemprop="dateCreated datePublished" datetime="2025-09-06T11:24:45+08:00">2025-09-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>普通结构体、元组结构体、单元结构体、方法、特征、trait</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/09/06/Rust%E5%9F%BA%E7%A1%80-%E7%BB%93%E6%9E%84%E4%BD%93/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/06/Rust%E5%9F%BA%E7%A1%80-enum/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | samxie52">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/09/06/Rust%E5%9F%BA%E7%A1%80-enum/" class="post-title-link" itemprop="url">Rust基础-enum</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-06 10:16:03 / 修改时间：10:45:03" itemprop="dateCreated datePublished" datetime="2025-09-06T10:16:03+08:00">2025-09-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Enums"><a href="#Enums" class="headerlink" title="Enums"></a>Enums</h2><ul>
+<li>Option</li>
+<li>Result</li>
+</ul>
+<h3 id="对比不同语言中的enum"><a href="#对比不同语言中的enum" class="headerlink" title="对比不同语言中的enum"></a>对比不同语言中的enum</h3><blockquote>
+<p>从写法上对比一下</p>
+</blockquote>
+<h4 id="TypeScript"><a href="#TypeScript" class="headerlink" title="TypeScript"></a>TypeScript</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">    <span class="title class_">Up</span>,</span><br><span class="line">    <span class="title class_">Down</span>,</span><br><span class="line">    <span class="title class_">Left</span>,</span><br><span class="line">    <span class="title class_">Right</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Using the enum</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">dir</span>: <span class="title class_">Direction</span> = <span class="title class_">Direction</span>.<span class="property">Up</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">    Up,</span><br><span class="line">    Down,</span><br><span class="line">    Left,</span><br><span class="line">    Right,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// Using the enum</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Direction dir = Up;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Rust"><a href="#Rust" class="headerlink" title="Rust"></a>Rust</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Direction</span> &#123;</span><br><span class="line">    Up,</span><br><span class="line">    Down,</span><br><span class="line">    Left,</span><br><span class="line">    Right,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Using the enum</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">dir</span>: Direction = Direction::Up;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="语法-规范"><a href="#语法-规范" class="headerlink" title="语法 &amp; 规范"></a>语法 &amp; 规范</h3><h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><ul>
+<li>field-less enum</li>
+<li>unit-only enum</li>
+</ul>
+<h4 id="规范"><a href="#规范" class="headerlink" title="规范"></a>规范</h4><ul>
+<li>Pascal Case       </li>
+<li>snake_case</li>
+</ul>
+<h3 id="Discriminants-判别式"><a href="#Discriminants-判别式" class="headerlink" title="Discriminants 判别式"></a>Discriminants 判别式</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Fieldless</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">Tuple</span>(),</span><br><span class="line">        Struct &#123;&#125;,</span><br><span class="line">        Unit,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="number">0</span>, Fieldless::<span class="title function_ invoke__">Tuple</span>() <span class="keyword">as</span> <span class="type">isize</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">UnitOnlyEnum</span> &#123;</span><br><span class="line">        Foo = <span class="number">0</span>,</span><br><span class="line">        Bar = <span class="number">1</span>,</span><br><span class="line">        Baz = <span class="number">2</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">UnitOnlyEnum2</span> &#123;</span><br><span class="line">        Foo,</span><br><span class="line">        Bar,</span><br><span class="line">        Baz,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(UnitOnlyEnum::Foo <span class="keyword">as</span> <span class="type">isize</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(UnitOnlyEnum2::Foo <span class="keyword">as</span> <span class="type">isize</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><ul>
+<li>match vs if let</li>
+<li>match 必须匹配所有条件</li>
+</ul>
+<h3 id="Option"><a href="#Option" class="headerlink" title="Option"></a>Option</h3><p><code>null</code> a billion-dollar mistake  </p>
+<p>In his 2009 presentation <em>“Null References: The Billion Dollar Mistake”</em>, Tony Hoare, the inventor of null, has this to say:</p>
+<ul>
+<li><code>Some&lt;T&gt;</code></li>
+<li><code>None</code></li>
+</ul>
+<h3 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h3><ul>
+<li><code>Ok&lt;T&gt;</code></li>
+<li><code>Err&lt;E&gt;</code></li>
+</ul>
+<h3 id="Option-Result-转换"><a href="#Option-Result-转换" class="headerlink" title="Option &amp; Result 转换"></a>Option &amp; Result 转换</h3><ul>
+<li>ok_or*</li>
+<li>ok() err()</li>
+<li>map</li>
+</ul>
+<h4 id="Option-转-Result"><a href="#Option-转-Result" class="headerlink" title="Option 转 Result"></a>Option 转 Result</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">opt</span>: <span class="type">Option</span>&lt;<span class="type">i32</span>&gt; = <span class="title function_ invoke__">Some</span>(<span class="number">42</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Result</span>&lt;<span class="type">i32</span>, &amp;<span class="type">str</span>&gt; = opt.<span class="title function_ invoke__">ok_or</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line"><span class="built_in">assert_eq!</span>(result, <span class="title function_ invoke__">Ok</span>(<span class="number">42</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">none</span>: <span class="type">Option</span>&lt;<span class="type">i32</span>&gt; = <span class="literal">None</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Result</span>&lt;<span class="type">i32</span>, &amp;<span class="type">str</span>&gt; = none.<span class="title function_ invoke__">ok_or</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line"><span class="built_in">assert_eq!</span>(result, <span class="title function_ invoke__">Err</span>(<span class="string">&quot;error&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h4 id="Result-转-Option"><a href="#Result-转-Option" class="headerlink" title="Result 转 Option"></a>Result 转 Option</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Result</span>&lt;<span class="type">i32</span>, &amp;<span class="type">str</span>&gt; = <span class="title function_ invoke__">Ok</span>(<span class="number">42</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">opt</span>: <span class="type">Option</span>&lt;<span class="type">i32</span>&gt; = result.<span class="title function_ invoke__">ok</span>();</span><br><span class="line"><span class="built_in">assert_eq!</span>(opt, <span class="title function_ invoke__">Some</span>(<span class="number">42</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Result</span>&lt;<span class="type">i32</span>, &amp;<span class="type">str</span>&gt; = <span class="title function_ invoke__">Err</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">opt</span>: <span class="type">Option</span>&lt;<span class="type">i32</span>&gt; = result.<span class="title function_ invoke__">ok</span>();</span><br><span class="line"><span class="built_in">assert_eq!</span>(opt, <span class="literal">None</span>);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -782,172 +975,9 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/04/hexo-github-guide/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="samxie">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="samxie52">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | samxie52">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/09/04/hexo-github-guide/" class="post-title-link" itemprop="url">hexo_github_guide</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-09-04 16:40:38" itemprop="dateCreated datePublished" datetime="2025-09-04T16:40:38+08:00">2025-09-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-09-05 10:25:50" itemprop="dateModified" datetime="2025-09-05T10:25:50+08:00">2025-09-05</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Hexo + NexT 主题 + GitHub Pages 完整部署指南</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/09/04/hexo-github-guide/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/04/mac-rust-complete-guide/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="samxie">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="samxie52">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | samxie52">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/09/04/mac-rust-complete-guide/" class="post-title-link" itemprop="url">mac_rust_complete_guide</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-09-04 16:25:45" itemprop="dateCreated datePublished" datetime="2025-09-04T16:25:45+08:00">2025-09-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-09-05 10:25:55" itemprop="dateModified" datetime="2025-09-05T10:25:55+08:00">2025-09-05</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>macOS Rust 完整开发环境安装指南</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/09/04/mac-rust-complete-guide/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
 
 </div>
   </main>
