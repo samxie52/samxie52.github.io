@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="泛型是 Rust 中非常重要的一个特性，它允许我们编写更通用、更灵活的代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust基础-泛型">
+<meta property="og:url" content="http://example.com/2025/09/08/Rust%E5%9F%BA%E7%A1%80-%E6%B3%9B%E5%9E%8B/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="泛型是 Rust 中非常重要的一个特性，它允许我们编写更通用、更灵活的代码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-08T01:18:10.000Z">
+<meta property="article:modified_time" content="2025-09-08T02:43:28.687Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/08/Rust%E5%9F%BA%E7%A1%80-%E6%B3%9B%E5%9E%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/08/Rust%E5%9F%BA%E7%A1%80-%E6%B3%9B%E5%9E%8B/","path":"2025/09/08/Rust基础-泛型/","title":"Rust基础-泛型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Rust基础-泛型 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.1.</span> <span class="nav-text">泛型详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%9C%B0%E5%88%B6%E5%AE%9A%E6%B3%9B%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">显示地制定泛型的类型参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%9B%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">结构体中使用泛型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%9B%E5%9E%8B"><span class="nav-number">1.4.</span> <span class="nav-text">枚举中使用泛型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%9B%E5%9E%8B"><span class="nav-number">1.5.</span> <span class="nav-text">方法中使用泛型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#const-%E6%B3%9B%E5%9E%8B-Rust-1-51-%E7%89%88%E6%9C%AC%E5%BC%95%E5%85%A5%E7%9A%84%E9%87%8D%E8%A6%81%E7%89%B9%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">const 泛型(Rust 1.51 版本引入的重要特性)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#const-%E6%B3%9B%E5%9E%8B%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.6.1.</span> <span class="nav-text">const 泛型表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#const-fn-%E5%B8%B8%E9%87%8F%E5%87%BD%E6%95%B0"><span class="nav-number">1.6.2.</span> <span class="nav-text">const fn 常量函数</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/08/Rust%E5%9F%BA%E7%A1%80-%E6%B3%9B%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Rust基础-泛型 | samxie52">
+      <meta itemprop="description" content="泛型是 Rust 中非常重要的一个特性，它允许我们编写更通用、更灵活的代码。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rust基础-泛型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-08 09:18:10 / 修改时间：10:43:28" itemprop="dateCreated datePublished" datetime="2025-09-08T09:18:10+08:00">2025-09-08</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">泛型是 Rust 中非常重要的一个特性，它允许我们编写更通用、更灵活的代码。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><ul>
+<li>实际上，泛型就是一种多态。泛型主要目的是为程序员提供编程的便利，减少代码的臃肿，同时可以极大地丰富语言本身的表达能力，为程序员提供了一个合适的炮管。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// add函数 通过泛型T，可以实现不同类型的加法</span></span><br><span class="line"><span class="comment">// 这段代码的类型推断是无法工作的，因为 Rust 无法确定 T 的类型</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">add</span>&lt;T&gt;(a: T, b: T) <span class="punctuation">-&gt;</span> T &#123;</span><br><span class="line">    a + b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;add i8: &#123;&#125;&quot;</span>, <span class="title function_ invoke__">add</span>(<span class="number">1i8</span>, <span class="number">2i8</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;add i32: &#123;&#125;&quot;</span>, <span class="title function_ invoke__">add</span>(<span class="number">1i32</span>, <span class="number">2i32</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;add i64: &#123;&#125;&quot;</span>, <span class="title function_ invoke__">add</span>(<span class="number">1i64</span>, <span class="number">2i64</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;add i128: &#123;&#125;&quot;</span>, <span class="title function_ invoke__">add</span>(<span class="number">1i128</span>, <span class="number">2i128</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="泛型详解"><a href="#泛型详解" class="headerlink" title="泛型详解"></a>泛型详解</h3><ul>
+<li>上面代码的 T 就是泛型参数，泛型的名称可以任意起，但是出于惯例，我们都用 T（Type 的缩写）；</li>
+<li>使用泛型参数，有一个先决条件，<strong>就是在使用前对其进行声明</strong></li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数 largest 有泛型类型 T，它有个参数 list，其类型是元素为 T 的数组切片，最后，该函数返回值的类型也是 T。</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">largest</span>&lt;T&gt;(list: &amp;[T]) <span class="punctuation">-&gt;</span> T &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">largest</span> = list[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> &amp;item <span class="keyword">in</span> list.<span class="title function_ invoke__">iter</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> item &gt; largest &#123;</span><br><span class="line">            largest = item;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    largest</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">number_list</span> = <span class="built_in">vec!</span>[<span class="number">34</span>, <span class="number">50</span>, <span class="number">25</span>, <span class="number">100</span>, <span class="number">65</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span> = <span class="title function_ invoke__">largest</span>(&amp;number_list);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The largest number is &#123;&#125;&quot;</span>, result);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">char_list</span> = <span class="built_in">vec!</span>[<span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;m&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;q&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span> = <span class="title function_ invoke__">largest</span>(&amp;char_list);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The largest char is &#123;&#125;&quot;</span>, result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">error[E0369]: binary operation `&gt;` cannot be applied to <span class="built_in">type</span> `T` // `&gt;`操作符不能用于类型`T`</span><br><span class="line"> --&gt; src/main.rs:5:17</span><br><span class="line">  |</span><br><span class="line">5 |         <span class="keyword">if</span> item &gt; largest &#123;</span><br><span class="line">  |            ---- ^ ------- T</span><br><span class="line">  |            |</span><br><span class="line">  |            T</span><br><span class="line">  |</span><br><span class="line"><span class="built_in">help</span>: consider restricting <span class="built_in">type</span> parameter `T` // 考虑对T进行类型上的限制 :</span><br><span class="line">  |</span><br><span class="line">1 | fn largest&lt;T: std::cmp::PartialOrd&gt;(list: &amp;[T]) -&gt; T &#123;</span><br><span class="line">  |             ++++++++++++++++++++++  </span><br></pre></td></tr></table></figure>
+
+<h3 id="显示地制定泛型的类型参数"><a href="#显示地制定泛型的类型参数" class="headerlink" title="显示地制定泛型的类型参数"></a>显示地制定泛型的类型参数</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">add</span>&lt;T: std::ops::Add&lt;Output = T&gt;&gt;(a: T, b: T) <span class="punctuation">-&gt;</span> T &#123;</span><br><span class="line">    a + b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="结构体中使用泛型"><a href="#结构体中使用泛型" class="headerlink" title="结构体中使用泛型"></a>结构体中使用泛型</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span>&lt;T&gt; &#123;</span><br><span class="line">    x: T,</span><br><span class="line">    y: T,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">integer</span> = Point &#123; x: <span class="number">5</span>, y: <span class="number">10</span> &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">float</span> = Point &#123; x: <span class="number">1.0</span>, y: <span class="number">4.0</span> &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有两点需要特别的注意：</p>
+<ul>
+<li><strong>提前声明</strong>，跟泛型函数定义类似，首先我们在使用泛型参数之前必需要进行声明 Point<T>，接着就可以在结构体的字段类型中使用 T 来替代具体的类型</li>
+<li><strong>x 和 y 是相同的类型</strong></li>
+</ul>
+<p>如果想让 x 和 y 既能类型相同，又能类型不同，就需要使用不同的泛型参数：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span>&lt;T, U&gt; &#123;</span><br><span class="line">    x: T,</span><br><span class="line">    y: U,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">integer</span> = Point &#123; x: <span class="number">5</span>, y: <span class="number">10</span> &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">float</span> = Point &#123; x: <span class="number">1.0</span>, y: <span class="number">4.0</span> &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="枚举中使用泛型"><a href="#枚举中使用泛型" class="headerlink" title="枚举中使用泛型"></a>枚举中使用泛型</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Option</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(T),</span><br><span class="line">    <span class="literal">None</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>与 Option用于值的存在与否不同，Result 关注的主要是值的正确性</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T, E&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(T),</span><br><span class="line">    <span class="title function_ invoke__">Err</span>(E),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="方法中使用泛型"><a href="#方法中使用泛型" class="headerlink" title="方法中使用泛型"></a>方法中使用泛型</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span>&lt;T&gt; &#123;</span><br><span class="line">    x: T,</span><br><span class="line">    y: T,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T&gt; Point&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">x</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;T &#123;</span><br><span class="line">        &amp;<span class="keyword">self</span>.x</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = Point &#123; x: <span class="number">5</span>, y: <span class="number">10</span> &#125;;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p.x = &#123;&#125;&quot;</span>, p.<span class="title function_ invoke__">x</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>使用泛型参数前，依然需要提前声明：impl<T>，只有提前声明了，我们才能在Point<T>中使用它，这样 Rust 就知道 Point 的尖括号中的类型是泛型而不是具体类型。</p>
+</li>
+<li><p>需要注意的是，这里的 Point<T> 不再是泛型声明，而是一个完整的结构体类型，因为我们定义的结构体就是 Point<T> 而不再是 Point。</p>
+</li>
+</ul>
+<p>在结构体的方法中定义额外的泛型参数：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span>&lt;T,U&gt; &#123;</span><br><span class="line">    x: T,</span><br><span class="line">    y: U,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T,U&gt; Point&lt;T,U&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">minup</span>&lt;V, W&gt;(<span class="keyword">self</span>, other: Point&lt;V,W&gt;) <span class="punctuation">-&gt;</span> Point&lt;T,W&gt; &#123;</span><br><span class="line">        Point &#123;</span><br><span class="line">            x: <span class="keyword">self</span>.x,</span><br><span class="line">            y: other.y,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p1</span> = Point &#123; x: <span class="number">5</span>, y: <span class="number">10</span> &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p2</span> = Point &#123; x: <span class="number">1.0</span>, y: <span class="number">4.0</span> &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p3</span> = p1.<span class="title function_ invoke__">minup</span>(p2);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p3.x = &#123;&#125;&quot;</span>, p3.<span class="title function_ invoke__">x</span>());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p3.y = &#123;&#125;&quot;</span>, p3.<span class="title function_ invoke__">y</span>());</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+
+<p>这个例子中，T,U 是定义在结构体 Point 上的泛型参数，V,W 是单独定义在方法 mixup 上的泛型参数，它们并不冲突，说白了，你可以理解为，一个是结构体泛型，一个是函数泛型。</p>
+<h3 id="const-泛型-Rust-1-51-版本引入的重要特性"><a href="#const-泛型-Rust-1-51-版本引入的重要特性" class="headerlink" title="const 泛型(Rust 1.51 版本引入的重要特性)"></a>const 泛型(Rust 1.51 版本引入的重要特性)</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [i32; 5] [i32; 6] 是不同的类型</span></span><br><span class="line"><span class="comment">// 只要使用数组切片，然后传入 arr 的不可变引用</span></span><br><span class="line"><span class="comment">// std::fmt::Debug 用于打印</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">display_array</span>&lt;T : std::fmt::<span class="built_in">Debug</span>&gt;(arr: &amp;[T]) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, arr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">display_array</span>&lt;T : std::fmt::<span class="built_in">Debug</span>, <span class="keyword">const</span> N: <span class="type">usize</span>&gt;(arr: &amp;[T; N]) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, arr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>如上所示，我们定义了一个类型为 [T; N] 的数组，其中 T 是一个基于类型的泛型参数，这个和之前讲的泛型没有区别，而重点在于 N 这个泛型参数，它是一个基于值的泛型参数！因为它用来替代的是数组的长度。</p>
+</li>
+<li><p>N 就是 const 泛型，定义的语法是 const N: usize，表示 const 泛型 N ，它基于的值类型是 usize。</p>
+</li>
+<li><p>在泛型参数之前，Rust 完全不适合复杂矩阵的运算，自从有了 const 泛型，一切即将改变。</p>
+</li>
+</ul>
+<h4 id="const-泛型表达式"><a href="#const-泛型表达式" class="headerlink" title="const 泛型表达式"></a>const 泛型表达式</h4><h4 id="const-fn-常量函数"><a href="#const-fn-常量函数" class="headerlink" title="const fn 常量函数"></a>const fn 常量函数</h4><ul>
+<li>const fn 允许我们在编译期对函数进行求值，从而实现更高效、更灵活的设计</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">fn</span> <span class="title function_">add</span>(a: <span class="type">i32</span>, b: <span class="type">i32</span>) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    a + b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> REUSLT: <span class="type">i32</span> = <span class="title function_ invoke__">add</span>(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, REUSLT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/" rel="prev" title="Rust基础 - 模块化">
+                  <i class="fa fa-angle-left"></i> Rust基础 - 模块化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/08/Rust%E5%9F%BA%E7%A1%80-%E7%89%B9%E5%BE%81/" rel="next" title="Rust基础-特征">
+                  Rust基础-特征 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
