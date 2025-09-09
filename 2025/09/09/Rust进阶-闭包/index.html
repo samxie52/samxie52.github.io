@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Rust进阶-闭包(闭包的定义、闭包的使用、move 关键字)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust进阶-闭包">
+<meta property="og:url" content="http://example.com/2025/09/09/Rust%E8%BF%9B%E9%98%B6-%E9%97%AD%E5%8C%85/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="Rust进阶-闭包(闭包的定义、闭包的使用、move 关键字)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-09T02:43:11.000Z">
+<meta property="article:modified_time" content="2025-09-09T07:20:39.007Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/09/Rust%E8%BF%9B%E9%98%B6-%E9%97%AD%E5%8C%85/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/09/Rust%E8%BF%9B%E9%98%B6-%E9%97%AD%E5%8C%85/","path":"2025/09/09/Rust进阶-闭包/","title":"Rust进阶-闭包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Rust进阶-闭包 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AD%E5%8C%85-Closure"><span class="nav-number">1.</span> <span class="nav-text">闭包 Closure</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">闭包的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.</span> <span class="nav-text">闭包的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">闭包的语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Simple-Example"><span class="nav-number">1.2.2.</span> <span class="nav-text">Simple Example</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9C%81%E7%95%A5%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%97%AD%E5%8C%85"><span class="nav-number">1.2.3.</span> <span class="nav-text">省略类型的闭包</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">闭包的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%9C%E4%B8%BA%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">作为函数参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%95%E8%8E%B7%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">捕获环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E7%9A%84%E4%B8%89%E7%A7%8D%E6%8D%95%E8%8E%B7%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">闭包的三种捕获方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E5%AF%B9%E5%86%85%E5%AD%98%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">1.4.</span> <span class="nav-text">闭包对内存的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E7%A7%8DFn%E7%89%B9%E5%BE%81"><span class="nav-number">1.4.1.</span> <span class="nav-text">三种Fn特征</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%97%AD%E5%8C%85%E6%97%B6%EF%BC%8C%E9%80%9A%E8%BF%87%E9%97%AD%E5%8C%85%E5%AF%B9%E7%8E%AF%E5%A2%83%E5%80%BC%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%8CRust%E6%8E%A8%E6%96%AD%E5%87%BA%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E5%93%AA%E4%B8%AAtrait%EF%BC%9A"><span class="nav-number">1.4.2.</span> <span class="nav-text">创建闭包时，通过闭包对环境值的使用，Rust推断出具体使用哪个trait：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#move-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.5.</span> <span class="nav-text">move 关键字</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/09/Rust%E8%BF%9B%E9%98%B6-%E9%97%AD%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Rust进阶-闭包 | samxie52">
+      <meta itemprop="description" content="Rust进阶-闭包(闭包的定义、闭包的使用、move 关键字)">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rust进阶-闭包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-09 10:43:11 / 修改时间：15:20:39" itemprop="dateCreated datePublished" datetime="2025-09-09T10:43:11+08:00">2025-09-09</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">Rust进阶-闭包(闭包的定义、闭包的使用、move 关键字)</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="闭包-Closure"><a href="#闭包-Closure" class="headerlink" title="闭包 Closure"></a>闭包 Closure</h2><p><strong>闭包是一种匿名函数，它可以赋值给变量也可以作为参数传递给其他函数，不同于函数的是，它允许捕获调用者作用域中的值;</strong></p>
+<ul>
+<li>在Rust中，闭包通过<code>||</code>符号定义，可以向普通函数一样调用</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">1</span>; </span><br><span class="line">    <span class="comment">// 闭包 sum，它拥有一个入参 y，同时捕获了作用域中的 x 的值，因此调用 sum(2) 意味着将 2（参数 y）跟 1（x）进行相加，最终返回它们的和：3。</span></span><br><span class="line">    <span class="comment">// sum 非常符合闭包的定义：可以赋值给变量，允许捕获调用者作用域中的值。</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sum</span> = |y| x + y;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="title function_ invoke__">sum</span>(<span class="number">2</span>), <span class="number">3</span>);      <span class="comment">// assert_eq! 宏用于断言两个值相等</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="闭包的特点"><a href="#闭包的特点" class="headerlink" title="闭包的特点"></a>闭包的特点</h3><ul>
+<li>可以捕获周围作用域的变量；</li>
+<li>支持作为参数传递给其他函数；</li>
+<li>可以返回闭包作为函数的返回值；</li>
+<li>类型推断：闭包通常通过类型推断来确定参数和返回值的类型</li>
+</ul>
+<h3 id="闭包的定义"><a href="#闭包的定义" class="headerlink" title="闭包的定义"></a>闭包的定义</h3><h4 id="闭包的语法"><a href="#闭包的语法" class="headerlink" title="闭包的语法"></a>闭包的语法</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">closure_name</span> = |parameters| <span class="punctuation">-&gt;</span> return_type &#123; </span><br><span class="line">   body </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Simple-Example"><a href="#Simple-Example" class="headerlink" title="Simple Example"></a>Simple Example</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">add</span> = |x: <span class="type">i32</span>| <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123; x + <span class="number">1</span> &#125;;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">add</span>(<span class="number">2</span>));  <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="省略类型的闭包"><a href="#省略类型的闭包" class="headerlink" title="省略类型的闭包"></a>省略类型的闭包</h4><ul>
+<li>Rust可以推断闭包的参数和返回值类型，因此在很多情况下可以省略类型声明。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">add</span> = |x| x + <span class="number">1</span>;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">add</span>(<span class="number">2</span>));  <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="闭包的使用"><a href="#闭包的使用" class="headerlink" title="闭包的使用"></a>闭包的使用</h3><h4 id="作为函数参数"><a href="#作为函数参数" class="headerlink" title="作为函数参数"></a>作为函数参数</h4><ul>
+<li>闭包可以作为函数的参数传递，从而实现更灵活的代码结构；</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">apply_to_3</span>&lt;F&gt;(f: F) <span class="punctuation">-&gt;</span> <span class="type">i32</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    f: <span class="title function_ invoke__">Fn</span>(<span class="type">i32</span>) <span class="punctuation">-&gt;</span> <span class="type">i32</span>,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="title function_ invoke__">f</span>(<span class="number">3</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">double</span> = |x| x * <span class="number">2</span>;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">apply_to_3</span>(double));</span><br></pre></td></tr></table></figure>
+
+<h4 id="捕获环境变量"><a href="#捕获环境变量" class="headerlink" title="捕获环境变量"></a>捕获环境变量</h4><ul>
+<li>闭包可以捕获并使用其定义在环境中的变量；</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">add</span> = |y| x + y;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="title function_ invoke__">add</span>(<span class="number">2</span>), <span class="number">3</span>);  <span class="comment">// true </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="闭包的三种捕获方式"><a href="#闭包的三种捕获方式" class="headerlink" title="闭包的三种捕获方式"></a>闭包的三种捕获方式</h4><ul>
+<li>按值捕获：将环境变量的所有权移入闭包</li>
+<li>按引用捕获：通过引用捕获环境变量</li>
+<li>按可变引用捕获：通过可变引用捕获环境变量</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">num</span> = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">add_num</span> = |x| num + x;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">add_num</span>(<span class="number">1</span>));   <span class="comment">// 6</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">change_num</span> = |x| num += x;</span><br><span class="line"><span class="title function_ invoke__">change_num</span>(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, num);  <span class="comment">// 7</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="闭包对内存的影响"><a href="#闭包对内存的影响" class="headerlink" title="闭包对内存的影响"></a>闭包对内存的影响</h3><p>当闭包从环境中捕获一个值时，会分配内存去存储这些值。对于有些场景来说，这种额外的内存分配会成为一种负担。与之相比，函数就不会去捕获这些环境值，因此定义和使用函数不会拥有这种内存负担。</p>
+<h4 id="三种Fn特征"><a href="#三种Fn特征" class="headerlink" title="三种Fn特征"></a>三种Fn特征</h4><ol>
+<li>FnOnce，该类型的闭包会拿走被捕获变量的所有权。Once 顾名思义，说明该闭包只能运行一次：</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">fn_once</span>&lt;F&gt;(func: F)</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    F: <span class="title function_ invoke__">FnOnce</span>(<span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">bool</span>,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">func</span>(<span class="number">3</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">func</span>(<span class="number">4</span>));    <span class="comment">// error[E0382]: use of moved value: `func`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">    <span class="title function_ invoke__">fn_once</span>(|z|&#123;z == x.<span class="title function_ invoke__">len</span>()&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">fn_once</span>&lt;F&gt;(func: F)</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    F: <span class="title function_ invoke__">FnOnce</span>(<span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">bool</span> + <span class="built_in">Copy</span>,<span class="comment">// 改动在这里</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">func</span>(<span class="number">3</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="title function_ invoke__">func</span>(<span class="number">4</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">    <span class="title function_ invoke__">fn_once</span>(|z|&#123;z == x.<span class="title function_ invoke__">len</span>()&#125;)</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>FnMut，它以可变借用的方式捕获了环境中的值，因此可以修改该值：</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">update_string</span> =  |<span class="type">str</span>| s.<span class="title function_ invoke__">push_str</span>(<span class="type">str</span>);</span><br><span class="line">    <span class="title function_ invoke__">update_string</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>Fn 特征，它以不可变借用的方式捕获环境中的值 让我们把上面的代码中 exec 的 F 泛型参数类型修改为 Fn(&amp;’a str)：</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="string">&quot;hello, &quot;</span>.<span class="title function_ invoke__">to_string</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">update_string</span> =  |<span class="type">str</span>| <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;,&#123;&#125;&quot;</span>,s,<span class="type">str</span>);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">exec</span>(update_string);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>,s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">exec</span>&lt;<span class="symbol">&#x27;a</span>, F: <span class="title function_ invoke__">Fn</span>(<span class="type">String</span>) <span class="punctuation">-&gt;</span> ()&gt;(f: F)  &#123;</span><br><span class="line">    <span class="title function_ invoke__">f</span>(<span class="string">&quot;world&quot;</span>.<span class="title function_ invoke__">to_string</span>())</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+
+<h4 id="创建闭包时，通过闭包对环境值的使用，Rust推断出具体使用哪个trait："><a href="#创建闭包时，通过闭包对环境值的使用，Rust推断出具体使用哪个trait：" class="headerlink" title="创建闭包时，通过闭包对环境值的使用，Rust推断出具体使用哪个trait："></a>创建闭包时，通过闭包对环境值的使用，Rust推断出具体使用哪个trait：</h4><ul>
+<li>所有的闭包都实现了 FnOnce trait，因为它们都可以被调用一次</li>
+<li>没有移动捕获变量的实现了 FnMut trait</li>
+<li>无需可变访问捕获变量的闭包实现了 Fn trait</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">update_string</span> =  || <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>,s);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">exec</span>(update_string);</span><br><span class="line">    <span class="title function_ invoke__">exec1</span>(update_string);</span><br><span class="line">    <span class="title function_ invoke__">exec2</span>(update_string);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">exec</span>&lt;F: <span class="title function_ invoke__">FnOnce</span>()&gt;(f: F)  &#123;</span><br><span class="line">    <span class="title function_ invoke__">f</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">exec1</span>&lt;F: <span class="title function_ invoke__">FnMut</span>()&gt;(<span class="keyword">mut</span> f: F)  &#123;</span><br><span class="line">    <span class="title function_ invoke__">f</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">exec2</span>&lt;F: <span class="title function_ invoke__">Fn</span>()&gt;(f: F)  &#123;</span><br><span class="line">    <span class="title function_ invoke__">f</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="move-关键字"><a href="#move-关键字" class="headerlink" title="move 关键字"></a>move 关键字</h3><ul>
+<li>在参数列表前使用 move 关键字，可以强制闭包获取环境变量的所有权<br>当将闭包传递给新线程可以移动数据使其归线程所有时，此关键字很有用</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/09/%E4%BD%BF%E7%94%A8-Cargo-Workspace-%E6%9E%84%E5%BB%BA-Rust-%E5%85%A8%E6%A0%88%E5%BA%94%E7%94%A8/" rel="prev" title="使用 Cargo Workspace 构建 Rust 全栈应用">
+                  <i class="fa fa-angle-left"></i> 使用 Cargo Workspace 构建 Rust 全栈应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/09/Rust%E8%BF%9B%E9%98%B6-%E8%BF%AD%E4%BB%A3%E5%99%A8-%E5%85%B3%E8%81%94%E7%B1%BB%E5%9E%8B/" rel="next" title="Rust进阶-迭代器&amp;关联类型">
+                  Rust进阶-迭代器&关联类型 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
