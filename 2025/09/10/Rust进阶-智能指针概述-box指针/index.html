@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="智能指针（Box，Deref，Drop）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust进阶-智能指针概述&amp;box指针">
+<meta property="og:url" content="http://example.com/2025/09/10/Rust%E8%BF%9B%E9%98%B6-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%A6%82%E8%BF%B0-box%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="智能指针（Box，Deref，Drop）">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-10T03:29:35.000Z">
+<meta property="article:modified_time" content="2025-09-10T07:05:49.818Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/10/Rust%E8%BF%9B%E9%98%B6-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%A6%82%E8%BF%B0-box%E6%8C%87%E9%92%88/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/10/Rust%E8%BF%9B%E9%98%B6-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%A6%82%E8%BF%B0-box%E6%8C%87%E9%92%88/","path":"2025/09/10/Rust进阶-智能指针概述-box指针/","title":"Rust进阶-智能指针概述&box指针"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Rust进阶-智能指针概述&box指针 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是智能指针？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AD%98%E5%9C%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">2.</span> <span class="nav-text">为什么存在智能指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">智能指针的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Box"><span class="nav-number">4.</span> <span class="nav-text">Box</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Box-%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.1.</span> <span class="nav-text">Box 的底层实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Box-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">4.2.</span> <span class="nav-text">Box 的使用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Box-%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">4.3.</span> <span class="nav-text">Box 的优缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Drop-Deref-DerefMut"><span class="nav-number">5.</span> <span class="nav-text">Drop Deref DerefMut</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Drop-Trait"><span class="nav-number">5.1.</span> <span class="nav-text">Drop Trait</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Deref-Trait"><span class="nav-number">5.2.</span> <span class="nav-text">Deref Trait</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DerefMut-Trait"><span class="nav-number">5.3.</span> <span class="nav-text">DerefMut Trait</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/10/Rust%E8%BF%9B%E9%98%B6-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%A6%82%E8%BF%B0-box%E6%8C%87%E9%92%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Rust进阶-智能指针概述&amp;box指针 | samxie52">
+      <meta itemprop="description" content="智能指针（Box，Deref，Drop）">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rust进阶-智能指针概述&box指针
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-10 11:29:35 / 修改时间：15:05:49" itemprop="dateCreated datePublished" datetime="2025-09-10T11:29:35+08:00">2025-09-10</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">智能指针（Box，Deref，Drop）</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="什么是智能指针？"><a href="#什么是智能指针？" class="headerlink" title="什么是智能指针？"></a>什么是智能指针？</h3><ul>
+<li>智能指针(Smart Pointers)是一类数据结构，它不仅包含一个指针，还附带一些额外的元数据和功能。与普通指针不同，智能指针在 Rust 中实现了 Deref 和 Drop 两个trait，这使得它们可以像指针一样解引用并在离开作用域时自动清理资源。</li>
+</ul>
+<h3 id="为什么存在智能指针"><a href="#为什么存在智能指针" class="headerlink" title="为什么存在智能指针"></a>为什么存在智能指针</h3><ul>
+<li>资源管理<ul>
+<li>自动管理资源的分配和释放，避免内存泄漏。</li>
+</ul>
+</li>
+<li>所有权与借用<ul>
+<li>Rust 的所有权系统通过智能指针来确保内存安全，避免数据竞争和悬垂指针。</li>
+</ul>
+</li>
+<li>复杂数据结构<ul>
+<li>通过智能指针可以构建复杂的数据结构，如递归结构、共享数据等。</li>
+</ul>
+</li>
+</ul>
+<h3 id="智能指针的特性"><a href="#智能指针的特性" class="headerlink" title="智能指针的特性"></a>智能指针的特性</h3><ul>
+<li>Deref Trait<ul>
+<li>实现了 Deref trait 的类型可以像常规引用一样使用<em>运算符解引用。例如: Box<T>实现了 Deref，所以可以通过</em>解引用获取其内部数据。</li>
+</ul>
+</li>
+<li>Drop Trait<ul>
+<li>实现了 Drop trait 的类型在离开作用域时会自动调用其drop 方法，用于释放资源。</li>
+<li>例如: Box<T>在超出作用域时会自动释放堆内存</li>
+</ul>
+</li>
+</ul>
+<h3 id="Box"><a href="#Box" class="headerlink" title="Box"></a>Box<T></h3><ul>
+<li>基本概念<ul>
+<li>Box<T>将类型T的值分配在堆上，而不是栈上。</li>
+<li>当 Box 被销毁时，堆上的数据也会被销毁。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Box-的底层实现"><a href="#Box-的底层实现" class="headerlink" title="Box 的底层实现"></a>Box 的底层实现</h4><ul>
+<li><p>Box 的底层原理</p>
+<ul>
+<li>Box<T>实际上是一个智能指针，内部包含一个指向堆上分配内存的裸指针。</li>
+<li>当 Box<T> 被销毁时，其 Drop trait 会被调用，释放堆上的内存。</li>
+</ul>
+</li>
+<li><p>内存分配</p>
+<ul>
+<li>Rust 使用系统的全局分配器(如 malloc 和 free)来管理堆内存。</li>
+<li>Box::new 分配内存，Drop 释放内存。</li>
+</ul>
+</li>
+<li><p>安全性</p>
+<ul>
+<li>Rust 的所有权系统确保 Box<T>的内存安全。所有权转移时，堆内存的生命周期也会随之变化。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Box-的使用场景"><a href="#Box-的使用场景" class="headerlink" title="Box 的使用场景"></a>Box 的使用场景</h4><ol>
+<li>堆分配</li>
+</ol>
+<p>Box最常见的用途是将数据分配在堆上，而不是栈上。这在处理较大数据结构或数据结构的大小在编译时不确定时尤为重要。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(<span class="number">5</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>动态大小类型（DST）</li>
+</ol>
+<p>CBox允许处理动态大小类型，如 str 和[T]</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span>: <span class="type">Box</span>&lt;<span class="type">str</span>&gt; = <span class="string">&quot;hello&quot;</span>.<span class="title function_ invoke__">into</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, s);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">arr</span>: <span class="type">Box</span>&lt;[<span class="type">i32</span>]&gt; = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].<span class="title function_ invoke__">into_boxed_slice</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, arr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>递归数据结构</li>
+</ol>
+<p>递归数据结构需要指针类型来引用自身，而 Box提供了这一功能。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">List</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">Cons</span>(<span class="type">i32</span>, <span class="type">Box</span>&lt;List&gt;),</span><br><span class="line">    Nil,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> List::&#123;Cons, Nil&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">list</span> = <span class="title function_ invoke__">Cons</span>(<span class="number">1</span>, <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Cons</span>(<span class="number">2</span>, <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(Nil))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>类型擦除</li>
+</ol>
+<p>Box<dyn Trait>用于类型擦除，允许在运行时决定类型</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">train Animal &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">speak</span>(&amp;<span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Dog</span>;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Cat</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Animal</span> <span class="keyword">for</span> <span class="title class_">Dog</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">speak</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Woof!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Animal</span> <span class="keyword">for</span> <span class="title class_">Cat</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">speak</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Meow!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">dog</span> = Dog;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">cat</span> = Cat;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">animals</span>: <span class="type">Vec</span>&lt;<span class="type">Box</span>&lt;<span class="keyword">dyn</span> Animal&gt;&gt; = <span class="built_in">vec!</span>[<span class="type">Box</span>::<span class="title function_ invoke__">new</span>(dog), <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(cat)];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">animal</span> <span class="keyword">in</span> animals &#123;</span><br><span class="line">        animal.<span class="title function_ invoke__">speak</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>dyn 解释</strong></p>
+<p>dyn 关键字用于制定动态分发的类型，它允许在运行时决定具体的类型，在Rust中，dyn 关键字用于实现动态分发trait对象。</p>
+<ol start="5">
+<li>内存管理和性能优化</li>
+</ol>
+<p>通过使用 Box，可以控制内存的分配和释放，从而优化性能和内存使用。例如，将大型数据结构放在堆上，而不是栈上，可以减少栈的使用量，从而避免栈溢出。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">large_array</span> = <span class="built_in">vec!</span>[<span class="number">0</span>; <span class="number">1000000</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">box_large_array</span> = <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(large_array);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Size of box_large_array: &#123;&#125; bytes&quot;</span>, std::mem::<span class="title function_ invoke__">size_of_val</span>(&amp;box_large_array));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="Box-的优缺点"><a href="#Box-的优缺点" class="headerlink" title="Box 的优缺点"></a>Box 的优缺点</h4><p><strong>优点</strong><br>    - 提供堆内存分配，支持复杂数据结构。<br>    - 与 Rust 的所有权系统完美集成，确保内存安全。<br>    - 动态分配对象，实现类型擦除。</p>
+<p><strong>缺点</strong><br>    - 需要堆内存分配和释放，可能带来性能开销不适合需要频繁分配和释放的场景。</p>
+<h3 id="Drop-Deref-DerefMut"><a href="#Drop-Deref-DerefMut" class="headerlink" title="Drop Deref DerefMut"></a>Drop Deref DerefMut</h3><ul>
+<li>Drop Trait<ul>
+<li>Drop trait 定义了当一个值离开作用域时应该执行的操作。例如: Box<T>在超出作用域时会自动调用其 Droptrait，释放堆上的内存。</li>
+</ul>
+</li>
+<li>Deref Trait<ul>
+<li>Deref trait 定义了如何将一个类型转换为引用例如: Box<T>实现了 Deref，所以可以通过，运算符解引用获取其内部数据。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Drop-Trait"><a href="#Drop-Trait" class="headerlink" title="Drop Trait"></a>Drop Trait</h4><ul>
+<li>Drop trait 用于自定义当值离开作用域时执行的代码，通常用于释放资源(例如内存、文件句柄、网络连接等)。</li>
+<li>定义和实现Drop trait 定义了一个 drop 方法，当值被释放时，Rust 会自动调用这个方法。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MyStruct</span> &#123;</span><br><span class="line">    data: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Drop</span> <span class="keyword">for</span> <span class="title class_">MyStruct</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">drop</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Dropping MyStruct&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">my_struct</span> = MyStruct &#123; data: <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>] &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="Deref-Trait"><a href="#Deref-Trait" class="headerlink" title="Deref Trait"></a>Deref Trait</h4><ul>
+<li>Deref trait 用于重载解引用运算符(*)。它允许你定义自定义指针类型的解引用行为。</li>
+<li>定义和实现Deref trait 定义了一个 deref 方法，该方法返回指向目标类型的引用。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MyBox</span>&lt;T&gt;(T);</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T&gt; MyBox&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>(x: T) <span class="punctuation">-&gt;</span> MyBox&lt;T&gt; &#123;</span><br><span class="line">        <span class="title function_ invoke__">MyBox</span>(x)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T&gt; Deref <span class="keyword">for</span> <span class="title class_">MyBox</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Target</span> = T;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">deref</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;T &#123;</span><br><span class="line">        &amp;<span class="keyword">self</span>.<span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="DerefMut-Trait"><a href="#DerefMut-Trait" class="headerlink" title="DerefMut Trait"></a>DerefMut Trait</h4><ul>
+<li>与 Deref 类似，DerefMut 用于重载可变解引用运算符(*)，允许对自定义类型进行可变解引用。</li>
+<li>定义和实现DerefMut trait 定义了一个 deref_mut 方法，该方法返回指向目标类型的可变引用。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MyBox</span>&lt;T&gt;(T);</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T&gt; MyBox&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>(x: T) <span class="punctuation">-&gt;</span> MyBox&lt;T&gt; &#123;</span><br><span class="line">        <span class="title function_ invoke__">MyBox</span>(x)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T&gt; DerefMut <span class="keyword">for</span> <span class="title class_">MyBox</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">deref_mut</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">mut</span> T &#123;</span><br><span class="line">        &amp;<span class="keyword">mut</span> <span class="keyword">self</span>.<span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/09/Rust%E8%BF%9B%E9%98%B6-%E8%BF%AD%E4%BB%A3%E5%99%A8-%E5%85%B3%E8%81%94%E7%B1%BB%E5%9E%8B/" rel="prev" title="Rust进阶-迭代器&amp;关联类型">
+                  <i class="fa fa-angle-left"></i> Rust进阶-迭代器&关联类型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/10/Rust%E8%BF%9B%E9%98%B6-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%882/" rel="next" title="Rust进阶-智能指针2">
+                  Rust进阶-智能指针2 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
