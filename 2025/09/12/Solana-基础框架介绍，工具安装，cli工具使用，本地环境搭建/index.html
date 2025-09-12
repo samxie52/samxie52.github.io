@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建">
+<meta property="og:url" content="http://example.com/2025/09/12/Solana-%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%EF%BC%8C%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85%EF%BC%8Ccli%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%EF%BC%8C%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-12T08:34:17.000Z">
+<meta property="article:modified_time" content="2025-09-12T09:25:45.963Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/12/Solana-%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%EF%BC%8C%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85%EF%BC%8Ccli%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%EF%BC%8C%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/12/Solana-%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%EF%BC%8C%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85%EF%BC%8Ccli%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%EF%BC%8C%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/","path":"2025/09/12/Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建/","title":"Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Solana"><span class="nav-number">1.</span> <span class="nav-text">Solana</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE"><span class="nav-number">1.1.</span> <span class="nav-text">区块链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%98%93%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">交易流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">共识机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6"><span class="nav-number">1.4.</span> <span class="nav-text">智能合约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E7%BD%91%E7%BB%9C%EF%BC%88P2P%E7%BD%91%E7%BB%9C%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">去中心化网络（P2P网络）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97"><span class="nav-number">2.</span> <span class="nav-text">开发环境配置指南</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Rust-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%EF%BC%88%E5%8F%82%E8%80%83%E5%89%8D%E9%9D%A2%E7%9A%84-rust-%E8%AF%BE%E7%A8%8B%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">Rust 环境配置（参考前面的 rust 课程）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solana-cli"><span class="nav-number">2.2.</span> <span class="nav-text">Solana-cli</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%EF%BC%88%E5%B7%B2%E7%BB%8F%E5%AE%89%E8%A3%85%E8%BF%87%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">升级（已经安装过）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5"><span class="nav-number">2.4.</span> <span class="nav-text">检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Anchor-%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6"><span class="nav-number">2.5.</span> <span class="nav-text">Anchor 开发框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E7%A2%B0%E5%88%B0%E5%A4%B1%E8%B4%A5%E5%8F%AF%E5%B0%9D%E8%AF%95%E5%A6%82%E4%B8%8B%E6%96%B9%E6%A1%88"><span class="nav-number">2.5.1.</span> <span class="nav-text">如碰到失败可尝试如下方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AVM-Anchor-Version-Manager"><span class="nav-number">2.5.2.</span> <span class="nav-text">AVM (Anchor Version Manager)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Validate"><span class="nav-number">2.5.3.</span> <span class="nav-text">Validate</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%92%B1%E5%8C%85"><span class="nav-number">2.6.</span> <span class="nav-text">创建钱包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E9%92%B1%E5%8C%85%E5%9C%B0%E5%9D%80"><span class="nav-number">2.6.1.</span> <span class="nav-text">默认钱包地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%9B%E5%BB%BA%E9%92%B1%E5%8C%85"><span class="nav-number">2.6.2.</span> <span class="nav-text">命令行创建钱包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-Playground-%E5%88%9B%E5%BB%BA"><span class="nav-number">2.6.3.</span> <span class="nav-text">通过 Playground 创建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%B1%E5%8C%85%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.7.</span> <span class="nav-text">钱包连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BA%E6%8A%95-SOL-%E4%BB%A3%E5%B8%81"><span class="nav-number">2.7.1.</span> <span class="nav-text">空投 SOL 代币</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%A9%BA%E6%8A%95"><span class="nav-number">2.7.1.1.</span> <span class="nav-text">命令行空投</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-Faucet-%E9%A2%86%E5%8F%96"><span class="nav-number">2.7.2.</span> <span class="nav-text">通过 Faucet 领取</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%8C%BA%E5%9D%97%E6%B5%8F%E8%A7%88%E5%99%A8%E6%9F%A5%E7%9C%8B%E8%B4%A6%E6%88%B7%E4%BA%A4%E6%98%93"><span class="nav-number">2.8.</span> <span class="nav-text">通过区块浏览器查看账户交易</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E6%9C%AC%E5%9C%B0%E9%AA%8C%E8%AF%81%E8%8A%82%E7%82%B9"><span class="nav-number">2.8.1.</span> <span class="nav-text">设置本地验证节点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B0%E5%BC%80%E4%B8%80%E4%B8%AA%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%AA%97%E5%8F%A3%E8%BF%90%E8%A1%8C"><span class="nav-number">2.8.1.1.</span> <span class="nav-text">新开一个命令行窗口运行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C"><span class="nav-number">2.8.1.2.</span> <span class="nav-text">配置网络</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#solana-cli-%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="nav-number">2.9.</span> <span class="nav-text">solana-cli 常见用法</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/12/Solana-%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%EF%BC%8C%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85%EF%BC%8Ccli%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%EF%BC%8C%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建 | samxie52">
+      <meta itemprop="description" content="Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-12 16:34:17 / 修改时间：17:25:45" itemprop="dateCreated datePublished" datetime="2025-09-12T16:34:17+08:00">2025-09-12</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Solana"><a href="#Solana" class="headerlink" title="Solana"></a>Solana</h2><p>〉 高性能的公链平台</p>
+<h3 id="区块链"><a href="#区块链" class="headerlink" title="区块链"></a>区块链</h3><p>区块链是由一系列按时间顺序链接的“区块”组成的。每个区块包含三个部分：</p>
+<ul>
+<li><p>区块头（Block Header）</p>
+<ul>
+<li>前一个区块的哈希（Previous Block Hash）: 链接到链上前一个区块的加密哈希值，确保数据不可篡改</li>
+<li>时间戳（Timestamp）: 记录区块生成的时间</li>
+<li>默克尔根（Merkle Root）: 区块中所有交易的哈希值的集合的哈希值，确保交易数据的完整性</li>
+</ul>
+</li>
+<li><p>区块体（Block Body）: 包含实际的交易数据</p>
+<ul>
+<li>交易列表（Transactions）: 包含区块中的交易记录</li>
+</ul>
+</li>
+<li><p>区块哈希（Block Hash）: </p>
+<ul>
+<li>当前区块的哈希值： 通过对区块头数据进行哈希计算生成，作为下一个区块的“前一个区块哈希”。</li>
+</ul>
+</li>
+</ul>
+<h3 id="交易流程"><a href="#交易流程" class="headerlink" title="交易流程"></a>交易流程</h3><p>区块链中的交易流程可以简化为以下几步：</p>
+<ol>
+<li>交易创建:用户A创建一笔交易，将资金或数据发送给用户B</li>
+<li>交易广播:该交易被广播到区块链网络中，所有节点都会接收到这笔交易信息。</li>
+<li>交易验证:网络中的矿工或验证节点对交易进行验证，确保交易的合法性。</li>
+<li>交易打包:验证通过的交易被打包进区块中，比由矿工竞争挖矿（在PoW的情况下）</li>
+<li>交易确认:新创建的区块被添加到区块链中，交易正式生效。</li>
+</ol>
+<h3 id="共识机制"><a href="#共识机制" class="headerlink" title="共识机制"></a>共识机制</h3><p>共识机制是区块链网络中所有节点就数据达成一致的方式，以常见的工作量证明（Proof-of-work，POW）为例：<br>    - 工作量证明（POW）：矿工通过计算工作量来解决一个复杂难题，第一个算出来的矿工可以将其区块添加到区块链中。</p>
+<h3 id="智能合约"><a href="#智能合约" class="headerlink" title="智能合约"></a>智能合约</h3><ul>
+<li>智能合约是部署在区块链上的自动执行代码，能根据预定条件执行交易</li>
+</ul>
+<h3 id="去中心化网络（P2P网络）"><a href="#去中心化网络（P2P网络）" class="headerlink" title="去中心化网络（P2P网络）"></a>去中心化网络（P2P网络）</h3><p>区块链是由分布在全球的节点组成的去中心化网络，这些节点共同维护和更新区块链的状态。每个节点都有一份完整的区块链副本。</p>
+<h2 id="开发环境配置指南"><a href="#开发环境配置指南" class="headerlink" title="开发环境配置指南"></a>开发环境配置指南</h2><h3 id="Rust-环境配置（参考前面的-rust-课程）"><a href="#Rust-环境配置（参考前面的-rust-课程）" class="headerlink" title="Rust 环境配置（参考前面的 rust 课程）"></a>Rust 环境配置（参考前面的 rust 课程）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="Solana-cli"><a href="#Solana-cli" class="headerlink" title="Solana-cli"></a>Solana-cli</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sh -c <span class="string">&quot;<span class="subst">$(curl -sSfL https://release.anza.xyz/stable/install)</span>&quot;</span></span><br><span class="line">sh -c <span class="string">&quot;<span class="subst">$(curl -sSfL https://release.solana.com/stable/install)</span>&quot;</span> <span class="comment"># old version</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="升级（已经安装过）"><a href="#升级（已经安装过）" class="headerlink" title="升级（已经安装过）"></a>升级（已经安装过）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">agave-install update <span class="comment"># 新版本</span></span><br><span class="line">solana-install update <span class="comment"># 旧版本</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="检查"><a href="#检查" class="headerlink" title="检查"></a>检查</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ solana -V</span><br><span class="line">solana-cli 1.18.22 (src:b286211c; feat:4215500110, client:SolanaLabs)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Anchor-开发框架"><a href="#Anchor-开发框架" class="headerlink" title="Anchor 开发框架"></a>Anchor 开发框架</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo install --git https://github.com/coral-xyz/anchor avm --locked --force</span><br></pre></td></tr></table></figure>
+
+<h4 id="如碰到失败可尝试如下方案"><a href="#如碰到失败可尝试如下方案" class="headerlink" title="如碰到失败可尝试如下方案"></a>如碰到失败可尝试如下方案</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 anchor-cli --force</span><br></pre></td></tr></table></figure>
+
+<h4 id="AVM-Anchor-Version-Manager"><a href="#AVM-Anchor-Version-Manager" class="headerlink" title="AVM (Anchor Version Manager)"></a>AVM (Anchor Version Manager)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">avm install latest</span><br><span class="line">avm use latest</span><br></pre></td></tr></table></figure>
+
+<h4 id="Validate"><a href="#Validate" class="headerlink" title="Validate"></a>Validate</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">anchor -V</span><br><span class="line">anchor-cli 0.30.1</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="创建钱包"><a href="#创建钱包" class="headerlink" title="创建钱包"></a>创建钱包</h3><h4 id="默认钱包地址"><a href="#默认钱包地址" class="headerlink" title="默认钱包地址"></a>默认钱包地址</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/.config/solana/id.json</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令行创建钱包"><a href="#命令行创建钱包" class="headerlink" title="命令行创建钱包"></a>命令行创建钱包</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">solana-keygen new <span class="comment"># --force overwrite</span></span><br><span class="line">solana config <span class="built_in">set</span> -k ~/.config/solana/id.json <span class="comment"># 设置为默认钱包</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="通过-Playground-创建"><a href="#通过-Playground-创建" class="headerlink" title="通过 Playground 创建"></a>通过 Playground 创建</h4><p>网址：<a target="_blank" rel="noopener" href="https://beta.solpg.io/">https://beta.solpg.io/</a></p>
+<blockquote>
+<p>创建后会自动 airdrop 5 SOL</p>
+</blockquote>
+<h3 id="钱包连接"><a href="#钱包连接" class="headerlink" title="钱包连接"></a>钱包连接</h3><p>右上角 ☰ wallet &#x3D;&gt; Add</p>
+<h4 id="空投-SOL-代币"><a href="#空投-SOL-代币" class="headerlink" title="空投 SOL 代币"></a>空投 SOL 代币</h4><h5 id="命令行空投"><a href="#命令行空投" class="headerlink" title="命令行空投"></a>命令行空投</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">solana airdrop 5</span><br></pre></td></tr></table></figure>
+
+<h4 id="通过-Faucet-领取"><a href="#通过-Faucet-领取" class="headerlink" title="通过 Faucet 领取"></a>通过 Faucet 领取</h4><p>网址：<a target="_blank" rel="noopener" href="https://faucet.solana.com/">https://faucet.solana.com/</a></p>
+<h3 id="通过区块浏览器查看账户交易"><a href="#通过区块浏览器查看账户交易" class="headerlink" title="通过区块浏览器查看账户交易"></a>通过区块浏览器查看账户交易</h3><p><strong>查看钱包地址模板：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://explorer.solana.com/address/[钱包地址]?cluster=devnet</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://explorer.solana.com/address/DeBfTUHrGvmDU3HgK2d9PKcCTrKVg4cNjMegSYNGHJFg?cluster=devnet</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="设置本地验证节点"><a href="#设置本地验证节点" class="headerlink" title="设置本地验证节点"></a>设置本地验证节点</h4><h5 id="新开一个命令行窗口运行"><a href="#新开一个命令行窗口运行" class="headerlink" title="新开一个命令行窗口运行"></a>新开一个命令行窗口运行</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">solana-test-validator</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置网络"><a href="#配置网络" class="headerlink" title="配置网络"></a>配置网络</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">solana config get <span class="comment"># get config</span></span><br><span class="line">solana config <span class="built_in">set</span> --url localhost <span class="comment"># 配置 本地主机验证器</span></span><br><span class="line">solana config <span class="built_in">set</span> --url testnet <span class="comment"># 配置 test net</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="solana-cli-常见用法"><a href="#solana-cli-常见用法" class="headerlink" title="solana-cli 常见用法"></a>solana-cli 常见用法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取配置</span></span><br><span class="line">solana config get</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置配置-设置网络</span></span><br><span class="line">solana config <span class="built_in">set</span> --url &lt;net&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建钱包</span></span><br><span class="line">solana-keygen new</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看钱包地址</span></span><br><span class="line">solana address</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看余额</span></span><br><span class="line">solana balance &lt;pub_key&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转账  </span></span><br><span class="line">solana transfer &lt;recipient_public_key&gt; &lt;amount&gt; --from &lt;sender_keypair_key&gt;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/11/Solana-Sol%E7%9A%84%E6%9E%B6%E6%9E%84%E5%92%8C%E5%B8%B8%E8%A7%81%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/" rel="prev" title="Solana-Sol的架构和常见名词概念">
+                  <i class="fa fa-angle-left"></i> Solana-Sol的架构和常见名词概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/12/Solana-%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8/" rel="next" title="Solana-开发入门">
+                  Solana-开发入门 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -19,26 +19,26 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="模块化是Rust中组织代码的重要方式">
+    <meta name="description" content="Solana-Sol的架构和常见名词概念">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Rust基础 - 模块化">
-<meta property="og:url" content="http://example.com/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/index.html">
+<meta property="og:title" content="Solana-Sol的架构和常见名词概念">
+<meta property="og:url" content="http://example.com/2025/09/11/Solana-Sol%E7%9A%84%E6%9E%B6%E6%9E%84%E5%92%8C%E5%B8%B8%E8%A7%81%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/index.html">
 <meta property="og:site_name" content="samxie52">
-<meta property="og:description" content="模块化是Rust中组织代码的重要方式">
+<meta property="og:description" content="Solana-Sol的架构和常见名词概念">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-09-07T06:23:41.000Z">
-<meta property="article:modified_time" content="2025-09-07T07:02:36.572Z">
+<meta property="article:published_time" content="2025-09-11T13:35:35.000Z">
+<meta property="article:modified_time" content="2025-09-12T13:06:00.936Z">
 <meta property="article:author" content="samxie">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/">
+<link rel="canonical" href="http://example.com/2025/09/11/Solana-Sol%E7%9A%84%E6%9E%B6%E6%9E%84%E5%92%8C%E5%B8%B8%E8%A7%81%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/","path":"2025/09/07/Rust基础-模块化/","title":"Rust基础 - 模块化"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/11/Solana-Sol%E7%9A%84%E6%9E%B6%E6%9E%84%E5%92%8C%E5%B8%B8%E8%A7%81%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/","path":"2025/09/11/Solana-Sol的架构和常见名词概念/","title":"Solana-Sol的架构和常见名词概念"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Rust基础 - 模块化 | samxie52</title>
+<title>Solana-Sol的架构和常见名词概念 | samxie52</title>
   
 
 
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#module-system"><span class="nav-number">1.</span> <span class="nav-text">module system</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Packages-A-Cargo-feature-that-lets-you-build-share-and-reuse-crates"><span class="nav-number">1.1.</span> <span class="nav-text">Packages: A Cargo feature that lets you build, share, and reuse crates</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Crates-A-tree-of-modules-that-produces-a-library-or-executable"><span class="nav-number">1.2.</span> <span class="nav-text">Crates: A tree of modules that produces a library or executable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Modules-and-use-Let-you-control-the-organization-scope-and-pricacy-of-paths"><span class="nav-number">1.3.</span> <span class="nav-text">Modules and use: Let you control the organization, scope, and pricacy of paths</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#visibility"><span class="nav-number">1.3.1.</span> <span class="nav-text">visibility</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Path-A-way-of-naming-an-item-such-as-a-struct-function-or-module"><span class="nav-number">1.4.</span> <span class="nav-text">Path: A way of naming an item, such as a struct, function, or module</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#workspace"><span class="nav-number">2.</span> <span class="nav-text">workspace</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">常见概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Account"><span class="nav-number">1.1.</span> <span class="nav-text">Account</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E7%BA%A6%E3%80%81%E9%AA%8C%E8%AF%81%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">合约、验证器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">区块链浏览器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#address"><span class="nav-number">1.4.</span> <span class="nav-text">address</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transfer"><span class="nav-number">1.5.</span> <span class="nav-text">transfer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dApp"><span class="nav-number">1.6.</span> <span class="nav-text">dApp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#token"><span class="nav-number">1.7.</span> <span class="nav-text">token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fee"><span class="nav-number">1.8.</span> <span class="nav-text">fee</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#block"><span class="nav-number">1.9.</span> <span class="nav-text">block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%9F%E7%BA%A6"><span class="nav-number">1.10.</span> <span class="nav-text">租约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%BE%E5%90%8D"><span class="nav-number">1.11.</span> <span class="nav-text">签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%B1%E5%8C%85"><span class="nav-number">1.12.</span> <span class="nav-text">钱包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8%E5%A4%A7%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF"><span class="nav-number">2.</span> <span class="nav-text">8大核心技术</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -162,7 +162,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/11/Solana-Sol%E7%9A%84%E6%9E%B6%E6%9E%84%E5%92%8C%E5%B8%B8%E8%A7%81%E5%90%8D%E8%AF%8D%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -175,12 +175,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Rust基础 - 模块化 | samxie52">
-      <meta itemprop="description" content="模块化是Rust中组织代码的重要方式">
+      <meta itemprop="name" content="Solana-Sol的架构和常见名词概念 | samxie52">
+      <meta itemprop="description" content="Solana-Sol的架构和常见名词概念">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Rust基础 - 模块化
+          Solana-Sol的架构和常见名词概念
         </h1>
 
         <div class="post-meta-container">
@@ -190,9 +190,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-09-07 14:23:41 / 修改时间：15:02:36" itemprop="dateCreated datePublished" datetime="2025-09-07T14:23:41+08:00">2025-09-07</time>
+      <time title="创建时间：2025-09-11 21:35:35" itemprop="dateCreated datePublished" datetime="2025-09-11T21:35:35+08:00">2025-09-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-12 21:06:00" itemprop="dateModified" datetime="2025-09-12T21:06:00+08:00">2025-09-12</time>
     </span>
 
   
@@ -205,41 +211,44 @@
     </span>
 </div>
 
-            <div class="post-description">模块化是Rust中组织代码的重要方式</div>
+            <div class="post-description">Solana-Sol的架构和常见名词概念</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h3 id="module-system"><a href="#module-system" class="headerlink" title="module system"></a>module system</h3><h4 id="Packages-A-Cargo-feature-that-lets-you-build-share-and-reuse-crates"><a href="#Packages-A-Cargo-feature-that-lets-you-build-share-and-reuse-crates" class="headerlink" title="Packages: A Cargo feature that lets you build, share, and reuse crates"></a>Packages: A Cargo feature that lets you build, share, and reuse crates</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">├── src/</span><br><span class="line">│   ├── main.rs          </span><br><span class="line">├── Cargo.toml           # 依赖和项目元数据</span><br><span class="line">├── README.md            # 本文档</span><br><span class="line">└── .gitignore           # Git忽略文件</span><br></pre></td></tr></table></figure>
+    <div class="post-body" itemprop="articleBody"><h2 id="常见概念"><a href="#常见概念" class="headerlink" title="常见概念"></a>常见概念</h2><h3 id="Account"><a href="#Account" class="headerlink" title="Account"></a>Account</h3><p>账户是Solana网络中的基本单位，每个账户都有一个唯一的地址和一定的余额。</p>
+<h3 id="合约、验证器"><a href="#合约、验证器" class="headerlink" title="合约、验证器"></a>合约、验证器</h3><p>合约是Solana网络中的智能合约，验证器是Solana网络中的节点。</p>
+<h3 id="区块链浏览器"><a href="#区块链浏览器" class="headerlink" title="区块链浏览器"></a>区块链浏览器</h3><p>区块链浏览器是用于查看Solana网络中交易和账户信息的工具。</p>
+<h3 id="address"><a href="#address" class="headerlink" title="address"></a>address</h3><p>address是Solana网络中的账户地址。</p>
+<h3 id="transfer"><a href="#transfer" class="headerlink" title="transfer"></a>transfer</h3><p>transfer是Solana网络中的转账交易。</p>
+<h3 id="dApp"><a href="#dApp" class="headerlink" title="dApp"></a>dApp</h3><p>dApp是去中心化应用。</p>
+<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p>token是Solana网络中的代币。</p>
+<h3 id="fee"><a href="#fee" class="headerlink" title="fee"></a>fee</h3><p>fee是Solana网络中的交易费用。</p>
+<h3 id="block"><a href="#block" class="headerlink" title="block"></a>block</h3><p>block是Solana网络中的区块。</p>
+<h3 id="租约"><a href="#租约" class="headerlink" title="租约"></a>租约</h3><p>租约是Solana网络中的租约，用于租用账户空间。</p>
+<h3 id="签名"><a href="#签名" class="headerlink" title="签名"></a>签名</h3><p>签名是Solana网络中的交易签名。</p>
+<h3 id="钱包"><a href="#钱包" class="headerlink" title="钱包"></a>钱包</h3><p>钱包是用于管理Solana网络中的账户的工具。</p>
+<h2 id="8大核心技术"><a href="#8大核心技术" class="headerlink" title="8大核心技术"></a>8大核心技术</h2><ul>
+<li><p>POH：历史证明，创新（时间问题的解决方案</p>
+</li>
+<li><p>Tower BFT： PBFT的PoH优化版本（ Byzantine Fault Tolerance）</p>
+</li>
+<li><p>Sealevel：并行处理引擎，智能合约</p>
+</li>
+<li><p>Cloudbreak：水平拓展的帐户数据库</p>
+</li>
+<li><p>Gulf Stream：无内存池交易转发协议</p>
+</li>
+<li><p>Turbine：一种区块传播协议，btt和纠删码</p>
+</li>
+<li><p>Pipelining：用于验证优化的交易处理单元</p>
+</li>
+<li><p>Archivers： 分布式账本存储（PoRep）</p>
+</li>
+</ul>
 
-
-<h4 id="Crates-A-tree-of-modules-that-produces-a-library-or-executable"><a href="#Crates-A-tree-of-modules-that-produces-a-library-or-executable" class="headerlink" title="Crates: A tree of modules that produces a library or executable"></a>Crates: A tree of modules that produces a library or executable</h4><ul>
-<li>binary crate</li>
-<li>library crate</li>
-</ul>
-<h4 id="Modules-and-use-Let-you-control-the-organization-scope-and-pricacy-of-paths"><a href="#Modules-and-use-Let-you-control-the-organization-scope-and-pricacy-of-paths" class="headerlink" title="Modules and use: Let you control the organization, scope, and pricacy of paths"></a>Modules and use: Let you control the organization, scope, and pricacy of paths</h4><ul>
-<li>pub</li>
-<li>mod</li>
-<li>use</li>
-<li>as</li>
-</ul>
-<h5 id="visibility"><a href="#visibility" class="headerlink" title="visibility"></a>visibility</h5><ul>
-<li>private(default)</li>
-<li>pub(crate)</li>
-<li>pub(in path)</li>
-<li>pub use</li>
-</ul>
-<h4 id="Path-A-way-of-naming-an-item-such-as-a-struct-function-or-module"><a href="#Path-A-way-of-naming-an-item-such-as-a-struct-function-or-module" class="headerlink" title="Path: A way of naming an item, such as a struct, function, or module"></a>Path: A way of naming an item, such as a struct, function, or module</h4><ul>
-<li>absolute path <code>crate</code></li>
-<li>relative path <code>super</code> or <code>self</code></li>
-</ul>
-<h3 id="workspace"><a href="#workspace" class="headerlink" title="workspace"></a>workspace</h3><blockquote>
-<p>multiple packages </p>
-</blockquote>
-<p>Root dir <code>Cargo.toml</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[workspace]</span><br><span class="line">lib_add = &#123;path = &quot;./lib_add&quot;&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -252,13 +261,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" rel="prev" title="Rust基础-返回值与错误处理">
-                  <i class="fa fa-angle-left"></i> Rust基础-返回值与错误处理
+                <a href="/2025/09/11/Solana-SOL%E5%8E%86%E5%8F%B2%E3%80%81%E6%9C%AA%E6%9D%A5%E3%80%81%E4%BB%A5%E5%8F%8A%E5%8F%91%E5%B1%95/" rel="prev" title="Solana-SOL历史、未来、以及发展">
+                  <i class="fa fa-angle-left"></i> Solana-SOL历史、未来、以及发展
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/09/08/Rust%E8%BF%9B%E9%98%B6-%E6%B3%9B%E5%9E%8B/" rel="next" title="Rust进阶-泛型">
-                  Rust进阶-泛型 <i class="fa fa-angle-right"></i>
+                <a href="/2025/09/12/Solana-%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%EF%BC%8C%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85%EF%BC%8Ccli%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%EF%BC%8C%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="next" title="Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建">
+                  Solana-基础框架介绍，工具安装，cli工具使用，本地环境搭建 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
