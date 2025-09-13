@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="实现Token交互合约(创建mint帐号，创建ATA后Mint代币)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana基础-SPLToken合约创建（一）">
+<meta property="og:url" content="http://example.com/2025/09/13/Solana%E5%9F%BA%E7%A1%80-SPLToken%E5%90%88%E7%BA%A6%E5%88%9B%E5%BB%BA%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="实现Token交互合约(创建mint帐号，创建ATA后Mint代币)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-13T10:35:45.000Z">
+<meta property="article:modified_time" content="2025-09-13T14:31:08.838Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/13/Solana%E5%9F%BA%E7%A1%80-SPLToken%E5%90%88%E7%BA%A6%E5%88%9B%E5%BB%BA%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/13/Solana%E5%9F%BA%E7%A1%80-SPLToken%E5%90%88%E7%BA%A6%E5%88%9B%E5%BB%BA%EF%BC%88%E4%B8%80%EF%BC%89/","path":"2025/09/13/Solana基础-SPLToken合约创建（一）/","title":"Solana基础-SPLToken合约创建（一）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana基础-SPLToken合约创建（一） | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Solana%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Solana项目结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0Token%E4%BA%A4%E4%BA%92%E5%90%88%E7%BA%A6"><span class="nav-number">1.1.</span> <span class="nav-text">实现Token交互合约</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/13/Solana%E5%9F%BA%E7%A1%80-SPLToken%E5%90%88%E7%BA%A6%E5%88%9B%E5%BB%BA%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana基础-SPLToken合约创建（一） | samxie52">
+      <meta itemprop="description" content="实现Token交互合约(创建mint帐号，创建ATA后Mint代币)">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana基础-SPLToken合约创建（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-13 18:35:45 / 修改时间：22:31:08" itemprop="dateCreated datePublished" datetime="2025-09-13T18:35:45+08:00">2025-09-13</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">实现Token交互合约(创建mint帐号，创建ATA后Mint代币)</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="Solana项目结构"><a href="#Solana项目结构" class="headerlink" title="Solana项目结构"></a>Solana项目结构</h3><ul>
+<li>核心文件<ul>
+<li>processor.rs：核心业务逻辑，处理指令；</li>
+<li>state.rs： 定义帐户的状态和拓展字段</li>
+<li>instruction.rs：定义各种代币的操作的指令</li>
+<li>error.rs：定义了程序可能抛出的错误</li>
+<li>lib.rs： 程序入口点，汇总各个模块</li>
+</ul>
+</li>
+</ul>
+<h4 id="实现Token交互合约"><a href="#实现Token交互合约" class="headerlink" title="实现Token交互合约"></a>实现Token交互合约</h4><ul>
+<li>创建mint帐号</li>
+<li>创建ATA后Mint代币</li>
+</ul>
+<p>token&#x2F;src&#x2F;processor.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导入 Borsh 反序列化 trait，用于将字节数组反序列化为 Rust 结构体</span></span><br><span class="line"><span class="keyword">use</span> borsh::BorshDeserialize;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 导入 Solana 程序开发的核心依赖项</span></span><br><span class="line"><span class="keyword">use</span> solana_program::&#123;</span><br><span class="line">    account_info::AccountInfo,          <span class="comment">// 账户信息结构体，包含账户的所有元数据</span></span><br><span class="line">    entrypoint::ProgramResult,         <span class="comment">// 程序执行结果类型，等同于 Result&lt;(), ProgramError&gt;</span></span><br><span class="line">    program::&#123;invoke, invoke_signed&#125;,   <span class="comment">// 跨程序调用函数</span></span><br><span class="line">    program_pack::Pack,                <span class="comment">// Pack trait，用于账户数据的序列化/反序列化</span></span><br><span class="line">    pubkey::Pubkey,                    <span class="comment">// 公钥类型</span></span><br><span class="line">    rent::Rent,                        <span class="comment">// 租金计算结构体</span></span><br><span class="line">    system_instruction,                <span class="comment">// 系统程序指令构建器</span></span><br><span class="line">    sysvar::Sysvar                     <span class="comment">// 系统变量 trait</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 导入 SPL Token 程序的相关功能</span></span><br><span class="line"><span class="keyword">use</span> spl_token::&#123;</span><br><span class="line">    instruction::initialize_mint,       <span class="comment">// 初始化 Mint 账户的指令构建函数</span></span><br><span class="line">    state::Mint                        <span class="comment">// Mint 账户的状态结构体</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 导入自定义的指令定义</span></span><br><span class="line"><span class="keyword">use</span> crate::instruction::TokenInstruction;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义处理器结构体 - 这是一个零大小类型，用作命名空间</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Processor</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 导入账户迭代和日志功能</span></span><br><span class="line"><span class="keyword">use</span> solana_program::&#123;account_info::next_account_info, msg&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Processor</span> &#123;</span><br><span class="line">    <span class="comment">/// 程序的主要入口点 - 处理所有传入的指令</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// 参数:</span></span><br><span class="line">    <span class="comment">/// - program_id: 当前程序的公钥 ID</span></span><br><span class="line">    <span class="comment">/// - accounts: 指令所需的所有账户信息数组</span></span><br><span class="line">    <span class="comment">/// - instruction_data: 序列化后的指令数据字节数组</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// 返回: ProgramResult (成功时为 Ok(()), 失败时为 Err(ProgramError))</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">process</span>(</span><br><span class="line">        program_id: &amp;Pubkey,</span><br><span class="line">        accounts: &amp;[AccountInfo],</span><br><span class="line">        instruction_data: &amp;[<span class="type">u8</span>],</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> ProgramResult &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 反序列化指令数据</span></span><br><span class="line">        <span class="comment">// try_from_slice() 是 BorshDeserialize trait 提供的方法</span></span><br><span class="line">        <span class="comment">// 尝试将字节数组 instruction_data 反序列化为 TokenInstruction 枚举</span></span><br><span class="line">        <span class="comment">// ? 操作符会在反序列化失败时提前返回错误</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">instruction</span> = TokenInstruction::<span class="title function_ invoke__">try_from_slice</span>(instruction_data)?;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 使用模式匹配处理不同类型的指令</span></span><br><span class="line">        <span class="keyword">match</span> instruction &#123;</span><br><span class="line">            <span class="comment">// 处理创建 Token 指令</span></span><br><span class="line">            <span class="comment">// 提取 decimals 参数并调用相应的处理函数</span></span><br><span class="line">            TokenInstruction::CreateToken &#123; decimals &#125; =&gt; <span class="keyword">Self</span>::<span class="title function_ invoke__">create_token</span>(accounts, decimals),</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 处理铸造 Token 指令</span></span><br><span class="line">            <span class="comment">// 提取 amount 参数并调用相应的处理函数</span></span><br><span class="line">            TokenInstruction::Mint &#123; amount &#125; =&gt; <span class="keyword">Self</span>::<span class="title function_ invoke__">mint_token</span>(accounts, amount),</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 处理创建 Token 的逻辑</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// 此函数执行以下操作:</span></span><br><span class="line">    <span class="comment">/// 1. 解析传入的账户</span></span><br><span class="line">    <span class="comment">/// 2. 创建 Mint 账户</span></span><br><span class="line">    <span class="comment">/// 3. 初始化 Mint 账户</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// 参数:</span></span><br><span class="line">    <span class="comment">/// - accounts: 按特定顺序排列的账户信息数组</span></span><br><span class="line">    <span class="comment">/// - decimals: Token 的小数位数</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">create_token</span>(accounts: &amp;[AccountInfo], decimals: <span class="type">u8</span>) <span class="punctuation">-&gt;</span> ProgramResult &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建账户迭代器，用于按顺序提取账户</span></span><br><span class="line">        <span class="comment">// &amp;mut 使迭代器可变，这样 next_account_info() 才能修改迭代器状态</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">accounts_iter</span> = &amp;<span class="keyword">mut</span> accounts.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 按照客户端传入的顺序依次提取账户</span></span><br><span class="line">        <span class="comment">// next_account_info() 从迭代器中获取下一个账户，如果没有更多账户则返回错误</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// mint_account: 将要创建的 Token Mint 账户</span></span><br><span class="line">        <span class="comment">// 这个账户将存储 Mint 的元数据 (供应量、小数位数、权限等)</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">mint_account</span> = <span class="title function_ invoke__">next_account_info</span>(accounts_iter)?;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// mint_authority: Mint 权限账户</span></span><br><span class="line">        <span class="comment">// 拥有铸造新 Token 权限的账户公钥</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">mint_authority</span> = <span class="title function_ invoke__">next_account_info</span>(accounts_iter)?;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// payer: 支付账户</span></span><br><span class="line">        <span class="comment">// 支付创建账户所需租金的账户</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">payer</span> = <span class="title function_ invoke__">next_account_info</span>(accounts_iter)?;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// rent_sysvar: Rent 系统变量账户</span></span><br><span class="line">        <span class="comment">// 包含当前租金费率信息的系统账户</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">rent_sysvar</span> = <span class="title function_ invoke__">next_account_info</span>(accounts_iter)?;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// system_program: 系统程序账户</span></span><br><span class="line">        <span class="comment">// Solana 的内置系统程序，负责创建和管理账户</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">system_program</span> = <span class="title function_ invoke__">next_account_info</span>(accounts_iter)?;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// token_program: SPL Token 程序账户</span></span><br><span class="line">        <span class="comment">// 负责处理所有 Token 相关操作的程序</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">token_program</span> = <span class="title function_ invoke__">next_account_info</span>(accounts_iter)?;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录日志到程序日志 (可通过 solana logs 查看)</span></span><br><span class="line">        msg!(<span class="string">&quot;Creating mint account ...&quot;</span>);</span><br><span class="line">        msg!(<span class="string">&quot;mint_account: &#123;&#125;&quot;</span>, mint_account.key); </span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 1: 创建 Mint 账户</span></span><br><span class="line">        <span class="comment">// 构建创建账户的系统指令</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">create_account_instruction</span> = system_instruction::<span class="title function_ invoke__">create_account</span>(</span><br><span class="line">            payer.key,                                    <span class="comment">// 资金来源账户</span></span><br><span class="line">            mint_account.key,                            <span class="comment">// 要创建的新账户地址</span></span><br><span class="line">            (Rent::<span class="title function_ invoke__">get</span>()?).<span class="title function_ invoke__">minimum_balance</span>(Mint::LEN),   <span class="comment">// 计算 Mint 账户所需的最小租金余额</span></span><br><span class="line">            Mint::LEN <span class="keyword">as</span> <span class="type">u64</span>,                           <span class="comment">// 账户数据大小 (Mint 结构体的字节长度)</span></span><br><span class="line">            token_program.key,                          <span class="comment">// 账户所有者 (SPL Token 程序)</span></span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 执行跨程序调用 (CPI) 来创建账户</span></span><br><span class="line">        <span class="comment">// invoke() 调用其他程序的指令，这里调用系统程序</span></span><br><span class="line">        <span class="title function_ invoke__">invoke</span>(</span><br><span class="line">            &amp;create_account_instruction,    <span class="comment">// 要执行的指令</span></span><br><span class="line">            &amp;[                             <span class="comment">// 指令需要的账户数组</span></span><br><span class="line">                mint_account.<span class="title function_ invoke__">clone</span>(),      <span class="comment">// 新账户 (需要签名)</span></span><br><span class="line">                payer.<span class="title function_ invoke__">clone</span>(),             <span class="comment">// 付款者 (需要签名)</span></span><br><span class="line">                system_program.<span class="title function_ invoke__">clone</span>(),    <span class="comment">// 系统程序</span></span><br><span class="line">                token_program.<span class="title function_ invoke__">clone</span>(),     <span class="comment">// Token 程序 (将成为新账户的所有者)</span></span><br><span class="line">            ],</span><br><span class="line">        )?;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 2: 初始化 Mint 账户</span></span><br><span class="line">        <span class="comment">// 构建初始化 Mint 的 SPL Token 指令</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">mint_init_ix</span> = &amp;<span class="title function_ invoke__">initialize_mint</span>(</span><br><span class="line">            token_program.key,    <span class="comment">// SPL Token 程序 ID</span></span><br><span class="line">            mint_account.key,     <span class="comment">// 要初始化的 Mint 账户</span></span><br><span class="line">            mint_authority.key,   <span class="comment">// Mint 权限 (谁可以铸造 Token)</span></span><br><span class="line">            <span class="literal">None</span>,                 <span class="comment">// 冻结权限 (设为 None 表示没有冻结权限)</span></span><br><span class="line">            decimals,            <span class="comment">// Token 的小数位数</span></span><br><span class="line">        )?;</span><br><span class="line"></span><br><span class="line">        msg!(<span class="string">&quot;Initializing mint account ...&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 执行跨程序调用来初始化 Mint</span></span><br><span class="line">        <span class="comment">// invoke_signed() 用于需要程序派生地址 (PDA) 签名的情况</span></span><br><span class="line">        <span class="comment">// 这里传入空的签名种子数组 &amp;[]，因为我们不使用 PDA</span></span><br><span class="line">        <span class="title function_ invoke__">invoke_signed</span>(</span><br><span class="line">            mint_init_ix,              <span class="comment">// 初始化 Mint 的指令</span></span><br><span class="line">            &amp;[                         <span class="comment">// 指令需要的账户数组</span></span><br><span class="line">                mint_account.<span class="title function_ invoke__">clone</span>(),   <span class="comment">// Mint 账户</span></span><br><span class="line">                rent_sysvar.<span class="title function_ invoke__">clone</span>(),   <span class="comment">// Rent 系统变量 (用于验证租金豁免)</span></span><br><span class="line">                token_program.<span class="title function_ invoke__">clone</span>(), <span class="comment">// SPL Token 程序</span></span><br><span class="line">                mint_authority.<span class="title function_ invoke__">clone</span>(),<span class="comment">// Mint 权限账户</span></span><br><span class="line">            ], </span><br><span class="line">            &amp;[]                        <span class="comment">// 签名种子数组 (空数组表示不使用 PDA 签名)</span></span><br><span class="line">        )?;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录成功创建的日志</span></span><br><span class="line">        msg!(<span class="string">&quot;SPL Token Mint created successfully&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 返回成功结果</span></span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 处理铸造 Token 的逻辑</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// 注意: 这个函数目前是空实现，需要根据具体需求来实现</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// 参数:</span></span><br><span class="line">    <span class="comment">/// - accounts: 铸造操作所需的账户信息数组</span></span><br><span class="line">    <span class="comment">/// - amount: 要铸造的 Token 数量</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">mint_token</span>(accounts: &amp;[AccountInfo], amount: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> ProgramResult &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> 实现铸造 Token 的逻辑</span></span><br><span class="line">        <span class="comment">// 预期的实现步骤:</span></span><br><span class="line">        <span class="comment">// 1. 解析账户 (mint 账户, 目标 Token 账户, mint 权限等)</span></span><br><span class="line">        <span class="comment">// 2. 验证权限</span></span><br><span class="line">        <span class="comment">// 3. 调用 SPL Token 的 mint_to 指令</span></span><br><span class="line">        </span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+
+<p>token-cli&#x2F;src&#x2F;main.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导入 Solana 程序开发所需的核心依赖项</span></span><br><span class="line"><span class="keyword">use</span> solana_program::&#123;</span><br><span class="line">    pubkey::Pubkey,                    <span class="comment">// 公钥类型，用于标识账户地址</span></span><br><span class="line">    instruction::&#123;Instruction, AccountMeta&#125;  <span class="comment">// 指令类型和账户元数据类型</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">use</span> solana_sdk::&#123;</span><br><span class="line">    signature::&#123;Keypair, Signer&#125;,      <span class="comment">// 密钥对和签名者 trait</span></span><br><span class="line">    sysvar,                            <span class="comment">// 系统变量模块</span></span><br><span class="line">    transaction::Transaction           <span class="comment">// 交易类型</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">use</span> solana_client::rpc_client::RpcClient;  <span class="comment">// RPC 客户端，用于与 Solana 集群通信</span></span><br><span class="line"><span class="keyword">use</span> solana_sdk::signature::read_keypair_file;  <span class="comment">// 从文件读取密钥对的函数</span></span><br><span class="line"><span class="keyword">use</span> std::&#123;fmt::<span class="built_in">Debug</span>, <span class="type">str</span>::FromStr&#125;;   <span class="comment">// 标准库的调试和字符串转换 trait</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 导入 Borsh 序列化库，用于高效的二进制序列化</span></span><br><span class="line"><span class="keyword">use</span> borsh::&#123;BorshDeserialize, BorshSerialize&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 主函数 - 程序入口点</span></span><br><span class="line"><span class="comment">/// 目前只是打印 &quot;Hello, world!&quot;，实际功能在测试函数中实现</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Hello, world!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// TokenInstruction 枚举定义了我们的 Token 程序支持的所有指令类型</span></span><br><span class="line"><span class="comment">/// 使用 BorshDeserialize 和 BorshSerialize derive 宏来自动实现序列化功能</span></span><br><span class="line"><span class="meta">#[derive(BorshDeserialize, BorshSerialize)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">TokenInstruction</span> &#123;</span><br><span class="line">    <span class="comment">/// CreateToken 指令用于创建一个新的 Token Mint 账户</span></span><br><span class="line">    <span class="comment">/// decimals: Token 的小数位数 (例如: USDC 有 6 位小数)</span></span><br><span class="line">    CreateToken &#123; decimals: <span class="type">u8</span> &#125;,</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// Mint 指令用于向现有 Token 账户铸造新的 Token</span></span><br><span class="line">    <span class="comment">/// amount: 要铸造的 Token 数量</span></span><br><span class="line">    Mint &#123; amount: <span class="type">u64</span> &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 测试函数 - 包含创建 Token 的完整流程</span></span><br><span class="line"><span class="comment">/// 使用 #[test] 属性标记，可以通过 `cargo test` 命令运行</span></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_fn</span>() &#123;</span><br><span class="line">    <span class="comment">// Step 1: 创建 RPC 客户端连接到本地 Solana 测试验证器</span></span><br><span class="line">    <span class="comment">// RpcClient::new() 方法创建一个新的 RPC 客户端实例</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">rpc_client</span> = RpcClient::<span class="title function_ invoke__">new</span>(<span class="string">&quot;http://127.0.0.1:8899&quot;</span>.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 从文件系统读取付款者的密钥对</span></span><br><span class="line">    <span class="comment">// read_keypair_file() 读取 Solana CLI 默认密钥对文件</span></span><br><span class="line">    <span class="comment">// expect() 方法在读取失败时会触发 panic 并显示错误消息</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">payer</span> = <span class="title function_ invoke__">read_keypair_file</span>(<span class="string">&quot;/Users/samxie/.config/solana/id.json&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Failed to read keypair file&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 定义我们要调用的程序 ID</span></span><br><span class="line">    <span class="comment">// Pubkey::from_str() 将字符串形式的公钥转换为 Pubkey 类型</span></span><br><span class="line">    <span class="comment">// unwrap() 在转换失败时会触发 panic</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">program_id</span> = Pubkey::<span class="title function_ invoke__">from_str</span>(<span class="string">&quot;BLroNjMLjdre6sCVnPqcKkycjFEsN9V74yf85qUfsV4F&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 生成一个新的密钥对作为 Mint 账户</span></span><br><span class="line">    <span class="comment">// Keypair::new() 生成一个随机的新密钥对</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">mint_account</span> = Keypair::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 5: 打印 Mint 账户的公钥地址</span></span><br><span class="line">    <span class="comment">// pubkey() 方法获取密钥对的公钥</span></span><br><span class="line">    <span class="comment">// to_string() 将公钥转换为 base58 编码的字符串</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;mint_account: &#123;:?&#125;&quot;</span>, mint_account.<span class="title function_ invoke__">pubkey</span>().<span class="title function_ invoke__">to_string</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 6: 调用 create_token 函数执行实际的 Token 创建操作</span></span><br><span class="line">    <span class="comment">// 传递 RPC 客户端、程序 ID、付款者、mint 账户、mint 权限和小数位数</span></span><br><span class="line">    <span class="title function_ invoke__">create_token</span>(</span><br><span class="line">        &amp;rpc_client, </span><br><span class="line">        &amp;program_id, </span><br><span class="line">        &amp;payer, </span><br><span class="line">        &amp;mint_account, </span><br><span class="line">        &amp;mint_account.<span class="title function_ invoke__">pubkey</span>(),  <span class="comment">// mint_authority 设置为 mint_account 自身</span></span><br><span class="line">        <span class="number">9</span>                        <span class="comment">// 设置 Token 的小数位数为 9</span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// create_token 函数负责创建新的 Token Mint 账户</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 参数说明:</span></span><br><span class="line"><span class="comment">/// - rpc_client: RPC 客户端引用，用于发送交易到区块链</span></span><br><span class="line"><span class="comment">/// - program_id: 目标程序的公钥 ID</span></span><br><span class="line"><span class="comment">/// - payer: 交易费用付款者的密钥对</span></span><br><span class="line"><span class="comment">/// - mint_account: 新创建的 Mint 账户密钥对</span></span><br><span class="line"><span class="comment">/// - mint_authority: Mint 权限账户的公钥</span></span><br><span class="line"><span class="comment">/// - decimals: Token 的小数位数</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 返回值: Result 类型，成功返回 (), 失败返回 Box&lt;dyn std::error::Error&gt;</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">create_token</span>(</span><br><span class="line">    rpc_client: &amp;RpcClient,</span><br><span class="line">    program_id: &amp;Pubkey,</span><br><span class="line">    payer: &amp;Keypair,</span><br><span class="line">    mint_account: &amp;Keypair,</span><br><span class="line">    mint_authority: &amp;Pubkey,</span><br><span class="line">    decimals: <span class="type">u8</span>,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> std::error::Error&gt;&gt;&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Step 1: 序列化指令数据</span></span><br><span class="line">    <span class="comment">// 使用 borsh::to_vec() 将 TokenInstruction 枚举序列化为字节数组</span></span><br><span class="line">    <span class="comment">// 这些字节将被发送给链上程序进行解析</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">instruction_data</span> = borsh::<span class="title function_ invoke__">to_vec</span>(&amp;TokenInstruction::CreateToken &#123; decimals &#125;)</span><br><span class="line">        .<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 构建账户元数据数组</span></span><br><span class="line">    <span class="comment">// AccountMeta 定义了指令需要访问的所有账户及其权限</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">accounts</span> = <span class="built_in">vec!</span>[</span><br><span class="line">        <span class="comment">// Mint 账户 - 需要写入权限和签名权限 (new + signer)</span></span><br><span class="line">        AccountMeta::<span class="title function_ invoke__">new</span>(mint_account.<span class="title function_ invoke__">pubkey</span>(), <span class="literal">true</span>),</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Mint 权限账户 - 只读权限，无需签名</span></span><br><span class="line">        AccountMeta::<span class="title function_ invoke__">new_readonly</span>(*mint_authority, <span class="literal">false</span>),</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 付款者账户 - 只读权限，无需签名 (已经在交易级别签名)</span></span><br><span class="line">        AccountMeta::<span class="title function_ invoke__">new_readonly</span>(payer.<span class="title function_ invoke__">pubkey</span>(), <span class="literal">false</span>),</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 系统 Rent Sysvar - 只读权限，提供租金计算信息</span></span><br><span class="line">        <span class="comment">// sysvar::rent::id() 返回 Rent sysvar 的预定义公钥</span></span><br><span class="line">        AccountMeta::<span class="title function_ invoke__">new_readonly</span>(sysvar::rent::<span class="title function_ invoke__">id</span>(), <span class="literal">false</span>),</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 系统程序 - 只读权限，用于创建账户</span></span><br><span class="line">        <span class="comment">// solana_sdk::system_program::id() 返回系统程序的公钥</span></span><br><span class="line">        AccountMeta::<span class="title function_ invoke__">new_readonly</span>(solana_sdk::system_program::<span class="title function_ invoke__">id</span>(), <span class="literal">false</span>),</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// SPL Token 程序 - 只读权限，提供 Token 相关功能</span></span><br><span class="line">        <span class="comment">// spl_token::id() 返回 SPL Token 程序的公钥</span></span><br><span class="line">        AccountMeta::<span class="title function_ invoke__">new_readonly</span>(spl_token::<span class="title function_ invoke__">id</span>(), <span class="literal">false</span>),</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 构建完整的指令对象</span></span><br><span class="line">    <span class="comment">// Instruction 包含了程序 ID、账户列表和指令数据</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">token_instruction</span> = Instruction &#123;</span><br><span class="line">        program_id: *program_id,  <span class="comment">// 解引用 program_id 引用</span></span><br><span class="line">        accounts,                 <span class="comment">// 账户元数据数组</span></span><br><span class="line">        data: instruction_data,   <span class="comment">// 序列化后的指令数据</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 构建并发送交易</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取最新的区块哈希 - 用于交易的时间戳和防重放攻击</span></span><br><span class="line">    <span class="comment">// get_latest_blockhash() 返回 Result 类型，使用 ? 操作符处理错误</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">latest_blockhash</span> = rpc_client.<span class="title function_ invoke__">get_latest_blockhash</span>()?;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 创建已签名的交易</span></span><br><span class="line">    <span class="comment">// Transaction::new_signed_with_payer() 构建一个完整的、已签名的交易</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">tx</span> = Transaction::<span class="title function_ invoke__">new_signed_with_payer</span>(</span><br><span class="line">        &amp;[token_instruction],     <span class="comment">// 指令数组 (这里只有一个指令)</span></span><br><span class="line">        <span class="title function_ invoke__">Some</span>(&amp;payer.<span class="title function_ invoke__">pubkey</span>()),    <span class="comment">// 付款者的公钥</span></span><br><span class="line">        &amp;[payer, mint_account],   <span class="comment">// 签名者数组 - 付款者和 mint 账户都需要签名</span></span><br><span class="line">        latest_blockhash,         <span class="comment">// 最新区块哈希</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送交易到区块链并等待确认</span></span><br><span class="line">    <span class="comment">// send_and_confirm_transaction() 发送交易并等待其被确认</span></span><br><span class="line">    <span class="comment">// 返回交易签名字符串</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">r</span> = rpc_client.<span class="title function_ invoke__">send_and_confirm_transaction</span>(&amp;tx);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 打印交易结果 - unwrap() 在失败时会触发 panic</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, r.<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印成功消息</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Token created successfully.&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回成功结果</span></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/13/Solana%E5%9F%BA%E7%A1%80-Token%E8%A7%A3%E6%9E%90-%E5%88%9B%E5%BB%BA/" rel="prev" title="Solana基础-Token解析&amp;创建">
+                  <i class="fa fa-angle-left"></i> Solana基础-Token解析&创建
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
