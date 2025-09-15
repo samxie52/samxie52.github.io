@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="取消关注用户、发布帖子、查询帖子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana基础-社交项目2">
+<meta property="og:url" content="http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-%E7%A4%BE%E4%BA%A4%E9%A1%B9%E7%9B%AE2/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="取消关注用户、发布帖子、查询帖子">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-15T12:23:22.000Z">
+<meta property="article:modified_time" content="2025-09-15T12:28:50.849Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-%E7%A4%BE%E4%BA%A4%E9%A1%B9%E7%9B%AE2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-%E7%A4%BE%E4%BA%A4%E9%A1%B9%E7%9B%AE2/","path":"2025/09/15/Solana基础-社交项目2/","title":"Solana基础-社交项目2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana基础-社交项目2 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">功能实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E5%8F%96%E5%85%B3%E7%94%A8%E6%88%B7"><span class="nav-number">1.1.</span> <span class="nav-text">服务端-取关用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E5%8F%91%E5%B8%83%E5%B8%96%E5%AD%90"><span class="nav-number">1.2.</span> <span class="nav-text">服务端-发布帖子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E6%9F%A5%E8%AF%A2%E5%B8%96%E5%AD%90"><span class="nav-number">1.3.</span> <span class="nav-text">服务端-查询帖子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E5%8F%96%E5%85%B3%E7%94%A8%E6%88%B7"><span class="nav-number">1.4.</span> <span class="nav-text">客户端-取关用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E5%8F%91%E5%B8%83%E5%B8%96%E5%AD%90"><span class="nav-number">1.5.</span> <span class="nav-text">客户端-发布帖子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E6%9F%A5%E8%AF%A2%E5%B8%96%E5%AD%90"><span class="nav-number">1.6.</span> <span class="nav-text">客户端-查询帖子</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-%E7%A4%BE%E4%BA%A4%E9%A1%B9%E7%9B%AE2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana基础-社交项目2 | samxie52">
+      <meta itemprop="description" content="取消关注用户、发布帖子、查询帖子">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana基础-社交项目2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-15 20:23:22 / 修改时间：20:28:50" itemprop="dateCreated datePublished" datetime="2025-09-15T20:23:22+08:00">2025-09-15</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">取消关注用户、发布帖子、查询帖子</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="功能实现"><a href="#功能实现" class="headerlink" title="功能实现"></a>功能实现</h2><p><a href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E5%8F%96%E5%85%B3%E7%94%A8%E6%88%B7">服务端-取关用户</a></p>
+<p><a href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E5%8F%91%E5%B8%83%E5%B8%96%E5%AD%90">服务端-发布帖子</a></p>
+<p><a href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E6%9F%A5%E8%AF%A2%E5%B8%96%E5%AD%90">服务端-查询帖子</a></p>
+<p><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E5%8F%96%E5%85%B3%E7%94%A8%E6%88%B7">客户端-取关用户</a></p>
+<p><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E5%8F%91%E5%B8%83%E5%B8%96%E5%AD%90">客户端-发布帖子</a></p>
+<p><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E6%9F%A5%E8%AF%A2%E5%B8%96%E5%AD%90">客户端-查询帖子</a></p>
+<h3 id="服务端-取关用户"><a href="#服务端-取关用户" class="headerlink" title="服务端-取关用户"></a>服务端-取关用户</h3><p>&#x2F;friend&#x2F;src&#x2F;processor.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/// 处理取消关注用户的逻辑</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 此函数执行以下操作:</span></span><br><span class="line"><span class="comment">/// 1. 解析传入的账户信息</span></span><br><span class="line"><span class="comment">/// 2. 读取用户资料账户的当前数据</span></span><br><span class="line"><span class="comment">/// 3. 计算账户数据的实际大小</span></span><br><span class="line"><span class="comment">/// 4. 反序列化用户资料数据</span></span><br><span class="line"><span class="comment">/// 5. 从关注列表中移除指定用户</span></span><br><span class="line"><span class="comment">/// 6. 将更新后的数据序列化回账户</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - accounts: 取消关注操作所需的账户信息数组</span></span><br><span class="line"><span class="comment">/// - user_to_unfollow: 要取消关注的用户公钥地址</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 返回: ProgramResult (成功时为 Ok(()), 失败时为 Err(ProgramError))</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">unfollow_user</span>(accounts: &amp;[AccountInfo], user_to_unfollow: Pubkey) <span class="punctuation">-&gt;</span> ProgramResult &#123;</span><br><span class="line">    <span class="comment">// 创建账户迭代器，用于按顺序提取账户</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">account_info_iter</span> = &amp;<span class="keyword">mut</span> accounts.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提取用户资料账户 (要移除关注者的账户)</span></span><br><span class="line">    <span class="comment">// 这应该是用户的 &quot;profile&quot; PDA 账户</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user_account_info</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 1: 计算用户资料账户的实际数据大小</span></span><br><span class="line">    <span class="comment">// 由于 UserProfile 包含动态数组，需要先读取关注者数量来确定总大小</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">size</span>: <span class="type">usize</span> = <span class="number">0</span>;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 借用账户数据进行只读访问</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">data</span> = &amp;user_account_info.data.<span class="title function_ invoke__">borrow</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取前 U16_SIZE 字节，这里存储的是关注者数量 (data_len 字段)</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">len</span> = &amp;data[..U16_SIZE];</span><br><span class="line">        <span class="comment">// 将字节数组转换为 u16 类型的关注者数量</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">pubkey_count</span> = <span class="title function_ invoke__">bytes_to_u16</span>(len).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录当前关注者数量，用于调试</span></span><br><span class="line">        msg!(<span class="string">&quot;len_number is &#123;&#125;&quot;</span>, U16_SIZE);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 根据关注者数量计算整个用户资料结构的字节大小</span></span><br><span class="line">        size = <span class="title function_ invoke__">compute_profile_size</span>(pubkey_count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 反序列化用户资料数据</span></span><br><span class="line">    <span class="comment">// 从账户数据中读取指定大小的字节并反序列化为 UserProfile 结构体</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">user_profile</span> =</span><br><span class="line">        UserProfile::<span class="title function_ invoke__">try_from_slice</span>(&amp;user_account_info.data.<span class="title function_ invoke__">borrow</span>()[..size])?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 从关注列表中移除指定用户</span></span><br><span class="line">    <span class="comment">// 调用 UserProfile 的 unfollow 方法将指定用户从关注列表中移除</span></span><br><span class="line">    user_profile.<span class="title function_ invoke__">unfollow</span>(user_to_unfollow);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 将更新后的数据序列化回账户</span></span><br><span class="line">    <span class="comment">// 获取账户数据的可变借用并将更新后的 UserProfile 序列化写入</span></span><br><span class="line">    <span class="comment">// 注意：这里使用了 &amp;mut &amp;mut 的双重可变引用来获取整个数据切片的可变访问</span></span><br><span class="line">    user_profile.<span class="title function_ invoke__">serialize</span>(&amp;<span class="keyword">mut</span> &amp;<span class="keyword">mut</span> user_account_info.data.<span class="title function_ invoke__">borrow_mut</span>()[..])?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 记录成功取消关注的日志</span></span><br><span class="line">    msg!(<span class="string">&quot;User unfollowed successfully.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务端-发布帖子"><a href="#服务端-发布帖子" class="headerlink" title="服务端-发布帖子"></a>服务端-发布帖子</h3><p>&#x2F;post&#x2F;src&#x2F;processor.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/// 处理用户发布内容的逻辑</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 此函数执行以下操作:</span></span><br><span class="line"><span class="comment">/// 1. 解析传入的账户信息</span></span><br><span class="line"><span class="comment">/// 2. 获取当前时间戳</span></span><br><span class="line"><span class="comment">/// 3. 更新用户帖子计数器</span></span><br><span class="line"><span class="comment">/// 4. 为新帖子生成唯一的PDA地址</span></span><br><span class="line"><span class="comment">/// 5. 创建新的帖子账户</span></span><br><span class="line"><span class="comment">/// 6. 将帖子内容序列化并存储到账户中</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - program_id: 当前程序的公钥ID</span></span><br><span class="line"><span class="comment">/// - accounts: 发布操作所需的账户信息数组</span></span><br><span class="line"><span class="comment">/// - content: 要发布的帖子内容字符串</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 返回: ProgramResult (成功时为 Ok(()), 失败时为 Err(ProgramError))</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">post_content</span>(</span><br><span class="line">    program_id: &amp;Pubkey,</span><br><span class="line">    accounts: &amp;[AccountInfo],</span><br><span class="line">    content: <span class="type">String</span>,</span><br><span class="line">) <span class="punctuation">-&gt;</span> ProgramResult &#123;</span><br><span class="line">    <span class="comment">// 创建账户迭代器，用于按顺序提取账户</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">account_info_iter</span> = &amp;<span class="keyword">mut</span> accounts.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 按照客户端传入的顺序依次提取账户</span></span><br><span class="line">    <span class="comment">// user_account_info: 用户的主账户 (签名者，用于支付交易费用)</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user_account_info</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line">    <span class="comment">// pda_account: 用户的帖子计数PDA账户 (用于跟踪用户发布的帖子数量)</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pda_account</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line">    <span class="comment">// post_pda_account: 即将创建的新帖子PDA账户</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">post_pda_account</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line">    <span class="comment">// system_program: 系统程序账户，用于创建新账户</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">system_program</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 1: 获取当前区块链时间戳</span></span><br><span class="line">    <span class="comment">// Clock 是 Solana 的系统变量，提供当前区块时间信息</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">clock</span> = Clock::<span class="title function_ invoke__">get</span>()?;</span><br><span class="line">    <span class="comment">// 将时间戳转换为 u64 类型，用于存储帖子创建时间</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">timestamp</span> = clock.unix_timestamp <span class="keyword">as</span> <span class="type">u64</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 更新用户帖子计数器</span></span><br><span class="line">    <span class="comment">// 从用户的帖子计数PDA账户中反序列化 UserPost 结构</span></span><br><span class="line">    <span class="comment">// 使用 try_from_slice_unchecked 读取整个账户数据（注意：这可能存在安全风险）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">user_post</span> = try_from_slice_unchecked::&lt;UserPost&gt;(&amp;pda_account.data.<span class="title function_ invoke__">borrow</span>())?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 add_post 方法增加帖子计数</span></span><br><span class="line">    user_post.<span class="title function_ invoke__">add_post</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将更新后的帖子计数序列化回PDA账户</span></span><br><span class="line">    user_post.<span class="title function_ invoke__">serialize</span>(&amp;<span class="keyword">mut</span> *pda_account.<span class="title function_ invoke__">try_borrow_mut_data</span>()?)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前的帖子总数，用作新帖子的唯一标识符</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">count</span> = user_post.<span class="title function_ invoke__">get_count</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 为新帖子生成唯一的PDA地址</span></span><br><span class="line">    <span class="comment">// PDA由用户公钥 + &quot;post&quot; + 帖子编号 + 程序ID确定性生成</span></span><br><span class="line">    <span class="comment">// 这确保每个用户的每篇帖子都有唯一的地址</span></span><br><span class="line">    <span class="keyword">let</span> (pda, bump_seed) = Pubkey::<span class="title function_ invoke__">find_program_address</span>(</span><br><span class="line">        &amp;[</span><br><span class="line">            user_account_info.key.<span class="title function_ invoke__">as_ref</span>(), <span class="comment">// 用户公钥</span></span><br><span class="line">            <span class="string">&quot;post&quot;</span>.<span class="title function_ invoke__">as_bytes</span>(),              <span class="comment">// 固定种子字符串</span></span><br><span class="line">            &amp;[count <span class="keyword">as</span> <span class="type">u8</span>],                 <span class="comment">// 帖子编号作为种子</span></span><br><span class="line">        ],</span><br><span class="line">        program_id, <span class="comment">// 程序ID</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 记录生成的帖子PDA地址</span></span><br><span class="line">    msg!(<span class="string">&quot;pda: &#123;:?&#125;&quot;</span>, pda);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 计算帖子存储所需的空间和租金</span></span><br><span class="line">    <span class="comment">// 获取当前的租金费率信息</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">rent</span> = Rent::<span class="title function_ invoke__">get</span>()?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建新的帖子实例，包含内容和时间戳</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">post</span> = Post::<span class="title function_ invoke__">new</span>(content, timestamp);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过序列化帖子来计算所需的存储空间</span></span><br><span class="line">    <span class="comment">// 这是动态计算的，因为帖子内容长度可能不同</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">space</span> = borsh::<span class="title function_ invoke__">to_vec</span>(&amp;post).<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">len</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 记录计算出的存储空间大小</span></span><br><span class="line">    msg!(<span class="string">&quot;space:&#123;:?&#125;&quot;</span>, space);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算账户租金豁免所需的最小 lamports 数量</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">lamports</span> = rent.<span class="title function_ invoke__">minimum_balance</span>(space);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 5: 创建新的帖子账户</span></span><br><span class="line">    <span class="comment">// 构建创建账户的系统指令</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">create_account_ix</span> = system_instruction::<span class="title function_ invoke__">create_account</span>(</span><br><span class="line">        user_account_info.key, <span class="comment">// 资金来源账户 (付款者)</span></span><br><span class="line">        &amp;pda,                  <span class="comment">// 要创建的新帖子账户地址</span></span><br><span class="line">        lamports,              <span class="comment">// 账户租金豁免所需的 lamports</span></span><br><span class="line">        space <span class="keyword">as</span> <span class="type">u64</span>,          <span class="comment">// 账户数据大小</span></span><br><span class="line">        program_id,            <span class="comment">// 账户所有者 (当前程序)</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 6: 执行带签名的跨程序调用来创建帖子PDA账户</span></span><br><span class="line">    <span class="comment">// invoke_signed 用于PDA签名，因为只有程序可以为其PDA签名</span></span><br><span class="line">    <span class="title function_ invoke__">invoke_signed</span>(</span><br><span class="line">        &amp;create_account_ix, <span class="comment">// 要执行的指令</span></span><br><span class="line">        &amp;[</span><br><span class="line">            <span class="comment">// 指令需要的账户数组</span></span><br><span class="line">            user_account_info.<span class="title function_ invoke__">clone</span>(), <span class="comment">// 付款者 (需要签名)</span></span><br><span class="line">            post_pda_account.<span class="title function_ invoke__">clone</span>(),  <span class="comment">// 新创建的帖子PDA账户</span></span><br><span class="line">            system_program.<span class="title function_ invoke__">clone</span>(),    <span class="comment">// 系统程序</span></span><br><span class="line">        ],</span><br><span class="line">        &amp;[&amp;[</span><br><span class="line">            <span class="comment">// 签名种子数组，用于PDA签名</span></span><br><span class="line">            user_account_info.key.<span class="title function_ invoke__">as_ref</span>(), <span class="comment">// 用户公钥</span></span><br><span class="line">            <span class="string">&quot;post&quot;</span>.<span class="title function_ invoke__">as_bytes</span>(),              <span class="comment">// 种子字符串</span></span><br><span class="line">            &amp;[count <span class="keyword">as</span> <span class="type">u8</span>],                 <span class="comment">// 帖子编号</span></span><br><span class="line">            &amp;[bump_seed],                   <span class="comment">// bump seed</span></span><br><span class="line">        ]],</span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 7: 将帖子内容序列化并存储到新创建的账户中</span></span><br><span class="line">    post.<span class="title function_ invoke__">serialize</span>(&amp;<span class="keyword">mut</span> *post_pda_account.<span class="title function_ invoke__">try_borrow_mut_data</span>()?)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 记录成功创建帖子的日志</span></span><br><span class="line">    msg!(<span class="string">&quot;Post created successfully. &#123;:?&#125;&quot;</span>, post);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务端-查询帖子"><a href="#服务端-查询帖子" class="headerlink" title="服务端-查询帖子"></a>服务端-查询帖子</h3><p>&#x2F;post&#x2F;src&#x2F;processor.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/// 处理查询用户帖子的逻辑</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 此函数执行以下操作:</span></span><br><span class="line"><span class="comment">/// 1. 解析传入的账户信息</span></span><br><span class="line"><span class="comment">/// 2. 从帖子计数PDA账户读取用户的帖子统计信息</span></span><br><span class="line"><span class="comment">/// 3. 从特定帖子PDA账户读取单个帖子的详细内容</span></span><br><span class="line"><span class="comment">/// 4. 将帖子信息输出到程序日志中供查看</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 注意：当前实现只能查询单个帖子，需要客户端指定具体的帖子PDA账户</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - accounts: 查询操作所需的账户信息数组</span></span><br><span class="line"><span class="comment">///   - accounts[0]: 用户的帖子计数PDA账户 (存储UserPost结构)</span></span><br><span class="line"><span class="comment">///   - accounts[1]: 特定帖子的PDA账户 (存储Post结构)</span></span><br><span class="line"><span class="comment">///</span></span><br><span class="line"><span class="comment">/// 返回: ProgramResult (成功时为 Ok(()), 失败时为 Err(ProgramError))</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">query_posts</span>(accounts: &amp;[AccountInfo]) <span class="punctuation">-&gt;</span> ProgramResult &#123;</span><br><span class="line">    <span class="comment">// 创建账户迭代器，用于按顺序提取账户</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">account_info_iter</span> = &amp;<span class="keyword">mut</span> accounts.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 1: 提取账户信息</span></span><br><span class="line">    <span class="comment">// pda_account: 用户的帖子计数PDA账户</span></span><br><span class="line">    <span class="comment">// 这个账户存储 UserPost 结构，包含用户发布的帖子总数等统计信息</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pda_account</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// post_pda_account: 特定帖子的PDA账户</span></span><br><span class="line">    <span class="comment">// 这个账户存储 Post 结构，包含具体的帖子内容、时间戳等信息</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">post_pda_account</span> = <span class="title function_ invoke__">next_account_info</span>(account_info_iter)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 读取用户帖子统计信息</span></span><br><span class="line">    <span class="comment">// 从帖子计数PDA账户反序列化 UserPost 结构</span></span><br><span class="line">    <span class="comment">// 注意：使用 try_from_slice_unchecked 不检查数据边界，存在潜在安全风险</span></span><br><span class="line">    <span class="comment">// 建议改为 UserPost::try_from_slice(&amp;pda_account.data.borrow()) 以确保安全</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user_post</span> = try_from_slice_unchecked::&lt;UserPost&gt;(&amp;pda_account.data.<span class="title function_ invoke__">borrow</span>())?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出用户的帖子统计信息到程序日志</span></span><br><span class="line">    <span class="comment">// 这可能包括用户发布的帖子总数等信息</span></span><br><span class="line">    msg!(<span class="string">&quot;Post:&#123;:?&#125;&quot;</span>, user_post);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 读取具体帖子内容</span></span><br><span class="line">    <span class="comment">// 从特定帖子PDA账户反序列化 Post 结构</span></span><br><span class="line">    <span class="comment">// 同样使用了 try_from_slice_unchecked，建议改为安全的方法</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">post</span> = try_from_slice_unchecked::&lt;Post&gt;(&amp;post_pda_account.data.<span class="title function_ invoke__">borrow</span>())?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 输出帖子详细信息</span></span><br><span class="line">    <span class="comment">// 显示帖子内容和发布时间戳</span></span><br><span class="line">    <span class="comment">// 格式：&quot; - [帖子内容] at [时间戳]&quot;</span></span><br><span class="line">    msg!(<span class="string">&quot; - &#123;&#125; at &#123;&#125;&quot;</span>, post.content, post.timestamp);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端-取关用户"><a href="#客户端-取关用户" class="headerlink" title="客户端-取关用户"></a>客户端-取关用户</h3><p>&#x2F;friend-cli&#x2F;src&#x2F;main.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 取消关注用户</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 此函数从当前用户的关注列表中移除指定用户 </span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - user_keypair: 执行取关操作的用户密钥对  </span></span><br><span class="line"><span class="comment">/// - user_to_follow: 要取关的用户公钥（变量名可能有误）</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 返回:</span></span><br><span class="line"><span class="comment">/// - Ok(()): 取关操作成功</span></span><br><span class="line"><span class="comment">/// - Err: 取关过程中的错误</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">unfollow_user</span>(&amp;<span class="keyword">self</span>, user_keypair: &amp;Keypair, user_to_unfollow: Pubkey) <span class="punctuation">-&gt;</span><span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> std::error::Error&gt;&gt; &#123; </span><br><span class="line">    <span class="comment">// 取关操作应该修改用户配置文件，而不是帖子数据</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pda</span> = <span class="title function_ invoke__">get_profile_pda</span>(&amp;<span class="keyword">self</span>.program_id, &amp;[user_keypair.<span class="title function_ invoke__">pubkey</span>().<span class="title function_ invoke__">as_ref</span>(), PROFILE_SEED.<span class="title function_ invoke__">as_bytes</span>()]);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">let</span> <span class="variable">instruction</span> = Instruction::<span class="title function_ invoke__">new_with_borsh</span>(</span><br><span class="line">        <span class="keyword">self</span>.program_id, </span><br><span class="line">        &amp;SocialInstruction::UnfollowUser &#123; user_to_unfollow &#125;,  <span class="comment">// 变量名错误</span></span><br><span class="line">         <span class="built_in">vec!</span>[AccountMeta::<span class="title function_ invoke__">new</span>(pda, <span class="literal">false</span>)]</span><br><span class="line">        );</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">self</span>.<span class="title function_ invoke__">send_instruction</span>(user_keypair, <span class="built_in">vec!</span>[instruction])?;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;User unfollowed successfully...&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端-发布帖子"><a href="#客户端-发布帖子" class="headerlink" title="客户端-发布帖子"></a>客户端-发布帖子</h3><p>&#x2F;post-cli&#x2F;src&#x2F;main.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/// 发布新帖子</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 此函数在区块链上创建新的帖子记录</span></span><br><span class="line"><span class="comment">/// 每个帖子都有唯一的 ID，存储在独立的 PDA 账户中</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - user_keypair: 发布帖子的用户密钥对</span></span><br><span class="line"><span class="comment">/// - content: 帖子内容文本</span></span><br><span class="line"><span class="comment">/// - id: 帖子的唯一标识符（通常是递增的序号）</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 返回:</span></span><br><span class="line"><span class="comment">/// - Ok(()): 帖子发布成功</span></span><br><span class="line"><span class="comment">/// - Err: 发布过程中的错误</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 存储结构：</span></span><br><span class="line"><span class="comment">/// - 用户配置文件 PDA：存储用户基本信息和帖子计数</span></span><br><span class="line"><span class="comment">/// - 帖子 PDA：存储具体的帖子内容和元数据</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">post_content</span>(&amp;<span class="keyword">self</span>, user_keypair: &amp;Keypair, content: <span class="type">String</span>, id: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> std::error::Error&gt;&gt; &#123;</span><br><span class="line">    <span class="comment">// Step 1: 获取用户配置文件 PDA</span></span><br><span class="line">    <span class="comment">// ❗️ 潜在问题：这里使用了 POST_SEED，但从逻辑上应该是 PROFILE_SEED</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pda</span> = <span class="title function_ invoke__">get_profile_pda</span>(&amp;<span class="keyword">self</span>.program_id, &amp;[user_keypair.<span class="title function_ invoke__">pubkey</span>().<span class="title function_ invoke__">as_ref</span>(), POST_SEED.<span class="title function_ invoke__">as_bytes</span>()]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 生成特定帖子的 PDA 地址</span></span><br><span class="line">    <span class="comment">// 使用 用户公钥 + POST_SEED + 帖子ID 作为种子</span></span><br><span class="line">    <span class="comment">// 这确保了每个帖子都有唯一的存储地址</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">post_pda</span> = <span class="title function_ invoke__">get_profile_pda</span>(&amp;<span class="keyword">self</span>.program_id, &amp;[</span><br><span class="line">        user_keypair.<span class="title function_ invoke__">pubkey</span>().<span class="title function_ invoke__">as_ref</span>(), </span><br><span class="line">        POST_SEED.<span class="title function_ invoke__">as_bytes</span>(), </span><br><span class="line">        &amp;[id <span class="keyword">as</span> <span class="type">u8</span>]  <span class="comment">// 将帖子ID转换为字节作为种子的一部分</span></span><br><span class="line">    ]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 构建发帖指令</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">instruction</span> = Instruction::<span class="title function_ invoke__">new_with_borsh</span>(</span><br><span class="line">        <span class="keyword">self</span>.program_id, </span><br><span class="line">        &amp;SocialInstruction::PostContent &#123; content &#125;, </span><br><span class="line">        <span class="built_in">vec!</span>[</span><br><span class="line">            <span class="comment">// 用户账户：需要签名，支付交易费用</span></span><br><span class="line">            AccountMeta::<span class="title function_ invoke__">new</span>(user_keypair.<span class="title function_ invoke__">pubkey</span>(), <span class="literal">true</span>),</span><br><span class="line">            <span class="comment">// 用户配置文件：可能需要更新帖子计数</span></span><br><span class="line">            AccountMeta::<span class="title function_ invoke__">new</span>(pda, <span class="literal">false</span>),</span><br><span class="line">            <span class="comment">// 帖子 PDA：存储帖子内容的新账户</span></span><br><span class="line">            AccountMeta::<span class="title function_ invoke__">new</span>(post_pda, <span class="literal">false</span>),</span><br><span class="line">            <span class="comment">// 系统程序：用于创建帖子账户</span></span><br><span class="line">            AccountMeta::<span class="title function_ invoke__">new_readonly</span>(solana_sdk::system_program::<span class="title function_ invoke__">id</span>(), <span class="literal">false</span>),</span><br><span class="line">        ]</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 发送交易</span></span><br><span class="line">    <span class="keyword">self</span>.<span class="title function_ invoke__">send_instruction</span>(user_keypair, <span class="built_in">vec!</span>[instruction]);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Post created successfully ...&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端-查询帖子"><a href="#客户端-查询帖子" class="headerlink" title="客户端-查询帖子"></a>客户端-查询帖子</h3><p>&#x2F;post-cli&#x2F;src&#x2F;main.rs</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/// 查询特定帖子内容</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 此函数查询指定 ID 的帖子详细信息</span></span><br><span class="line"><span class="comment">/// 通过帖子的 PDA 地址获取存储的帖子数据</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - user_keypair: 查询帖子的用户密钥对</span></span><br><span class="line"><span class="comment">/// - id: 要查询的帖子 ID</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 返回:</span></span><br><span class="line"><span class="comment">/// - Ok(()): 查询操作成功</span></span><br><span class="line"><span class="comment">/// - Err: 查询过程中的错误</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 使用场景：</span></span><br><span class="line"><span class="comment">/// - 显示帖子详情页面</span></span><br><span class="line"><span class="comment">/// - 验证帖子是否存在</span></span><br><span class="line"><span class="comment">/// - 获取帖子的完整内容和元数据</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">query_posts</span>(&amp;<span class="keyword">self</span>, user_keypair: &amp;Keypair, id: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> std::error::Error&gt;&gt; &#123;</span><br><span class="line">    <span class="comment">// Step 1: 生成特定帖子的 PDA 地址</span></span><br><span class="line">    <span class="comment">// 必须与发帖时使用的相同种子组合</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">post_pda</span> = <span class="title function_ invoke__">get_profile_pda</span>(&amp;<span class="keyword">self</span>.program_id, &amp;[</span><br><span class="line">        user_keypair.<span class="title function_ invoke__">pubkey</span>().<span class="title function_ invoke__">as_ref</span>(), </span><br><span class="line">        POST_SEED.<span class="title function_ invoke__">as_bytes</span>(), </span><br><span class="line">        &amp;[id <span class="keyword">as</span> <span class="type">u8</span>]</span><br><span class="line">    ]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 2: 获取用户配置文件 PDA</span></span><br><span class="line">    <span class="comment">// 可能需要用于权限验证或获取用户上下文</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pda</span> = <span class="title function_ invoke__">get_profile_pda</span>(&amp;<span class="keyword">self</span>.program_id, &amp;[user_keypair.<span class="title function_ invoke__">pubkey</span>().<span class="title function_ invoke__">as_ref</span>(), POST_SEED.<span class="title function_ invoke__">as_bytes</span>()]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 3: 构建查询指令</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">instruction</span> = Instruction::<span class="title function_ invoke__">new_with_borsh</span>(</span><br><span class="line">        <span class="keyword">self</span>.program_id, </span><br><span class="line">        &amp;SocialInstruction::QueryPosts, </span><br><span class="line">        <span class="built_in">vec!</span>[</span><br><span class="line">            <span class="comment">// 用户配置文件：提供用户上下文</span></span><br><span class="line">            AccountMeta::<span class="title function_ invoke__">new</span>(pda, <span class="literal">false</span>),</span><br><span class="line">            <span class="comment">// 特定帖子：要查询的目标帖子</span></span><br><span class="line">            AccountMeta::<span class="title function_ invoke__">new</span>(post_pda, <span class="literal">false</span>),</span><br><span class="line">        ]</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Step 4: 发送查询交易</span></span><br><span class="line">    <span class="keyword">self</span>.<span class="title function_ invoke__">send_instruction</span>(user_keypair, <span class="built_in">vec!</span>[instruction]);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Post queried successfully...&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/14/Solana%E5%9F%BA%E7%A1%80-%E7%A4%BE%E4%BA%A4%E9%A1%B9%E7%9B%AE1/" rel="prev" title="Solana基础-社交项目1">
+                  <i class="fa fa-angle-left"></i> Solana基础-社交项目1
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
