@@ -19,26 +19,26 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="SOL中的协议与标准库(协议、标准库、模块化与跨程序调用(CPI))">
+    <meta name="description" content="Solana课程-anchor入门&amp;pda的概念和用法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Solana基础-SOL中的协议与标准库">
-<meta property="og:url" content="http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-SOL%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E6%A0%87%E5%87%86%E5%BA%93/index.html">
+<meta property="og:title" content="Solana课程-anchor入门&amp;pda的概念和用法">
+<meta property="og:url" content="http://example.com/2025/09/17/Solana%E8%AF%BE%E7%A8%8B-anchor%E5%85%A5%E9%97%A8-pda%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%94%A8%E6%B3%95/index.html">
 <meta property="og:site_name" content="samxie52">
-<meta property="og:description" content="SOL中的协议与标准库(协议、标准库、模块化与跨程序调用(CPI))">
+<meta property="og:description" content="Solana课程-anchor入门&amp;pda的概念和用法">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-09-15T12:42:23.000Z">
-<meta property="article:modified_time" content="2025-09-15T12:45:20.173Z">
+<meta property="article:published_time" content="2025-09-17T01:08:59.000Z">
+<meta property="article:modified_time" content="2025-09-17T01:29:50.769Z">
 <meta property="article:author" content="samxie">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-SOL%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E6%A0%87%E5%87%86%E5%BA%93/">
+<link rel="canonical" href="http://example.com/2025/09/17/Solana%E8%AF%BE%E7%A8%8B-anchor%E5%85%A5%E9%97%A8-pda%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%94%A8%E6%B3%95/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-SOL%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E6%A0%87%E5%87%86%E5%BA%93/","path":"2025/09/15/Solana基础-SOL中的协议与标准库/","title":"Solana基础-SOL中的协议与标准库"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/17/Solana%E8%AF%BE%E7%A8%8B-anchor%E5%85%A5%E9%97%A8-pda%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%94%A8%E6%B3%95/","path":"2025/09/17/Solana课程-anchor入门-pda的概念和用法/","title":"Solana课程-anchor入门&pda的概念和用法"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Solana基础-SOL中的协议与标准库 | samxie52</title>
+<title>Solana课程-anchor入门&pda的概念和用法 | samxie52</title>
   
 
 
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SOL%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E6%A0%87%E5%87%86%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">SOL中的协议与标准库</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5-PDA"><span class="nav-number">1.</span> <span class="nav-text">核心概念-PDA</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -162,7 +162,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/15/Solana%E5%9F%BA%E7%A1%80-SOL%E4%B8%AD%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E6%A0%87%E5%87%86%E5%BA%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/17/Solana%E8%AF%BE%E7%A8%8B-anchor%E5%85%A5%E9%97%A8-pda%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%94%A8%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -175,12 +175,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Solana基础-SOL中的协议与标准库 | samxie52">
-      <meta itemprop="description" content="SOL中的协议与标准库(协议、标准库、模块化与跨程序调用(CPI))">
+      <meta itemprop="name" content="Solana课程-anchor入门&amp;pda的概念和用法 | samxie52">
+      <meta itemprop="description" content="Solana课程-anchor入门&amp;pda的概念和用法">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Solana基础-SOL中的协议与标准库
+          Solana课程-anchor入门&pda的概念和用法
         </h1>
 
         <div class="post-meta-container">
@@ -192,7 +192,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-09-15 20:42:23 / 修改时间：20:45:20" itemprop="dateCreated datePublished" datetime="2025-09-15T20:42:23+08:00">2025-09-15</time>
+      <time title="创建时间：2025-09-17 09:08:59 / 修改时间：09:29:50" itemprop="dateCreated datePublished" datetime="2025-09-17T09:08:59+08:00">2025-09-17</time>
     </span>
 
   
@@ -205,34 +205,18 @@
     </span>
 </div>
 
-            <div class="post-description">SOL中的协议与标准库(协议、标准库、模块化与跨程序调用(CPI))</div>
+            <div class="post-description">Solana课程-anchor入门&pda的概念和用法</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h3 id="SOL中的协议与标准库"><a href="#SOL中的协议与标准库" class="headerlink" title="SOL中的协议与标准库"></a>SOL中的协议与标准库</h3><ul>
-<li><p>1.什么是协议</p>
-<ul>
-<li>不同公链的协议有什么区别</li>
-<li>基本标准有哪些</li>
-<li>token、swap、NFT，<ul>
-<li>SPL-token</li>
-<li>SPL-Associated TokenAccount</li>
-<li>Memo. name service.</li>
-<li>swap、 staking、Governance、 Flash Loans</li>
-<li>SPL-Token 2022 可选的代币冻结和代市锁定机制</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>2.标准库的用途。</p>
-<ul>
-<li>模块化与跨程序调用(CPI)</li>
-</ul>
-</li>
-</ul>
+    <div class="post-body" itemprop="articleBody"><h3 id="核心概念-PDA"><a href="#核心概念-PDA" class="headerlink" title="核心概念-PDA"></a>核心概念-PDA</h3><p>思考：如果希望每个人的计时器独立，互不影响，该如何设计？</p>
+<p>方式一： hashmap<br>    - 帐户有10Mb大小的限制<br>    - Dapp当查询某一个人的计时器需要拉取全部数据；</p>
+<p>方式二：独立帐户<br>    - 需要记录钱包和帐户的映射关系</p>
+<p>方式三：PDA<br>    - 不需要记录钱包和帐户的映射关系<br>    - 每个帐户独立且不会冲突</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [counterKeypair, bump] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">   [wallet.<span class="property">publicKey</span>.<span class="title function_">toBytes</span>()],</span><br><span class="line">   program.<span class="property">programId</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;pda is &quot;</span>, counterKeypair.<span class="title function_">toString</span>());</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -246,13 +230,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/09/15/Solana%E5%9F%BA%E7%A1%80-%E7%A4%BE%E4%BA%A4%E9%A1%B9%E7%9B%AE2/" rel="prev" title="Solana基础-社交项目2">
-                  <i class="fa fa-angle-left"></i> Solana基础-社交项目2
+                <a href="/2025/09/16/Solana%E8%AF%BE%E7%A8%8B-anchor%E5%85%A5%E9%97%A8-%E8%B4%A6%E6%88%B7%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%94%A8%E6%B3%95/" rel="prev" title="Solana课程-anchor入门&amp;账户的概念和用法">
+                  <i class="fa fa-angle-left"></i> Solana课程-anchor入门&账户的概念和用法
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/09/16/Solana%E8%AF%BE%E7%A8%8B-anchor%E5%85%A5%E9%97%A8-%E8%B4%A6%E6%88%B7%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%94%A8%E6%B3%95/" rel="next" title="Solana课程-anchor入门&amp;账户的概念和用法">
-                  Solana课程-anchor入门&账户的概念和用法 <i class="fa fa-angle-right"></i>
+                <a href="/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7profile-1/" rel="next" title="Solana中anchor框架实战-创建用户profile-1">
+                  Solana中anchor框架实战-创建用户profile-1 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
