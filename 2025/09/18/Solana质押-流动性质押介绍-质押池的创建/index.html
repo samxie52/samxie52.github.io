@@ -19,15 +19,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="流动性质押（Liquid Staking）1、native stake中，质押了SOL之后，这部分SOL就被冻结无法参与交易2、流动性质押中，质押了SOL之后，staker将获得proxy token （liquid stakepool token）。这些token我们可以用来swap、traded、transferred。 收益 假设质押池初始时1sol&#x3D;1token经过一定的epoc">
+    <meta name="description" content="Solana流动性质押入门指南">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solana质押-流动性质押介绍&amp;质押池的创建">
 <meta property="og:url" content="http://example.com/2025/09/18/Solana%E8%B4%A8%E6%8A%BC-%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E4%BB%8B%E7%BB%8D-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%9A%84%E5%88%9B%E5%BB%BA/index.html">
 <meta property="og:site_name" content="samxie52">
-<meta property="og:description" content="流动性质押（Liquid Staking）1、native stake中，质押了SOL之后，这部分SOL就被冻结无法参与交易2、流动性质押中，质押了SOL之后，staker将获得proxy token （liquid stakepool token）。这些token我们可以用来swap、traded、transferred。 收益 假设质押池初始时1sol&#x3D;1token经过一定的epoc">
+<meta property="og:description" content="Solana流动性质押入门指南">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-09-18T14:49:26.000Z">
-<meta property="article:modified_time" content="2025-09-18T15:12:43.717Z">
+<meta property="article:modified_time" content="2025-09-18T15:29:28.776Z">
 <meta property="article:author" content="samxie">
 <meta name="twitter:card" content="summary">
 
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%EF%BC%88Liquid-Staking%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">流动性质押（Liquid Staking）</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solana%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solana流动性质押入门指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%96-%E4%BB%80%E4%B9%88%E6%98%AF%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">📖 什么是流动性质押？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E8%B4%A8%E6%8A%BC-vs-%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC"><span class="nav-number">1.1.1.</span> <span class="nav-text">传统质押 vs 流动性质押</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%92%B0-%E6%94%B6%E7%9B%8A%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.1.2.</span> <span class="nav-text">💰 收益机制详解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8F%97%EF%B8%8F-Solana%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%A8%8B%E5%BA%8F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">🏗️ Solana质押池程序架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">核心组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%8E%AD-%E4%B8%BB%E8%A6%81%E8%A7%92%E8%89%B2"><span class="nav-number">1.2.2.</span> <span class="nav-text">🎭 主要角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%A6%E6%88%B7%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">1.2.3.</span> <span class="nav-text">账户架构图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8C%9F-%E7%83%AD%E9%97%A8%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E6%B1%A0"><span class="nav-number">1.3.</span> <span class="nav-text">🌟 热门流动性质押池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%92%BC-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E8%B4%B9%E7%94%A8%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text">💼 质押池费用结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B9%E7%94%A8%E8%AE%A1%E7%AE%97%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">费用计算示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9B%A0%EF%B8%8F-%E5%88%9B%E5%BB%BA%E8%B4%A8%E6%8A%BC%E6%B1%A0%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97"><span class="nav-number">1.5.</span> <span class="nav-text">🛠️ 创建质押池实战指南</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">1.5.1.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%A7-%E5%BF%85%E5%A1%AB%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.5.2.</span> <span class="nav-text">🔧 必填参数详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%93%8A-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.5.3.</span> <span class="nav-text">📊 质押池创建流程图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%91%BD%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.5.4.</span> <span class="nav-text">创建命令示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%8D-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%AE%A1%E7%90%86%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.5.</span> <span class="nav-text">🔍 质押池管理操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%B4%A8%E6%8A%BC%E6%B1%A0%E8%AF%A6%E6%83%85"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">查看质押池详情</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E7%AE%A1%E7%90%86%E5%91%98"><span class="nav-number">1.5.5.2.</span> <span class="nav-text">修改管理员</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%B4%B9%E7%94%A8"><span class="nav-number">1.5.5.3.</span> <span class="nav-text">修改费用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E9%AA%8C%E8%AF%81%E8%8A%82%E7%82%B9"><span class="nav-number">1.5.5.4.</span> <span class="nav-text">添加验证节点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%84-%E8%B4%A8%E6%8A%BC%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.6.</span> <span class="nav-text">🔄 质押操作流程详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E8%B4%A8%E6%8A%BC%E6%B5%81%E7%A8%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">用户质押流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E5%8F%96%E6%B5%81%E7%A8%8B"><span class="nav-number">1.6.2.</span> <span class="nav-text">提取流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%88-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.7.</span> <span class="nav-text">📈 最佳实践建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E7%94%A8%E6%88%B7"><span class="nav-number">1.7.1.</span> <span class="nav-text">对于用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%AE%A1%E7%90%86%E5%91%98"><span class="nav-number">1.7.2.</span> <span class="nav-text">对于质押池管理员</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9D%93-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.</span> <span class="nav-text">❓ 常见问题</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -176,7 +176,7 @@
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
       <meta itemprop="name" content="Solana质押-流动性质押介绍&amp;质押池的创建 | samxie52">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content="Solana流动性质押入门指南">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -192,7 +192,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-09-18 22:49:26 / 修改时间：23:12:43" itemprop="dateCreated datePublished" datetime="2025-09-18T22:49:26+08:00">2025-09-18</time>
+      <time title="创建时间：2025-09-18 22:49:26 / 修改时间：23:29:28" itemprop="dateCreated datePublished" datetime="2025-09-18T22:49:26+08:00">2025-09-18</time>
     </span>
 
   
@@ -205,129 +205,197 @@
     </span>
 </div>
 
+            <div class="post-description">Solana流动性质押入门指南</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="流动性质押（Liquid-Staking）"><a href="#流动性质押（Liquid-Staking）" class="headerlink" title="流动性质押（Liquid Staking）"></a>流动性质押（Liquid Staking）</h2><p>1、native stake中，质押了SOL之后，这部分SOL就被冻结无法参与交易<br>2、流动性质押中，质押了SOL之后，staker将获得proxy token （liquid stakepool token）。这些token我们可以用来swap、traded、transferred。</p>
-<p><strong>收益</strong></p>
-<p>假设质押池初始时1sol&#x3D;1token<br>经过一定的epoch后1sol&#x3D;0.5token</p>
-<p>此时1token&#x3D;2sol</p>
-<p><strong>Solana Stake Pool Program</strong><br>一个标准质押池。实现了validator分配策略、费用、从池中委托&#x2F;提取资金的指令</p>
-<p><strong>ID</strong><br>SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy</p>
-<p><strong>官方文档</strong>：Solana Stake Pool Program Documentation</p>
-<p><strong>角色</strong><br>• Pool Manager：质押池的管理员及相关角色<br>• User Wallet：用户通过质押账户质押或者直接质押SOL<br>• Validator List：验证节点列表，validator通过vote account接收质押</p>
-<p><strong>Solana Stake Pool Program</strong></p>
-<p>热门流动性质押池</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Token</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Marinade</td>
-<td>mSOL</td>
-</tr>
-<tr>
-<td>Lido</td>
-<td>stSOL</td>
-</tr>
-<tr>
-<td>Jito</td>
-<td>jitoSOL</td>
-</tr>
-<tr>
-<td>Jpool</td>
-<td>jSOL</td>
-</tr>
-<tr>
-<td>Blaze Stake</td>
-<td>bSOL</td>
-</tr>
-<tr>
-<td>Socean</td>
-<td>ScnSOL</td>
-</tr>
-</tbody></table>
-<p><strong>如何创建质押池</strong></p>
-<p><strong>费用（收益）</strong><br>The stake pool program allows authorities to implement different types of fees for the pool:</p>
-<table>
-<thead>
-<tr>
-<th>Fee Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SOL Deposit</td>
-<td>% charged to users when a user deposits SOL into the pool</td>
-</tr>
-<tr>
-<td>Stake Deposit</td>
-<td>% charged to users when user delegates a stake account to the pool</td>
-</tr>
-<tr>
-<td>SOL Withdrawal</td>
-<td>% charged to users when a user withdrawals SOL from the pool</td>
-</tr>
-<tr>
-<td>Stake Withdrawal</td>
-<td>% charged to users when a user withdrawals SOL to an activated 34340L 2024</td>
-</tr>
-<tr>
-<td>Epoch (Stake Reward)</td>
-<td>% of the pool’s staking rewards that are charged to the pool at the end of each epoch</td>
-</tr>
-<tr>
-<td>Referral</td>
-<td>% of the pool’s deposit fee that is allocated to a partner application or wallet</td>
-</tr>
-</tbody></table>
-<p><strong>如何创建质押池</strong></p>
-<p><strong>Method 1- 使用 Solana CLI</strong></p>
-<p><strong>启动本地环境</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">solana-test-validator \</span><br><span class="line">--clone-upgradeable-program SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy \</span><br><span class="line">--clone-upgradeable-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s \</span><br><span class="line">--url mainnet-beta \</span><br><span class="line">--slots-per-epoch 32 \</span><br><span class="line">--quiet --reset</span><br><span class="line">solana config <span class="built_in">set</span> --url http://127.0.0.1:8899</span><br><span class="line">solana config <span class="built_in">set</span> --commitment confirmed</span><br></pre></td></tr></table></figure>
+    <div class="post-body" itemprop="articleBody"><h1 id="Solana流动性质押入门指南"><a href="#Solana流动性质押入门指南" class="headerlink" title="Solana流动性质押入门指南"></a>Solana流动性质押入门指南</h1><h2 id="📖-什么是流动性质押？"><a href="#📖-什么是流动性质押？" class="headerlink" title="📖 什么是流动性质押？"></a>📖 什么是流动性质押？</h2><h3 id="传统质押-vs-流动性质押"><a href="#传统质押-vs-流动性质押" class="headerlink" title="传统质押 vs 流动性质押"></a>传统质押 vs 流动性质押</h3><p>想象一下，你有100个SOL代币：</p>
+<p><strong>传统质押（Native Stake）</strong></p>
+<ul>
+<li>质押后，SOL被”冻结”，无法交易或使用</li>
+<li>就像把钱存进定期存款，期间无法动用</li>
+</ul>
+<p><strong>流动性质押（Liquid Staking）</strong>  </p>
+<ul>
+<li>质押后，获得代表凭证（如mSOL、stSOL等）</li>
+<li>这些凭证可以自由交易、转账，同时仍享受质押收益</li>
+<li>就像把钱投资基金，既有收益又保持流动性</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[用户持有100 SOL] --&gt; B&#123;选择质押方式&#125;</span><br><span class="line">    B --&gt;|传统质押| C[SOL被冻结&lt;br/&gt;无法使用]</span><br><span class="line">    B --&gt;|流动性质押| D[获得100代币凭证&lt;br/&gt;可自由交易]</span><br><span class="line">    C --&gt; E[等待解锁期&lt;br/&gt;才能取回]</span><br><span class="line">    D --&gt; F[随时可以交易&lt;br/&gt;或换回SOL]</span><br></pre></td></tr></table></figure>
 
-<p><strong>必填参数</strong></p>
+<h3 id="💰-收益机制详解"><a href="#💰-收益机制详解" class="headerlink" title="💰 收益机制详解"></a>💰 收益机制详解</h3><p>流动性质押的收益来自汇率变化：</p>
+<p><strong>初始状态</strong>：1 SOL &#x3D; 1 代币凭证<br><strong>一个周期后</strong>：1 SOL &#x3D; 0.5 代币凭证</p>
+<p>这意味着：<strong>1 代币凭证 &#x3D; 2 SOL</strong></p>
+<p>你的收益就是这个汇率差！</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    A[投入100 SOL] --&gt; B[获得100代币凭证]</span><br><span class="line">    B --&gt; C[一段时间后...]</span><br><span class="line">    C --&gt; D[100代币凭证 = 200 SOL]</span><br><span class="line">    D --&gt; E[净收益：100 SOL]</span><br></pre></td></tr></table></figure>
+
+<h2 id="🏗️-Solana质押池程序架构"><a href="#🏗️-Solana质押池程序架构" class="headerlink" title="🏗️ Solana质押池程序架构"></a>🏗️ Solana质押池程序架构</h2><h3 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h3><p><strong>程序ID</strong>: <code>SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy</code></p>
+<p>Solana质押池程序是一个标准化的智能合约，提供：</p>
 <ul>
-<li>–epoch-fee-denominator：费用的底数。如果设置成100，所有费用都是百分数</li>
-<li>–epoch-fee-numerator：管理的手续费。如果validator收8%，stakepool收2%，对于100SOL的奖励，用户到手90.16 SOL</li>
-<li>–max-validators : stake pool中最大的validator</li>
+<li>验证节点分配策略</li>
+<li>费用管理</li>
+<li>资金委托&#x2F;提取指令</li>
 </ul>
-<p><strong>其他参数</strong></p>
+<h3 id="🎭-主要角色"><a href="#🎭-主要角色" class="headerlink" title="🎭 主要角色"></a>🎭 主要角色</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    A[质押池生态系统] --&gt; B[Pool Manager&lt;br/&gt;质押池管理员]</span><br><span class="line">    A --&gt; C[User Wallet&lt;br/&gt;普通用户]</span><br><span class="line">    A --&gt; D[Validator List&lt;br/&gt;验证节点列表]</span><br><span class="line">    </span><br><span class="line">    B --&gt; E[管理费用设置&lt;br/&gt;添加/移除验证节点&lt;br/&gt;池参数调整]</span><br><span class="line">    C --&gt; F[质押SOL&lt;br/&gt;获得代币凭证&lt;br/&gt;赎回操作]</span><br><span class="line">    D --&gt; G[接收委托质押&lt;br/&gt;产生质押奖励&lt;br/&gt;维护网络安全]</span><br></pre></td></tr></table></figure>
+
+<h3 id="账户架构图"><a href="#账户架构图" class="headerlink" title="账户架构图"></a>账户架构图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph &quot;质押池核心账户&quot;</span><br><span class="line">        A[质押池账户&lt;br/&gt;Stake Pool Account]</span><br><span class="line">        B[验证节点列表&lt;br/&gt;Validator List Account]</span><br><span class="line">        C[储备质押账户&lt;br/&gt;Reserve Stake Account]</span><br><span class="line">        D[代币铸造账户&lt;br/&gt;Pool Token Mint Account]</span><br><span class="line">        E[费用收取账户&lt;br/&gt;Pool Fee Collection Account]</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    A --&gt; B</span><br><span class="line">    A --&gt; C</span><br><span class="line">    A --&gt; D</span><br><span class="line">    A --&gt; E</span><br><span class="line">    </span><br><span class="line">    F[用户] --&gt; A</span><br><span class="line">    A --&gt; G[验证节点1]</span><br><span class="line">    A --&gt; H[验证节点2]</span><br><span class="line">    A --&gt; I[验证节点N]</span><br></pre></td></tr></table></figure>
+
+<h2 id="🌟-热门流动性质押池"><a href="#🌟-热门流动性质押池" class="headerlink" title="🌟 热门流动性质押池"></a>🌟 热门流动性质押池</h2><table>
+<thead>
+<tr>
+<th>项目名称</th>
+<th>代币符号</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Marinade</strong></td>
+<td>mSOL</td>
+<td>老牌项目，算法分配验证节点</td>
+</tr>
+<tr>
+<td><strong>Lido</strong></td>
+<td>stSOL</td>
+<td>以太坊生态扩展而来</td>
+</tr>
+<tr>
+<td><strong>Jito</strong></td>
+<td>jitoSOL</td>
+<td>支持MEV（最大可提取价值）</td>
+</tr>
+<tr>
+<td><strong>Jpool</strong></td>
+<td>jSOL</td>
+<td>社区驱动</td>
+</tr>
+<tr>
+<td><strong>Blaze Stake</strong></td>
+<td>bSOL</td>
+<td>高收益策略</td>
+</tr>
+<tr>
+<td><strong>Socean</strong></td>
+<td>ScnSOL</td>
+<td>DeFi集成友好</td>
+</tr>
+</tbody></table>
+<h2 id="💼-质押池费用结构"><a href="#💼-质押池费用结构" class="headerlink" title="💼 质押池费用结构"></a>💼 质押池费用结构</h2><p>理解费用对于用户和管理员都很重要：</p>
+<table>
+<thead>
+<tr>
+<th>费用类型</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SOL存入费</strong></td>
+<td>用户存入SOL时收取</td>
+<td>存入100 SOL，收取1% &#x3D; 1 SOL</td>
+</tr>
+<tr>
+<td><strong>质押账户存入费</strong></td>
+<td>委托质押账户时收取</td>
+<td>委托现有质押账户收取费用</td>
+</tr>
+<tr>
+<td><strong>SOL提取费</strong></td>
+<td>用户提取SOL时收取</td>
+<td>提取100 SOL，收取0.5% &#x3D; 0.5 SOL</td>
+</tr>
+<tr>
+<td><strong>质押账户提取费</strong></td>
+<td>提取到激活的质押账户时收取</td>
+<td>特殊提取方式的费用</td>
+</tr>
+<tr>
+<td><strong>周期费用（质押奖励费）</strong></td>
+<td>从质押奖励中收取的管理费</td>
+<td>奖励100 SOL，收取2% &#x3D; 2 SOL</td>
+</tr>
+<tr>
+<td><strong>推荐费</strong></td>
+<td>给推荐方的分成</td>
+<td>从存入费用中分成给推荐方</td>
+</tr>
+</tbody></table>
+<h3 id="费用计算示例"><a href="#费用计算示例" class="headerlink" title="费用计算示例"></a>费用计算示例</h3><p>假设：</p>
 <ul>
-<li>–withdrawal-fee-［denominator|numerator］：提现的手续费</li>
-<li>–deposit-fee-［denominator|numerator］：质押的手续费</li>
-<li>–referral-fee：介绍费</li>
-<li>–manager <KEYPAIR>: stake pooliJ# [default: cli config keypair]</li>
+<li>验证节点奖励：8%</li>
+<li>质押池管理费：2%  </li>
+<li>用户实际收益：6.16%</li>
 </ul>
-<p><strong>所有的账户地址我们都可以指定，不指定的话会创建新的地址</strong></p>
-<ul>
-<li>-validator-list-keypair <PATH>: validator list</li>
-<li>–mint-keypair <PATH>： mint账户使用的keypair ［default: new keypair]</li>
-<li>-reserve-keypair &lt;PATH› : pool reserve stake account</li>
+<p><strong>计算过程</strong>：</p>
+<ol>
+<li>原始奖励：100 SOL × 8% &#x3D; 8 SOL</li>
+<li>管理费：8 SOL × 2% &#x3D; 0.16 SOL</li>
+<li>用户获得：8 - 0.16 &#x3D; 7.84 SOL</li>
+<li>实际年化收益：7.84%</li>
+</ol>
+<h2 id="🛠️-创建质押池实战指南"><a href="#🛠️-创建质押池实战指南" class="headerlink" title="🛠️ 创建质押池实战指南"></a>🛠️ 创建质押池实战指南</h2><h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动本地测试环境</span></span><br><span class="line">solana-test-validator \</span><br><span class="line">--clone-upgradeable-program SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy \</span><br><span class="line">--clone-upgradeable-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s \</span><br><span class="line">--url mainnet-beta \</span><br><span class="line">--slots-per-epoch 32 \</span><br><span class="line">--quiet --reset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置CLI</span></span><br><span class="line">solana config <span class="built_in">set</span> --url http://127.0.0.1:8899</span><br><span class="line">solana config <span class="built_in">set</span> --commitment confirmed</span><br></pre></td></tr></table></figure>
+
+<h3 id="🔧-必填参数详解"><a href="#🔧-必填参数详解" class="headerlink" title="🔧 必填参数详解"></a>🔧 必填参数详解</h3><p>创建质押池时的关键参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--epoch-fee-denominator</code></td>
+<td>费用分母（基数）</td>
+<td>100（表示百分比）</td>
+</tr>
+<tr>
+<td><code>--epoch-fee-numerator</code></td>
+<td>管理费分子</td>
+<td>2（表示2%）</td>
+</tr>
+<tr>
+<td><code>--max-validators</code></td>
+<td>最大验证节点数量</td>
+<td>50</td>
+</tr>
+</tbody></table>
+<h3 id="📊-质押池创建流程图"><a href="#📊-质押池创建流程图" class="headerlink" title="📊 质押池创建流程图"></a>📊 质押池创建流程图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[开始创建质押池] --&gt; B[准备环境和参数]</span><br><span class="line">    B --&gt; C[设置必填参数&lt;br/&gt;- epoch-fee-denominator&lt;br/&gt;- epoch-fee-numerator&lt;br/&gt;- max-validators]</span><br><span class="line">    C --&gt; D[设置可选参数&lt;br/&gt;- withdrawal-fee&lt;br/&gt;- deposit-fee&lt;br/&gt;- referral-fee]</span><br><span class="line">    D --&gt; E[指定或创建账户&lt;br/&gt;- validator-list-keypair&lt;br/&gt;- mint-keypair&lt;br/&gt;- reserve-keypair]</span><br><span class="line">    E --&gt; F[执行创建命令]</span><br><span class="line">    F --&gt; G[验证创建结果]</span><br><span class="line">    G --&gt; H[添加验证节点]</span><br><span class="line">    H --&gt; I[质押池正式运行]</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建命令示例"><a href="#创建命令示例" class="headerlink" title="创建命令示例"></a>创建命令示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建基础质押池</span></span><br><span class="line">spl-stake-pool create-pool \</span><br><span class="line">  --epoch-fee-denominator 100 \</span><br><span class="line">  --epoch-fee-numerator 2 \</span><br><span class="line">  --max-validators 50 \</span><br><span class="line">  --deposit-fee-denominator 1000 \</span><br><span class="line">  --deposit-fee-numerator 5 \</span><br><span class="line">  --withdrawal-fee-denominator 1000 \</span><br><span class="line">  --withdrawal-fee-numerator 5</span><br></pre></td></tr></table></figure>
+
+<h3 id="🔍-质押池管理操作"><a href="#🔍-质押池管理操作" class="headerlink" title="🔍 质押池管理操作"></a>🔍 质押池管理操作</h3><h4 id="查看质押池详情"><a href="#查看质押池详情" class="headerlink" title="查看质押池详情"></a>查看质押池详情</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spl-stake-pool list -v &lt;YOUR_STAKE_POOL_ADDRESS&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改管理员"><a href="#修改管理员" class="headerlink" title="修改管理员"></a>修改管理员</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spl-stake-pool set-manager &lt;POOL_ADDRESS&gt; --new-manager &lt;NEW_MANAGER_KEYPAIR&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改费用"><a href="#修改费用" class="headerlink" title="修改费用"></a>修改费用</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spl-stake-pool set-fee &lt;POOL_ADDRESS&gt; &lt;FEE_TYPE&gt; &lt;NUMERATOR&gt; &lt;DENOMINATOR&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加验证节点"><a href="#添加验证节点" class="headerlink" title="添加验证节点"></a>添加验证节点</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 查看可用验证节点</span></span><br><span class="line">solana validators -u localhost</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 添加验证节点到池中</span></span><br><span class="line">spl-stake-pool add-validator &lt;STAKE_POOL_ADDRESS&gt; &lt;VOTE_ACCOUNT_ADDRESS&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 验证添加结果</span></span><br><span class="line">spl-stake-pool list -v &lt;STAKE_POOL_ADDRESS&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="🔄-质押操作流程详解"><a href="#🔄-质押操作流程详解" class="headerlink" title="🔄 质押操作流程详解"></a>🔄 质押操作流程详解</h2><h3 id="用户质押流程"><a href="#用户质押流程" class="headerlink" title="用户质押流程"></a>用户质押流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant U as 用户</span><br><span class="line">    participant P as 质押池</span><br><span class="line">    participant V as 验证节点</span><br><span class="line">    participant M as 代币铸造</span><br><span class="line"></span><br><span class="line">    U-&gt;&gt;P: 1. 存入100 SOL</span><br><span class="line">    P-&gt;&gt;P: 2. 扣除存入费用（如1 SOL）</span><br><span class="line">    P-&gt;&gt;V: 3. 将99 SOL委托给验证节点</span><br><span class="line">    P-&gt;&gt;M: 4. 铸造代币凭证给用户</span><br><span class="line">    M-&gt;&gt;U: 5. 用户获得代币凭证</span><br><span class="line">    </span><br><span class="line">    Note over U,M: 用户现在持有可交易的代币凭证&lt;br/&gt;同时享受质押奖励</span><br></pre></td></tr></table></figure>
+
+<h3 id="提取流程"><a href="#提取流程" class="headerlink" title="提取流程"></a>提取流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant U as 用户</span><br><span class="line">    participant P as 质押池</span><br><span class="line">    participant V as 验证节点</span><br><span class="line">    participant M as 代币铸造</span><br><span class="line"></span><br><span class="line">    U-&gt;&gt;P: 1. 提交代币凭证赎回</span><br><span class="line">    P-&gt;&gt;V: 2. 从验证节点解除委托</span><br><span class="line">    V-&gt;&gt;P: 3. 返回SOL到储备账户</span><br><span class="line">    P-&gt;&gt;M: 4. 销毁用户的代币凭证</span><br><span class="line">    P-&gt;&gt;P: 5. 扣除提取费用</span><br><span class="line">    P-&gt;&gt;U: 6. 返回SOL给用户</span><br></pre></td></tr></table></figure>
+
+<h2 id="📈-最佳实践建议"><a href="#📈-最佳实践建议" class="headerlink" title="📈 最佳实践建议"></a>📈 最佳实践建议</h2><h3 id="对于用户"><a href="#对于用户" class="headerlink" title="对于用户"></a>对于用户</h3><ul>
+<li>🔍 <strong>比较费用结构</strong>：选择费用合理的质押池</li>
+<li>📊 <strong>关注历史表现</strong>：查看质押池的历史收益率</li>
+<li>🔄 <strong>分散风险</strong>：可以将资金分配到多个质押池</li>
+<li>💎 <strong>长期持有</strong>：流动性质押更适合长期投资策略</li>
 </ul>
-<p><strong>查看质押池</strong></p>
-<p>spl-stake-pool list -v <YOUR_STAKE_POOL_ADDRESS></p>
-<ul>
-<li>Stake Pool Account；质押池</li>
-<li>Validator List Account：验证节点列表</li>
-<li>Reserve Stake Account：持有还没有质押的sal，可以通过rebalanc&amp;的方式质押给validator</li>
-<li>Pool Token Mint Account : SPL token的mint account，代表着流动性质押置換的token</li>
-<li>Pool Fee Collection Account：为manager持有交易费</li>
+<h3 id="对于质押池管理员"><a href="#对于质押池管理员" class="headerlink" title="对于质押池管理员"></a>对于质押池管理员</h3><ul>
+<li>⚖️ <strong>合理设置费用</strong>：平衡收益和用户吸引力</li>
+<li>🎯 <strong>优选验证节点</strong>：选择性能稳定、佣金合理的验证节点</li>
+<li>📢 <strong>透明运营</strong>：定期公布池的运营状况和费用使用</li>
+<li>🔧 <strong>持续优化</strong>：根据市场变化调整策略</li>
 </ul>
-<p><strong>如何修改质押池</strong></p>
-<p><strong>修改manager</strong></p>
-<p>spl-stake-pool set-manager [FLAGS] [OPTIONS] <POOL_ADDRESS> &lt;—-new-manager «KEYPAIR&gt;|-new-fee-receiver «ADDRESS»&gt;</p>
-<p><strong>修改费用</strong></p>
-<p>spl-stake-pool set-fee (FLAGS] [OPTIONS] <POOL_ADDRESS> ‹FEE_TYPE&gt; «NUMERATOR&gt; «DENOMINATOR»</p>
-<p><strong>修改staker</strong><br>spl-stake-pool set-staker [FLAGS] [OPTIONS] <POOL_ADDRESS> [ADDRESSI]</p>
-<p><strong>添加validator</strong></p>
-<p>solana validators -u localhost<br>spl-stake-pool add-validator «YOUR_STAKE_POOL_ADDRESS&gt; «VOTE_ACCOUNT_ADDRESS&gt;<br>spl-stake-pool list -v <YOUR_STAKE_POOL_ADDRESS></p>
+<h2 id="❓-常见问题"><a href="#❓-常见问题" class="headerlink" title="❓ 常见问题"></a>❓ 常见问题</h2><p><strong>Q: 流动性质押有什么风险？</strong><br>A: 主要风险包括智能合约风险、验证节点削减风险、流动性风险等。</p>
+<p><strong>Q: 代币凭证可以在哪里交易？</strong><br>A: 大多数DEX都支持流动性质押代币，如Raydium、Orca等。</p>
+<p><strong>Q: 如何选择合适的质押池？</strong><br>A: 考虑费用结构、历史表现、验证节点质量、社区信誉等因素。</p>
+<p><strong>Q: 质押池倒闭了怎么办？</strong><br>A: 正规的质押池程序是开源的，即使管理团队消失，技术上仍可以取回资金，但可能需要一定的技术知识。</p>
+<hr>
+<p><em>本指南旨在帮助用户理解Solana流动性质押的基本概念和操作方法。投资有风险，请根据自身情况谨慎决策。</em></p>
 
     </div>
 
