@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本教程将展示如何在 Solana 区块链上构建一个简单的推文功能，包括创建推文和点赞的完整实现。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana中anchor框架实战-用户发帖和点赞-2">
+<meta property="og:url" content="http://example.com/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%96%E5%92%8C%E7%82%B9%E8%B5%9E-2/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="本教程将展示如何在 Solana 区块链上构建一个简单的推文功能，包括创建推文和点赞的完整实现。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-17T07:33:44.000Z">
+<meta property="article:modified_time" content="2025-09-17T23:46:03.748Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%96%E5%92%8C%E7%82%B9%E8%B5%9E-2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%96%E5%92%8C%E7%82%B9%E8%B5%9E-2/","path":"2025/09/17/Solana中anchor框架实战-用户发帖和点赞-2/","title":"Solana中anchor框架实战-用户发帖和点赞-2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana中anchor框架实战-用户发帖和点赞-2 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41-%E5%AE%9A%E4%B9%89%E6%8E%A8%E6%96%87%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">步骤1: 定义推文数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A42-%E5%AE%9E%E7%8E%B0%E6%8E%A8%E6%96%87%E7%9B%B8%E5%85%B3%E7%9A%84%E6%8C%87%E4%BB%A4%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">步骤2: 实现推文相关的指令处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A43-%E5%9C%A8%E4%B8%BB%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%8C%87%E4%BB%A4%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.</span> <span class="nav-text">步骤3: 在主程序中暴露指令接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A44-%E5%AE%9E%E7%8E%B0%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A8%E6%96%87%E6%93%8D%E4%BD%9C"><span class="nav-number">4.</span> <span class="nav-text">步骤4: 实现客户端推文操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A45-%E4%B8%BB%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3-%E5%AE%8C%E6%95%B4%E7%9A%84%E4%BA%A4%E4%BA%92%E6%B5%81%E7%A8%8B%E6%BC%94%E7%A4%BA"><span class="nav-number">5.</span> <span class="nav-text">步骤5: 主程序入口 - 完整的交互流程演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%AD%A6%E4%B9%A0%E8%A6%81%E7%82%B9"><span class="nav-number">6.</span> <span class="nav-text">关键学习要点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Anchor-%E6%A1%86%E6%9E%B6%E7%89%B9%E6%80%A7"><span class="nav-number">6.1.</span> <span class="nav-text">Anchor 框架特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.2.</span> <span class="nav-text">区块链程序设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">6.3.</span> <span class="nav-text">错误处理最佳实践</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%96%E5%92%8C%E7%82%B9%E8%B5%9E-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana中anchor框架实战-用户发帖和点赞-2 | samxie52">
+      <meta itemprop="description" content="本教程将展示如何在 Solana 区块链上构建一个简单的推文功能，包括创建推文和点赞的完整实现。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana中anchor框架实战-用户发帖和点赞-2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-09-17 15:33:44" itemprop="dateCreated datePublished" datetime="2025-09-17T15:33:44+08:00">2025-09-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-18 07:46:03" itemprop="dateModified" datetime="2025-09-18T07:46:03+08:00">2025-09-18</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">本教程将展示如何在 Solana 区块链上构建一个简单的推文功能，包括创建推文和点赞的完整实现。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="步骤1-定义推文数据结构"><a href="#步骤1-定义推文数据结构" class="headerlink" title="步骤1: 定义推文数据结构"></a>步骤1: 定义推文数据结构</h2><p><strong>目标</strong>: 创建推文(Tweet)的数据模型，定义推文在区块链上的存储结构。</p>
+<p><strong>文件路径</strong>: <code>../ibuidl-socail/programs/ibuidl-socail/src/state/tweet.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 #[account] 宏标记这是一个 Anchor 账户结构</span></span><br><span class="line"><span class="comment">// #[derive(InitSpace)] 自动计算账户所需的空间大小</span></span><br><span class="line"><span class="meta">#[account]</span></span><br><span class="line"><span class="meta">#[derive(InitSpace)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">IbuidlTweet</span> &#123;</span><br><span class="line">    <span class="comment">// 推文的点赞数量，使用 u64 类型存储</span></span><br><span class="line">    <span class="keyword">pub</span> like_count: <span class="type">u64</span>,</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 推文内容，最大长度限制为 50 字符</span></span><br><span class="line">    <span class="comment">// #[max_len(50)] 用于 InitSpace 计算空间时确定字符串最大长度</span></span><br><span class="line">    <span class="meta">#[max_len(50)]</span></span><br><span class="line">    <span class="keyword">pub</span> body: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">IbuidlTweet</span> &#123;</span><br><span class="line">    <span class="comment">// 定义用于生成 PDA (Program Derived Address) 的种子前缀</span></span><br><span class="line">    <span class="comment">// 这个常量将用于唯一标识推文账户</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> SEED_PREFIX: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;tweet&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造函数：创建新的推文实例</span></span><br><span class="line">    <span class="comment">// 初始化时点赞数为 0，内容为传入的 body 参数</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(body: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">Self</span> &#123; </span><br><span class="line">            like_count: <span class="number">0</span>,  <span class="comment">// 新推文初始点赞数为 0</span></span><br><span class="line">            body           <span class="comment">// 推文内容</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念</strong>:</p>
+<ul>
+<li><code>#[account]</code>: Anchor 框架用于标识账户结构的宏</li>
+<li><code>InitSpace</code>: 自动计算账户在区块链上需要的存储空间</li>
+<li><code>PDA (Program Derived Address)</code>: 程序派生地址，用于确定性地生成账户地址</li>
+</ul>
+<h2 id="步骤2-实现推文相关的指令处理"><a href="#步骤2-实现推文相关的指令处理" class="headerlink" title="步骤2: 实现推文相关的指令处理"></a>步骤2: 实现推文相关的指令处理</h2><p><strong>目标</strong>: 实现创建推文和点赞功能的业务逻辑，定义与区块链交互的指令。</p>
+<p><strong>文件路径</strong>: <code>../ibuidl-socail/programs/ibuidl-socail/src/instructions/tweet.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 导入所需的状态结构</span></span><br><span class="line"><span class="keyword">use</span> crate::state::&#123;IbuidlProfile, IbuidlTweet, IbuidlLike&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建推文的指令处理函数</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_tweet</span>(ctx: Context&lt;CreateTweet&gt;, body: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 获取用户档案的可变引用</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">profile</span> = &amp;<span class="keyword">mut</span> ctx.accounts.profile;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 增加用户的推文计数</span></span><br><span class="line">    profile.tweet_count += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建新的推文实例</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">tweet</span> = IbuidlTweet::<span class="title function_ invoke__">new</span>(body);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// set_inner 是 Anchor 提供的方法，用于设置账户的内部数据</span></span><br><span class="line">    <span class="comment">// clone() 是必需的，因为我们需要将数据移动到账户中</span></span><br><span class="line">    ctx.accounts.tweet.<span class="title function_ invoke__">set_inner</span>(tweet.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">    </span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义创建推文所需的账户结构</span></span><br><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CreateTweet</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 推文账户 - 使用 init 约束表示这是新创建的账户</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init,                                    // 初始化新账户</span></span><br><span class="line"><span class="meta">        payer = authority,                       // 由 authority 支付账户创建费用</span></span><br><span class="line"><span class="meta">        space = IbuidlTweet::INIT_SPACE,        // 分配存储空间</span></span><br><span class="line"><span class="meta">        seeds = [                               // PDA 种子组合</span></span><br><span class="line"><span class="meta">            IbuidlTweet::SEED_PREFIX.as_bytes(), // <span class="string">&quot;tweet&quot;</span> 前缀</span></span><br><span class="line"><span class="meta">            profile.key().as_ref(),              // 用户档案的公钥</span></span><br><span class="line"><span class="meta">            (profile.tweet_count + 1).to_string().as_ref(), // 推文序号</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                   <span class="comment">// PDA bump seed</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> tweet: Account&lt;<span class="symbol">&#x27;info</span>, IbuidlTweet&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用户档案账户 - 需要更新推文计数，所以标记为 mut</span></span><br><span class="line">    <span class="meta">#[account( </span></span><br><span class="line"><span class="meta">        mut,                                    // 可变，因为要更新 tweet_count</span></span><br><span class="line"><span class="meta">        seeds = [                               // 验证 PDA 地址</span></span><br><span class="line"><span class="meta">            IbuidlProfile::SEED_PREFIX.as_bytes(), // <span class="string">&quot;profile&quot;</span> 前缀</span></span><br><span class="line"><span class="meta">            authority.key().as_ref(),            // 用户公钥</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                   <span class="comment">// 验证 bump seed</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> profile: Account&lt;<span class="symbol">&#x27;info</span>, IbuidlProfile&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 交易发起者，必须签名</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span>  <span class="comment">// 可变，因为要支付交易费用</span></span><br><span class="line">    <span class="keyword">pub</span> authority: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 系统程序，用于创建新账户</span></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建点赞的指令处理函数</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_like</span>(ctx: Context&lt;CreateLike&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 获取推文账户的可变引用</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">tweet</span> = &amp;<span class="keyword">mut</span> ctx.accounts.tweet;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 增加推文的点赞计数</span></span><br><span class="line">    tweet.like_count += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建新的点赞记录，记录哪个用户对哪个推文点赞</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">like</span> = IbuidlLike::<span class="title function_ invoke__">new</span>(</span><br><span class="line">        ctx.accounts.profile.<span class="title function_ invoke__">key</span>(),  <span class="comment">// 点赞用户的档案公钥</span></span><br><span class="line">        tweet.<span class="title function_ invoke__">key</span>()                  <span class="comment">// 被点赞推文的公钥</span></span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 将点赞数据保存到区块链账户</span></span><br><span class="line">    ctx.accounts.like.<span class="title function_ invoke__">set_inner</span>(like.<span class="title function_ invoke__">clone</span>());</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义创建点赞所需的账户结构</span></span><br><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CreateLike</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 点赞记录账户 - 每个用户对每个推文只能点赞一次</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init,                                   // 初始化新的点赞账户</span></span><br><span class="line"><span class="meta">        payer = authority,                      // 支付者</span></span><br><span class="line"><span class="meta">        space = 8 + IbuidlLike::INIT_SPACE,    // 账户判别器(8字节) + 数据空间</span></span><br><span class="line"><span class="meta">        seeds = [                              // 确保每个用户对每个推文只能有一个点赞记录</span></span><br><span class="line"><span class="meta">            IbuidlLike::SEED_PREFIX.as_bytes(), // <span class="string">&quot;like&quot;</span> 前缀</span></span><br><span class="line"><span class="meta">            profile.key().as_ref(),             // 点赞用户档案</span></span><br><span class="line"><span class="meta">            tweet.key().as_ref(),               // 被点赞的推文</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,</span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> like: Account&lt;<span class="symbol">&#x27;info</span>, IbuidlLike&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 被点赞的推文账户 - 需要更新点赞计数</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span></span><br><span class="line">    <span class="keyword">pub</span> tweet: Account&lt;<span class="symbol">&#x27;info</span>, IbuidlTweet&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 点赞用户的档案账户 - 用于验证身份</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                    // 可能需要更新档案信息</span></span><br><span class="line"><span class="meta">        seeds = [                               // 验证档案 PDA</span></span><br><span class="line"><span class="meta">            IbuidlProfile::SEED_PREFIX.as_bytes(),</span></span><br><span class="line"><span class="meta">            authority.key().as_ref(),</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,</span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> profile: Account&lt;<span class="symbol">&#x27;info</span>, IbuidlProfile&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 交易发起者</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span></span><br><span class="line">    <span class="keyword">pub</span> authority: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 系统程序</span></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;,</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念</strong>:</p>
+<ul>
+<li><code>Context&lt;T&gt;</code>: Anchor 框架提供的上下文结构，包含账户和程序信息</li>
+<li><code>init</code> 约束: 表示账户将被初始化为新账户</li>
+<li><code>mut</code> 约束: 表示账户数据可以被修改</li>
+<li><code>seeds</code> 约束: 用于验证或生成 PDA 地址的种子</li>
+<li><code>payer</code> 约束: 指定谁来支付账户创建费用</li>
+</ul>
+<h2 id="步骤3-在主程序中暴露指令接口"><a href="#步骤3-在主程序中暴露指令接口" class="headerlink" title="步骤3: 在主程序中暴露指令接口"></a>步骤3: 在主程序中暴露指令接口</h2><p><strong>目标</strong>: 在程序的主入口文件中定义公开的 RPC 接口，使客户端能够调用相关功能。</p>
+<p><strong>文件路径</strong>: <code>../ibuidl-socail/programs/ibuidl-socail/src/lib.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建推文的公开接口</span></span><br><span class="line"><span class="comment">// 这个函数将被编译为 Solana 程序的指令入口点</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_tweet</span>(ctx: Context&lt;CreateTweet&gt;, body: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 委托给具体的指令处理函数</span></span><br><span class="line">    <span class="comment">// 这种设计模式将接口定义和业务逻辑分离</span></span><br><span class="line">    instructions::tweet::<span class="title function_ invoke__">create_tweet</span>(ctx, body)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建点赞的公开接口</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_like</span>(ctx: Context&lt;CreateLike&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 委托给具体的指令处理函数</span></span><br><span class="line">    instructions::tweet::<span class="title function_ invoke__">create_like</span>(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念</strong>:</p>
+<ul>
+<li>这些函数是程序的对外接口，客户端通过 RPC 调用这些方法</li>
+<li>使用委托模式，保持主程序文件简洁，具体逻辑在指令模块中实现</li>
+<li><code>Result&lt;()&gt;</code> 表示操作可能成功或失败，符合 Rust 的错误处理约定</li>
+</ul>
+<h2 id="步骤4-实现客户端推文操作"><a href="#步骤4-实现客户端推文操作" class="headerlink" title="步骤4: 实现客户端推文操作"></a>步骤4: 实现客户端推文操作</h2><p><strong>目标</strong>: 创建 TypeScript 客户端代码，用于与 Solana 程序交互，实现推文的创建、查询和点赞功能。</p>
+<p><strong>文件路径</strong>: <code>../ibuidl-socail/app/app/tweet.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> anchor <span class="keyword">from</span> <span class="string">&quot;@coral-xyz/anchor&quot;</span></span><br><span class="line"><span class="keyword">import</span> &#123; program &#125; <span class="keyword">from</span> <span class="string">&quot;./wallet&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建推文的异步函数</span></span><br><span class="line"><span class="comment">// 返回值: [推文 PDA 地址, 交易签名]</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">createTweet</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">wallet</span>: anchor.<span class="title class_">Wallet</span>,</span></span><br><span class="line"><span class="params">    <span class="attr">body</span>: <span class="built_in">string</span>,</span></span><br><span class="line"><span class="params"></span>): <span class="title class_">Promise</span>&lt;[anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>, <span class="built_in">string</span>]&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算用户档案的 PDA 地址</span></span><br><span class="line">    <span class="comment">// 必须与 Rust 程序中定义的种子保持一致</span></span><br><span class="line">    <span class="keyword">const</span> [profilePDA] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">        [<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;profile&quot;</span>), wallet.<span class="property">publicKey</span>.<span class="title function_">toBuffer</span>()],</span><br><span class="line">        program.<span class="property">programId</span>,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从区块链获取用户档案数据</span></span><br><span class="line">    <span class="comment">// 需要知道当前的推文数量来生成唯一的推文 PDA</span></span><br><span class="line">    <span class="keyword">const</span> profile = <span class="keyword">await</span> program.<span class="property">account</span>.<span class="property">ibuidlProfile</span>.<span class="title function_">fetch</span>(profilePDA);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算新推文的 PDA 地址</span></span><br><span class="line">    <span class="comment">// 使用档案地址和推文序号确保唯一性</span></span><br><span class="line">    <span class="keyword">const</span> [tweetPDA, _] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">        [</span><br><span class="line">            <span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;tweet&quot;</span>),                    <span class="comment">// 推文前缀</span></span><br><span class="line">            profilePDA.<span class="title function_">toBuffer</span>(),                   <span class="comment">// 用户档案 PDA</span></span><br><span class="line">            <span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">`<span class="subst">$&#123;profile.tweetCount + <span class="number">1</span>&#125;</span>`</span>) <span class="comment">// 下一个推文序号</span></span><br><span class="line">        ],</span><br><span class="line">        program.<span class="property">programId</span>,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用程序方法创建推文</span></span><br><span class="line">    <span class="comment">// 返回推文 PDA 和交易签名</span></span><br><span class="line">    <span class="keyword">return</span> [tweetPDA,</span><br><span class="line">        <span class="keyword">await</span> program.<span class="property">methods</span>.<span class="title function_">createTweet</span>(body)</span><br><span class="line">            .<span class="title function_">accounts</span>(&#123;</span><br><span class="line">                <span class="attr">authority</span>: wallet.<span class="property">publicKey</span>,         <span class="comment">// 交易发起者</span></span><br><span class="line">                <span class="attr">tweet</span>: tweetPDA,                    <span class="comment">// 新推文账户地址</span></span><br><span class="line">                <span class="comment">// profile 和 system_program 由 Anchor 自动推导</span></span><br><span class="line">            &#125;)</span><br><span class="line">            .<span class="title function_">rpc</span>()];  <span class="comment">// 执行远程过程调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取推文数据的函数</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">getTweet</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">wallet</span>: anchor.<span class="title class_">Wallet</span>,</span></span><br><span class="line"><span class="params">    <span class="attr">tweetPDA</span>: anchor.web3.<span class="title class_">PublicKey</span>,</span></span><br><span class="line"><span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 直接从区块链获取推文账户数据</span></span><br><span class="line">    <span class="comment">// fetch 方法会自动反序列化数据结构</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> program.<span class="property">account</span>.<span class="property">ibuidlTweet</span>.<span class="title function_">fetch</span>(tweetPDA);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建点赞的异步函数</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">createLike</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">wallet</span>: anchor.<span class="title class_">Wallet</span>,</span></span><br><span class="line"><span class="params">    <span class="attr">tweetPDA</span>: anchor.web3.<span class="title class_">PublicKey</span>,</span></span><br><span class="line"><span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 计算点赞用户的档案 PDA</span></span><br><span class="line">    <span class="keyword">const</span> [profilePDA] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">        [<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;profile&quot;</span>), wallet.<span class="property">publicKey</span>.<span class="title function_">toBuffer</span>()],</span><br><span class="line">        program.<span class="property">programId</span>,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用点赞方法</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> program.<span class="property">methods</span>.<span class="title function_">createLike</span>()</span><br><span class="line">        .<span class="title function_">accountsPartial</span>(&#123;                      <span class="comment">// 使用部分账户指定</span></span><br><span class="line">            <span class="attr">tweet</span>: tweetPDA,                    <span class="comment">// 被点赞的推文</span></span><br><span class="line">            <span class="attr">authority</span>: wallet.<span class="property">publicKey</span>,         <span class="comment">// 点赞用户</span></span><br><span class="line">            <span class="attr">profile</span>: profilePDA,                <span class="comment">// 点赞用户的档案</span></span><br><span class="line">            <span class="comment">// like 账户地址由 Anchor 根据种子自动计算</span></span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_">signers</span>([wallet.<span class="property">payer</span>])                <span class="comment">// 指定签名者</span></span><br><span class="line">        .<span class="title function_">rpc</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念</strong>:</p>
+<ul>
+<li><code>findProgramAddressSync</code>: 同步计算 PDA 地址的方法</li>
+<li><code>program.account.*.fetch()</code>: 从区块链获取账户数据</li>
+<li><code>program.methods.*()</code>: 调用程序中定义的方法</li>
+<li><code>accountsPartial()</code>: 当某些账户可以自动推导时使用的方法</li>
+<li><code>rpc()</code>: 执行远程过程调用，将交易发送到区块链</li>
+</ul>
+<h2 id="步骤5-主程序入口-完整的交互流程演示"><a href="#步骤5-主程序入口-完整的交互流程演示" class="headerlink" title="步骤5: 主程序入口 - 完整的交互流程演示"></a>步骤5: 主程序入口 - 完整的交互流程演示</h2><p><strong>目标</strong>: 创建一个完整的演示程序，展示如何依次创建用户档案、发布推文、获取推文数据和进行点赞操作。</p>
+<p><strong>文件路径</strong>: <code>../ibuidl-socail/app/index.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createProfile, getProfile &#125; <span class="keyword">from</span> <span class="string">&quot;./app/profile&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createTweet, getTweet, createLike &#125; <span class="keyword">from</span> <span class="string">&quot;./app/tweet&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useDefaultWallet, useVisitorWallet &#125; <span class="keyword">from</span> <span class="string">&quot;./app/wallet&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 主程序异步执行函数</span></span><br><span class="line">(<span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="comment">// 初始化两个不同的钱包用于演示</span></span><br><span class="line">    <span class="keyword">const</span> defaultwallet = <span class="title function_">useDefaultWallet</span>();   <span class="comment">// 默认钱包 (推文发布者)</span></span><br><span class="line">    <span class="keyword">const</span> visitorwallet = <span class="title function_">useVisitorWallet</span>();   <span class="comment">// 访客钱包 (点赞者)</span></span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;default wallet is &gt;&gt;&gt; &quot;</span>, defaultwallet.<span class="property">publicKey</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;visitor wallet is &gt;&gt;&gt; &quot;</span>, visitorwallet.<span class="property">publicKey</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// === 第一步：确保默认钱包有档案 ===</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 尝试获取现有档案</span></span><br><span class="line">        <span class="keyword">const</span> r2 = <span class="keyword">await</span> <span class="title function_">getProfile</span>(defaultwallet);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;default wallet profile already exists &gt;&gt;&gt; &quot;</span>, r2);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="comment">// 档案不存在，创建新档案</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Creating profile for default wallet...&quot;</span>);</span><br><span class="line">        <span class="keyword">const</span> r1 = <span class="keyword">await</span> <span class="title function_">createProfile</span>(defaultwallet, <span class="string">&quot;Bobb&quot;</span>);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Created profile:&quot;</span>, r1);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 验证档案创建成功</span></span><br><span class="line">        <span class="keyword">const</span> r2 = <span class="keyword">await</span> <span class="title function_">getProfile</span>(defaultwallet);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;default wallet profile is &gt;&gt;&gt; &quot;</span>, r2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// === 第二步：确保访客钱包有档案 ===</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 尝试获取访客档案</span></span><br><span class="line">        <span class="keyword">const</span> r4 = <span class="keyword">await</span> <span class="title function_">getProfile</span>(visitorwallet);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;visitor wallet profile already exists &gt;&gt;&gt; &quot;</span>, r4);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="comment">// 创建访客档案</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Creating profile for visitor wallet...&quot;</span>);</span><br><span class="line">        <span class="keyword">const</span> r3 = <span class="keyword">await</span> <span class="title function_">createProfile</span>(visitorwallet, <span class="string">&quot;Alice&quot;</span>);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Created profile:&quot;</span>, r3);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 验证档案创建成功</span></span><br><span class="line">        <span class="keyword">const</span> r4 = <span class="keyword">await</span> <span class="title function_">getProfile</span>(visitorwallet);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;visitor wallet profile is &gt;&gt;&gt; &quot;</span>, r4);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// === 第三步：创建推文 ===</span></span><br><span class="line">    <span class="comment">// 使用默认钱包创建一条推文</span></span><br><span class="line">    <span class="keyword">const</span> [tweetPDA, ] = <span class="keyword">await</span> <span class="title function_">createTweet</span>(defaultwallet, <span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;tweetPDA is &gt;&gt;&gt; &quot;</span>, tweetPDA);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// === 第四步：获取推文数据验证创建成功 ===</span></span><br><span class="line">    <span class="keyword">const</span> r6 = <span class="keyword">await</span> <span class="title function_">getTweet</span>(defaultwallet, tweetPDA);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;tweet r6 is &gt;&gt;&gt; &quot;</span>, r6);</span><br><span class="line">    <span class="comment">// 此时应该显示: &#123; likeCount: 0, body: &quot;Hello World&quot; &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// === 第五步：使用访客钱包对推文点赞 ===</span></span><br><span class="line">    <span class="keyword">const</span> r7 = <span class="keyword">await</span> <span class="title function_">createLike</span>(visitorwallet, tweetPDA);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;r7 is &gt;&gt;&gt; &quot;</span>, r7);  <span class="comment">// 交易签名</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// === 第六步：验证点赞成功 ===</span></span><br><span class="line">    <span class="keyword">const</span> r8 = <span class="keyword">await</span> <span class="title function_">getTweet</span>(defaultwallet, tweetPDA);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;r8 is &gt;&gt;&gt; &quot;</span>, r8);</span><br><span class="line">    <span class="comment">// 此时应该显示: &#123; likeCount: 1, body: &quot;Hello World&quot; &#125;</span></span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+
+<p><strong>执行流程说明</strong>:</p>
+<ol>
+<li><strong>钱包初始化</strong>: 创建两个不同的钱包实例用于演示多用户交互</li>
+<li><strong>档案管理</strong>: 检查并创建用户档案，确保每个钱包都有对应的链上身份</li>
+<li><strong>推文创建</strong>: 使用默认钱包发布推文内容</li>
+<li><strong>数据验证</strong>: 从区块链读取推文数据验证创建成功</li>
+<li><strong>社交互动</strong>: 使用访客钱包对推文进行点赞</li>
+<li><strong>结果确认</strong>: 再次读取推文数据确认点赞计数已更新</li>
+</ol>
+<p><strong>错误处理说明</strong>:</p>
+<ul>
+<li>使用 try-catch 结构优雅处理账户不存在的情况</li>
+<li>在创建档案失败时提供清晰的错误信息</li>
+<li>通过多次数据获取验证操作的成功性</li>
+</ul>
+<h2 id="关键学习要点"><a href="#关键学习要点" class="headerlink" title="关键学习要点"></a>关键学习要点</h2><h3 id="Anchor-框架特性"><a href="#Anchor-框架特性" class="headerlink" title="Anchor 框架特性"></a>Anchor 框架特性</h3><ul>
+<li><strong>自动推导</strong>: Anchor 能够根据种子自动计算和验证 PDA 地址</li>
+<li><strong>类型安全</strong>: TypeScript 客户端提供完整的类型检查和自动补全</li>
+<li><strong>账户验证</strong>: 框架自动验证账户所有权和访问权限</li>
+</ul>
+<h3 id="区块链程序设计模式"><a href="#区块链程序设计模式" class="headerlink" title="区块链程序设计模式"></a>区块链程序设计模式</h3><ul>
+<li><strong>PDA 使用</strong>: 使用确定性地址确保账户唯一性和可预测性</li>
+<li><strong>状态管理</strong>: 通过链上账户持久化存储应用状态</li>
+<li><strong>权限控制</strong>: 通过签名者验证确保操作的合法性</li>
+</ul>
+<h3 id="错误处理最佳实践"><a href="#错误处理最佳实践" class="headerlink" title="错误处理最佳实践"></a>错误处理最佳实践</h3><ul>
+<li><strong>预检查</strong>: 在执行操作前检查前置条件（如档案是否存在）</li>
+<li><strong>原子操作</strong>: 每个交易要么完全成功要么完全失败</li>
+<li><strong>状态一致性</strong>: 通过适当的约束确保数据的一致性</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7profile-1/" rel="prev" title="Solana中anchor框架实战-创建用户profile-1">
+                  <i class="fa fa-angle-left"></i> Solana中anchor框架实战-创建用户profile-1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/18/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-spl-token%E5%92%8Cmint%E8%B4%A6%E6%88%B7%E7%9A%84%E5%88%9B%E5%BB%BA3/" rel="next" title="Solana中anchor框架实战-spl_token和mint账户的创建3">
+                  Solana中anchor框架实战-spl_token和mint账户的创建3 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

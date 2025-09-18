@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本教程将带您完整地了解如何在 Solana 上使用 Anchor 框架创建带有元数据的 SPL Token。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana中anchor框架实战-spl_token和mint账户的创建3">
+<meta property="og:url" content="http://example.com/2025/09/18/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-spl-token%E5%92%8Cmint%E8%B4%A6%E6%88%B7%E7%9A%84%E5%88%9B%E5%BB%BA3/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="本教程将带您完整地了解如何在 Solana 上使用 Anchor 框架创建带有元数据的 SPL Token。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-18T01:21:25.000Z">
+<meta property="article:modified_time" content="2025-09-18T06:52:21.242Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/18/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-spl-token%E5%92%8Cmint%E8%B4%A6%E6%88%B7%E7%9A%84%E5%88%9B%E5%BB%BA3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/18/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-spl-token%E5%92%8Cmint%E8%B4%A6%E6%88%B7%E7%9A%84%E5%88%9B%E5%BB%BA3/","path":"2025/09/18/Solana中anchor框架实战-spl-token和mint账户的创建3/","title":"Solana中anchor框架实战-spl_token和mint账户的创建3"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana中anchor框架实战-spl_token和mint账户的创建3 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">项目概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-1-%E9%85%8D%E7%BD%AE%E9%A1%B9%E7%9B%AE%E4%BE%9D%E8%B5%96-Cargo-toml"><span class="nav-number">2.</span> <span class="nav-text">步骤 1: 配置项目依赖 (Cargo.toml)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2-%E5%AE%9E%E7%8E%B0-Token-%E5%88%9B%E5%BB%BA%E6%8C%87%E4%BB%A4-token-rs"><span class="nav-number">3.</span> <span class="nav-text">步骤 2: 实现 Token 创建指令 (token.rs)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-3-%E5%9C%A8%E4%B8%BB%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%8C%87%E4%BB%A4-lib-rs"><span class="nav-number">4.</span> <span class="nav-text">步骤 3: 在主程序中暴露指令 (lib.rs)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-4-%E5%AE%A2%E6%88%B7%E7%AB%AF-Token-%E6%93%8D%E4%BD%9C-token-ts"><span class="nav-number">5.</span> <span class="nav-text">步骤 4: 客户端 Token 操作 (token.ts)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-5-%E4%B8%BB%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3-index-ts"><span class="nav-number">6.</span> <span class="nav-text">步骤 5: 主程序入口 (index.ts)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88"><span class="nav-number">7.</span> <span class="nav-text">程序架构总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">8.</span> <span class="nav-text">执行流程图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5%E6%80%BB%E7%BB%93"><span class="nav-number">9.</span> <span class="nav-text">重要概念总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4%E5%BB%BA%E8%AE%AE"><span class="nav-number">10.</span> <span class="nav-text">故障排除建议</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/18/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-spl-token%E5%92%8Cmint%E8%B4%A6%E6%88%B7%E7%9A%84%E5%88%9B%E5%BB%BA3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana中anchor框架实战-spl_token和mint账户的创建3 | samxie52">
+      <meta itemprop="description" content="本教程将带您完整地了解如何在 Solana 上使用 Anchor 框架创建带有元数据的 SPL Token。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana中anchor框架实战-spl_token和mint账户的创建3
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-18 09:21:25 / 修改时间：14:52:21" itemprop="dateCreated datePublished" datetime="2025-09-18T09:21:25+08:00">2025-09-18</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">本教程将带您完整地了解如何在 Solana 上使用 Anchor 框架创建带有元数据的 SPL Token。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="项目概述"><a href="#项目概述" class="headerlink" title="项目概述"></a>项目概述</h2><p>这个项目演示了如何：</p>
+<ul>
+<li>使用 Anchor 框架创建 Solana 程序</li>
+<li>集成 Metaplex Token Metadata 程序</li>
+<li>创建具有自定义元数据的 SPL Token</li>
+<li>使用 Program Derived Address (PDA) 管理账户</li>
+</ul>
+<h2 id="步骤-1-配置项目依赖-Cargo-toml"><a href="#步骤-1-配置项目依赖-Cargo-toml" class="headerlink" title="步骤 1: 配置项目依赖 (Cargo.toml)"></a>步骤 1: 配置项目依赖 (Cargo.toml)</h2><p>首先需要在 Rust 项目中配置必要的依赖项：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ../ibuidl-socail/programs/ibuidl-socail/Cargo.toml</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="comment"># Anchor 核心框架 - 提供基础的程序开发功能</span></span><br><span class="line"><span class="comment"># init-if-needed 特性: 允许使用 init_if_needed 约束，如果账户不存在则创建</span></span><br><span class="line"><span class="attr">anchor-lang</span> = &#123; version = <span class="string">&quot;0.31.0&quot;</span>, features = [<span class="string">&quot;init-if-needed&quot;</span>] &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Anchor SPL 库 - 提供与 SPL Token 和 Metaplex 的集成</span></span><br><span class="line"><span class="comment"># metadata 特性: 集成 Metaplex Token Metadata 程序的功能</span></span><br><span class="line"><span class="attr">anchor-spl</span> = &#123; version = <span class="string">&quot;0.31.0&quot;</span>, features = [<span class="string">&quot;metadata&quot;</span>] &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念解释:</strong></p>
+<ul>
+<li><code>anchor-lang</code>: Anchor 框架的核心库，提供宏、错误处理等基础功能</li>
+<li><code>anchor-spl</code>: 专门用于 SPL Token 操作的 Anchor 扩展库</li>
+<li><code>init-if-needed</code>: 特性标志，允许智能合约在账户不存在时自动创建账户</li>
+</ul>
+<h2 id="步骤-2-实现-Token-创建指令-token-rs"><a href="#步骤-2-实现-Token-创建指令-token-rs" class="headerlink" title="步骤 2: 实现 Token 创建指令 (token.rs)"></a>步骤 2: 实现 Token 创建指令 (token.rs)</h2><p>创建核心的 token 创建逻辑：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ../ibuidl-socail/programs/ibuidl-socail/src/instructions/token.rs</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"><span class="keyword">use</span> anchor_spl::&#123;</span><br><span class="line">    metadata::&#123;</span><br><span class="line">        create_metadata_accounts_v3,           <span class="comment">// Metaplex 创建元数据账户的函数</span></span><br><span class="line">        mpl_token_metadata::types::DataV2,     <span class="comment">// 元数据结构体 v2</span></span><br><span class="line">        CreateMetadataAccountsV3,              <span class="comment">// 创建元数据账户的上下文结构</span></span><br><span class="line">        Metadata                               <span class="comment">// Metaplex Token Metadata 程序类型</span></span><br><span class="line">    &#125;,</span><br><span class="line">    token::&#123;Mint, Token&#125;                       <span class="comment">// SPL Token 相关类型</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 创建带有元数据的 Token Mint 账户</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 这个函数执行以下操作：</span></span><br><span class="line"><span class="comment">/// 1. 记录正在创建的 mint 账户地址</span></span><br><span class="line"><span class="comment">/// 2. 设置签名者种子（用于 PDA 签名）</span></span><br><span class="line"><span class="comment">/// 3. 调用 Metaplex 程序创建元数据账户</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_token_mint_account</span>(ctx: Context&lt;CreateTokenMintAccount&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 输出日志信息，显示正在创建的 mint 账户地址</span></span><br><span class="line">    msg!(<span class="string">&quot;Creating token mint account &#123;&#125;&quot;</span>, ctx.accounts.mint_account.<span class="title function_ invoke__">key</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置 PDA 签名种子</span></span><br><span class="line">    <span class="comment">// 这里使用 &quot;mint_v9&quot; 作为种子，bump 是自动计算的随机数</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[<span class="string">b&quot;mint_v9&quot;</span>, &amp;[ctx.bumps.mint_account]]];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 Metaplex Token Metadata 程序创建元数据账户</span></span><br><span class="line">    <span class="title function_ invoke__">create_metadata_accounts_v3</span>(</span><br><span class="line">        <span class="comment">// 创建跨程序调用上下文，包含签名者信息</span></span><br><span class="line">        CpiContext::<span class="title function_ invoke__">new_with_signer</span>(</span><br><span class="line">            ctx.accounts.token_metadata_program.<span class="title function_ invoke__">to_account_info</span>(),  <span class="comment">// 目标程序（Metaplex）</span></span><br><span class="line">            CreateMetadataAccountsV3 &#123;</span><br><span class="line">                metadata: ctx.accounts.metadata_account.<span class="title function_ invoke__">to_account_info</span>(),      <span class="comment">// 元数据账户</span></span><br><span class="line">                mint: ctx.accounts.mint_account.<span class="title function_ invoke__">to_account_info</span>(),              <span class="comment">// mint 账户</span></span><br><span class="line">                mint_authority: ctx.accounts.mint_account.<span class="title function_ invoke__">to_account_info</span>(),    <span class="comment">// mint 权限（这里是 mint 自己）</span></span><br><span class="line">                update_authority: ctx.accounts.authority.<span class="title function_ invoke__">to_account_info</span>(),     <span class="comment">// 更新权限（调用者）</span></span><br><span class="line">                payer: ctx.accounts.authority.<span class="title function_ invoke__">to_account_info</span>(),                <span class="comment">// 费用支付者</span></span><br><span class="line">                system_program: ctx.accounts.system_program.<span class="title function_ invoke__">to_account_info</span>(),  <span class="comment">// 系统程序</span></span><br><span class="line">                rent: ctx.accounts.rent.<span class="title function_ invoke__">to_account_info</span>(),                      <span class="comment">// 租金 sysvar</span></span><br><span class="line">            &#125;, </span><br><span class="line">            signer_seeds  <span class="comment">// PDA 签名种子</span></span><br><span class="line">        ),</span><br><span class="line">        <span class="comment">// Token 元数据信息</span></span><br><span class="line">        DataV2 &#123;</span><br><span class="line">            name: <span class="string">&quot;ibuidl&quot;</span>.<span class="title function_ invoke__">to_string</span>(),                    <span class="comment">// Token 名称</span></span><br><span class="line">            symbol: <span class="string">&quot;IBUIDL&quot;</span>.<span class="title function_ invoke__">to_string</span>(),                  <span class="comment">// Token 符号</span></span><br><span class="line">            uri: <span class="string">&quot;https://ibuidl.com&quot;</span>.<span class="title function_ invoke__">to_string</span>(),         <span class="comment">// 元数据 URI（通常指向 JSON）</span></span><br><span class="line">            seller_fee_basis_points: <span class="number">0</span>,                    <span class="comment">// 交易费用（基点，0 = 0%）</span></span><br><span class="line">            creators: <span class="literal">None</span>,                                <span class="comment">// 创建者信息（可选）</span></span><br><span class="line">            collection: <span class="literal">None</span>,                              <span class="comment">// 所属集合（可选，用于 NFT）</span></span><br><span class="line">            uses: <span class="literal">None</span>,                                    <span class="comment">// 使用限制（可选）</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="literal">false</span>,  <span class="comment">// is_mutable: 元数据是否可变</span></span><br><span class="line">        <span class="literal">false</span>,  <span class="comment">// update_authority_is_signer: 更新权限是否是签名者</span></span><br><span class="line">        <span class="literal">None</span>,   <span class="comment">// collection_details: 集合详情（可选）</span></span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 定义创建 Token Mint 账户所需的账户结构</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 这个结构定义了指令执行时需要的所有账户，包括：</span></span><br><span class="line"><span class="comment">/// - 元数据账户（由 Metaplex 管理）</span></span><br><span class="line"><span class="comment">/// - Mint 账户（SPL Token 的核心）</span></span><br><span class="line"><span class="comment">/// - 权限账户（支付费用和拥有权限）</span></span><br><span class="line"><span class="comment">/// - 各种系统程序</span></span><br><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CreateTokenMintAccount</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">/// 元数据账户（由 Metaplex Token Metadata 程序管理）</span></span><br><span class="line">    <span class="comment">/// CHECK: 通过 PDA 推导验证地址有效性</span></span><br><span class="line">    <span class="comment">/// </span></span><br><span class="line">    <span class="comment">/// seeds: 用于生成 PDA 的种子</span></span><br><span class="line">    <span class="comment">/// - &quot;metadata&quot;: Metaplex 标准前缀</span></span><br><span class="line">    <span class="comment">/// - token_metadata_program.key(): Metaplex 程序 ID</span></span><br><span class="line">    <span class="comment">/// - mint_account.key(): 对应的 mint 账户地址</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                    // 账户可变（需要写入数据）</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            b<span class="string">&quot;metadata&quot;</span>,                        // 固定种子 <span class="string">&quot;metadata&quot;</span></span></span><br><span class="line"><span class="meta">            token_metadata_program.key().as_ref(),  // Metaplex 程序 ID 作为种子</span></span><br><span class="line"><span class="meta">            mint_account.key().as_ref(),        // Mint 账户地址作为种子</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                   <span class="comment">// 自动计算 bump 种子</span></span><br><span class="line">        seeds::program = token_metadata_program.<span class="title function_ invoke__">key</span>(),  <span class="comment">// 指定种子程序为 Metaplex</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> metadata_account: UncheckedAccount&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// SPL Token Mint 账户</span></span><br><span class="line">    <span class="comment">/// 这是 Token 的核心账户，定义了 Token 的基本属性</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init_if_needed,                         // 如果不存在则创建</span></span><br><span class="line"><span class="meta">        payer = authority,                      // 费用由 authority 支付</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            b<span class="string">&quot;mint_v9&quot;</span>,                         // PDA 种子，<span class="string">&quot;mint_v9&quot;</span> 表示版本</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                   <span class="comment">// 自动计算 bump</span></span><br><span class="line">        mint::decimals = <span class="number">6</span>,                     <span class="comment">// Token 精度为 6 位小数</span></span><br><span class="line">        mint::authority = mint_account.<span class="title function_ invoke__">key</span>(),   <span class="comment">// mint 权限设置为 mint 账户自己</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> mint_account: Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 权限账户（调用者）</span></span><br><span class="line">    <span class="comment">/// 必须是签名者，用于支付交易费用和创建账户费用</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span>                             <span class="comment">// 可变，因为需要扣除费用</span></span><br><span class="line">    <span class="keyword">pub</span> authority: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Solana 系统程序</span></span><br><span class="line">    <span class="comment">/// 用于创建账户、转账等基本操作</span></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;,</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// SPL Token 程序</span></span><br><span class="line">    <span class="comment">/// 用于 Token 相关操作（mint、transfer 等）</span></span><br><span class="line">    <span class="keyword">pub</span> token_program: Program&lt;<span class="symbol">&#x27;info</span>, Token&gt;,</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// Metaplex Token Metadata 程序</span></span><br><span class="line">    <span class="comment">/// 用于创建和管理 Token 元数据</span></span><br><span class="line">    <span class="keyword">pub</span> token_metadata_program: Program&lt;<span class="symbol">&#x27;info</span>, Metadata&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 租金 Sysvar</span></span><br><span class="line">    <span class="comment">/// 提供当前网络的租金豁免信息</span></span><br><span class="line">    <span class="keyword">pub</span> rent: Sysvar&lt;<span class="symbol">&#x27;info</span>, Rent&gt;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念解释:</strong></p>
+<ul>
+<li><strong>PDA (Program Derived Address)</strong>: 由程序和种子确定性生成的地址，程序可以代表这些地址签名</li>
+<li><strong>CPI (Cross-Program Invocation)</strong>: 跨程序调用，允许一个程序调用另一个程序</li>
+<li><strong>Seeds</strong>: 用于生成 PDA 的种子，确保地址的唯一性和可预测性</li>
+<li><strong>Bump</strong>: 一个额外的字节，确保生成的地址不在椭圆曲线上</li>
+</ul>
+<h2 id="步骤-3-在主程序中暴露指令-lib-rs"><a href="#步骤-3-在主程序中暴露指令-lib-rs" class="headerlink" title="步骤 3: 在主程序中暴露指令 (lib.rs)"></a>步骤 3: 在主程序中暴露指令 (lib.rs)</h2><p>在主程序文件中暴露创建的指令：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ../ibuidl-socail/programs/ibuidl-socail/src/lib.rs</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 创建 Token Mint 账户的公共接口</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 这是暴露给客户端的 RPC 方法，客户端可以通过调用这个方法</span></span><br><span class="line"><span class="comment">/// 来执行创建 Token Mint 账户的操作</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 参数:</span></span><br><span class="line"><span class="comment">/// - ctx: 包含所有必需账户的上下文</span></span><br><span class="line"><span class="comment">/// </span></span><br><span class="line"><span class="comment">/// 返回:</span></span><br><span class="line"><span class="comment">/// - Result&lt;()&gt;: 成功返回 ()，失败返回错误信息</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_token_mint_account</span>(ctx: Context&lt;CreateTokenMintAccount&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 调用实际的实现函数</span></span><br><span class="line">    instructions::token::<span class="title function_ invoke__">create_token_mint_account</span>(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念解释:</strong></p>
+<ul>
+<li>这个函数是程序的入口点，客户端通过 RPC 调用此方法</li>
+<li><code>Context&lt;CreateTokenMintAccount&gt;</code> 包含了所有验证过的账户信息</li>
+<li>使用模块化设计，将具体实现分离到 instructions 模块中</li>
+</ul>
+<h2 id="步骤-4-客户端-Token-操作-token-ts"><a href="#步骤-4-客户端-Token-操作-token-ts" class="headerlink" title="步骤 4: 客户端 Token 操作 (token.ts)"></a>步骤 4: 客户端 Token 操作 (token.ts)</h2><p>实现客户端的 Token 创建逻辑：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ../ibuidl-socail/app/app/token.ts</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> anchor <span class="keyword">from</span> <span class="string">&quot;@coral-xyz/anchor&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; program &#125; <span class="keyword">from</span> <span class="string">&quot;./wallet&quot;</span>;  <span class="comment">// 导入配置好的程序实例</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建 Token Mint 账户</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 这个函数执行以下操作：</span></span><br><span class="line"><span class="comment"> * 1. 计算 Token Mint 的 PDA 地址</span></span><br><span class="line"><span class="comment"> * 2. 调用链上程序创建 Token</span></span><br><span class="line"><span class="comment"> * 3. 返回创建的 Token 地址和交易哈希</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> <span class="variable">wallet</span> - 用于签名交易的钱包</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@returns</span> Promise&lt;[PublicKey, string]&gt; - 返回 [Token地址, 交易哈希]</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">createTokenMintAccount</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">wallet</span>: anchor.<span class="title class_">Wallet</span>,  <span class="comment">// Anchor 钱包实例，包含签名功能</span></span></span><br><span class="line"><span class="params"></span>)&#123;</span><br><span class="line">    <span class="comment">// 计算 Token Mint 账户的 PDA (Program Derived Address)</span></span><br><span class="line">    <span class="comment">// 使用与链上程序相同的种子来确保地址一致</span></span><br><span class="line">    <span class="keyword">const</span> [splTokenPDA, _] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">        [<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;mint_v9&quot;</span>)],  <span class="comment">// 种子：与链上程序中定义的种子一致</span></span><br><span class="line">        program.<span class="property">programId</span>,          <span class="comment">// 程序 ID：用于生成 PDA 的程序地址</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回 Token PDA 地址和交易执行结果</span></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        splTokenPDA,  <span class="comment">// Token Mint 账户的地址</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 调用链上程序的 createTokenMintAccount 方法</span></span><br><span class="line">        <span class="keyword">await</span> program.<span class="property">methods</span>.<span class="title function_">createTokenMintAccount</span>()</span><br><span class="line">        .<span class="title function_">accounts</span>(&#123;</span><br><span class="line">            <span class="comment">// 注意：这里 accounts 为空，但 Anchor 会自动推导大部分账户</span></span><br><span class="line">            <span class="comment">// 在实际应用中，可能需要显式指定某些账户</span></span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_">signers</span>([wallet.<span class="property">payer</span>])  <span class="comment">// 设置交易签名者（付费账户）</span></span><br><span class="line">        .<span class="title function_">rpc</span>()                    <span class="comment">// 执行 RPC 调用并等待确认</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念解释:</strong></p>
+<ul>
+<li><strong>findProgramAddressSync</strong>: 同步计算 PDA 地址，与链上计算保持一致</li>
+<li><strong>program.methods</strong>: Anchor 自动生成的方法调用接口</li>
+<li><strong>signers</strong>: 指定交易的签名者，通常是付费账户</li>
+<li><strong>rpc()</strong>: 发送交易到网络并等待确认</li>
+</ul>
+<h2 id="步骤-5-主程序入口-index-ts"><a href="#步骤-5-主程序入口-index-ts" class="headerlink" title="步骤 5: 主程序入口 (index.ts)"></a>步骤 5: 主程序入口 (index.ts)</h2><p>应用程序的主入口，演示如何使用创建的功能：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ../ibuidl-socail/app/index.ts</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; createProfile, getProfile &#125; <span class="keyword">from</span> <span class="string">&quot;./app/profile&quot;</span>;      <span class="comment">// 用户资料相关功能</span></span><br><span class="line"><span class="keyword">import</span> &#123; createTweet, getTweet, createLike &#125; <span class="keyword">from</span> <span class="string">&quot;./app/tweet&quot;</span>; <span class="comment">// 推文相关功能</span></span><br><span class="line"><span class="keyword">import</span> &#123; useDefaultWallet, useVisitorWallet &#125; <span class="keyword">from</span> <span class="string">&quot;./app/wallet&quot;</span>; <span class="comment">// 钱包管理功能</span></span><br><span class="line"><span class="keyword">import</span> &#123; createTokenMintAccount &#125; <span class="keyword">from</span> <span class="string">&quot;./app/token&quot;</span>;            <span class="comment">// Token 创建功能</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 主程序执行流程</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 这个 IIFE (立即执行函数表达式) 演示了完整的应用流程：</span></span><br><span class="line"><span class="comment"> * 1. 初始化钱包</span></span><br><span class="line"><span class="comment"> * 2. 创建 Token</span></span><br><span class="line"><span class="comment"> * 3. 输出相关信息</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">(<span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="comment">// 初始化两个不同的钱包实例</span></span><br><span class="line">    <span class="keyword">const</span> defaultwallet = <span class="title function_">useDefaultWallet</span>();    <span class="comment">// 默认钱包（主要用于管理操作）</span></span><br><span class="line">    <span class="keyword">const</span> visitorwallet = <span class="title function_">useVisitorWallet</span>();    <span class="comment">// 访客钱包（用于普通用户操作）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出钱包公钥信息，用于调试和验证</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;default wallet is &gt;&gt;&gt; &quot;</span>, defaultwallet.<span class="property">publicKey</span>);  <span class="comment">// 默认钱包地址</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;visitor wallet is &gt;&gt;&gt; &quot;</span>, visitorwallet.<span class="property">publicKey</span>);   <span class="comment">// 访客钱包地址</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用默认钱包创建 Token Mint 账户</span></span><br><span class="line">    <span class="comment">// 这里解构返回值：[Token地址, 交易哈希]，但只使用 Token 地址</span></span><br><span class="line">    <span class="keyword">const</span> [splTokenPDA, ] = <span class="keyword">await</span> <span class="title function_">createTokenMintAccount</span>(defaultwallet);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 输出创建的 SPL Token PDA 地址</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;splTokenPDA is &gt;&gt;&gt; &quot;</span>, splTokenPDA);</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键概念解释:</strong></p>
+<ul>
+<li><strong>IIFE</strong>: 立即执行函数表达式，用于创建独立的执行环境</li>
+<li><strong>async&#x2F;await</strong>: 异步编程模式，处理区块链交互的异步操作</li>
+<li><strong>解构赋值</strong>: <code>const [splTokenPDA, ]</code> 只取返回数组的第一个元素</li>
+<li><strong>钱包角色</strong>: 区分不同权限的钱包，体现权限管理思想</li>
+</ul>
+<h2 id="程序架构总览"><a href="#程序架构总览" class="headerlink" title="程序架构总览"></a>程序架构总览</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">项目结构：</span><br><span class="line">├── programs/ibuidl-socail/</span><br><span class="line">│   ├── Cargo.toml              # Rust 依赖配置</span><br><span class="line">│   └── src/</span><br><span class="line">│       ├── lib.rs              # 主程序入口</span><br><span class="line">│       └── instructions/</span><br><span class="line">│           └── token.rs        # Token 相关指令实现</span><br><span class="line">└── app/</span><br><span class="line">    ├── index.ts                # 客户端主程序</span><br><span class="line">    └── app/</span><br><span class="line">        ├── wallet.ts           # 钱包管理</span><br><span class="line">        └── token.ts            # Token 操作接口</span><br></pre></td></tr></table></figure>
+
+<h2 id="执行流程图"><a href="#执行流程图" class="headerlink" title="执行流程图"></a>执行流程图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1. 用户调用 createTokenMintAccount()</span><br><span class="line">   ↓</span><br><span class="line">2. 计算 Token Mint PDA 地址</span><br><span class="line">   ↓</span><br><span class="line">3. 构建交易指令</span><br><span class="line">   ↓</span><br><span class="line">4. 链上程序验证账户</span><br><span class="line">   ↓</span><br><span class="line">5. 创建 SPL Token Mint 账户</span><br><span class="line">   ↓</span><br><span class="line">6. 调用 Metaplex 创建元数据</span><br><span class="line">   ↓</span><br><span class="line">7. 返回 Token 地址和交易哈希</span><br></pre></td></tr></table></figure>
+
+<h2 id="重要概念总结"><a href="#重要概念总结" class="headerlink" title="重要概念总结"></a>重要概念总结</h2><ol>
+<li><p><strong>PDA (Program Derived Address)</strong>: </p>
+<ul>
+<li>由程序 ID 和种子确定性生成的地址</li>
+<li>程序可以代表这些地址签名</li>
+<li>确保账户地址的唯一性和可预测性</li>
+</ul>
+</li>
+<li><p><strong>CPI (Cross-Program Invocation)</strong>:</p>
+<ul>
+<li>允许一个程序调用另一个程序的功能</li>
+<li>本例中调用 Metaplex 程序创建元数据</li>
+</ul>
+</li>
+<li><p><strong>账户验证</strong>:</p>
+<ul>
+<li>Anchor 通过宏自动验证账户的有效性</li>
+<li>包括地址验证、权限检查、数据类型验证等</li>
+</ul>
+</li>
+<li><p><strong>元数据集成</strong>:</p>
+<ul>
+<li>使用 Metaplex Token Metadata 标准</li>
+<li>提供丰富的 Token 信息（名称、符号、URI 等）</li>
+</ul>
+</li>
+<li><p><strong>错误处理</strong>:</p>
+<ul>
+<li>当前错误可能由账户权限配置不当引起</li>
+<li>需要确保所有必需的程序都正确部署和配置</li>
+</ul>
+</li>
+</ol>
+<h2 id="故障排除建议"><a href="#故障排除建议" class="headerlink" title="故障排除建议"></a>故障排除建议</h2><p>如果遇到 “Cross-program invocation with unauthorized signer or writable account” 错误：</p>
+<ol>
+<li><strong>检查程序部署状态</strong>：确保所有依赖程序都已正确部署</li>
+<li><strong>验证账户配置</strong>：确保账户权限和可写性设置正确</li>
+<li><strong>使用 Devnet</strong>：考虑使用 Devnet 进行开发测试</li>
+<li><strong>调试账户信息</strong>：使用提供的调试脚本验证账户状态</li>
+</ol>
+<p>这个项目展示了 Solana 生态系统中多个组件的集成使用，是学习 Solana 开发的优秀示例。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/17/Solana%E4%B8%ADanchor%E6%A1%86%E6%9E%B6%E5%AE%9E%E6%88%98-%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%96%E5%92%8C%E7%82%B9%E8%B5%9E-2/" rel="prev" title="Solana中anchor框架实战-用户发帖和点赞-2">
+                  <i class="fa fa-angle-left"></i> Solana中anchor框架实战-用户发帖和点赞-2
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
