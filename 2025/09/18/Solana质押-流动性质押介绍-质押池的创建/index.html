@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="流动性质押（Liquid Staking）1、native stake中，质押了SOL之后，这部分SOL就被冻结无法参与交易2、流动性质押中，质押了SOL之后，staker将获得proxy token （liquid stakepool token）。这些token我们可以用来swap、traded、transferred。 收益 假设质押池初始时1sol&#x3D;1token经过一定的epoc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana质押-流动性质押介绍&amp;质押池的创建">
+<meta property="og:url" content="http://example.com/2025/09/18/Solana%E8%B4%A8%E6%8A%BC-%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E4%BB%8B%E7%BB%8D-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%9A%84%E5%88%9B%E5%BB%BA/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="流动性质押（Liquid Staking）1、native stake中，质押了SOL之后，这部分SOL就被冻结无法参与交易2、流动性质押中，质押了SOL之后，staker将获得proxy token （liquid stakepool token）。这些token我们可以用来swap、traded、transferred。 收益 假设质押池初始时1sol&#x3D;1token经过一定的epoc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-18T14:49:26.000Z">
+<meta property="article:modified_time" content="2025-09-18T15:12:43.717Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/18/Solana%E8%B4%A8%E6%8A%BC-%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E4%BB%8B%E7%BB%8D-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%9A%84%E5%88%9B%E5%BB%BA/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/18/Solana%E8%B4%A8%E6%8A%BC-%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E4%BB%8B%E7%BB%8D-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%9A%84%E5%88%9B%E5%BB%BA/","path":"2025/09/18/Solana质押-流动性质押介绍-质押池的创建/","title":"Solana质押-流动性质押介绍&质押池的创建"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana质押-流动性质押介绍&质押池的创建 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%EF%BC%88Liquid-Staking%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">流动性质押（Liquid Staking）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/18/Solana%E8%B4%A8%E6%8A%BC-%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC%E4%BB%8B%E7%BB%8D-%E8%B4%A8%E6%8A%BC%E6%B1%A0%E7%9A%84%E5%88%9B%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana质押-流动性质押介绍&amp;质押池的创建 | samxie52">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana质押-流动性质押介绍&质押池的创建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-18 22:49:26 / 修改时间：23:12:43" itemprop="dateCreated datePublished" datetime="2025-09-18T22:49:26+08:00">2025-09-18</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="流动性质押（Liquid-Staking）"><a href="#流动性质押（Liquid-Staking）" class="headerlink" title="流动性质押（Liquid Staking）"></a>流动性质押（Liquid Staking）</h2><p>1、native stake中，质押了SOL之后，这部分SOL就被冻结无法参与交易<br>2、流动性质押中，质押了SOL之后，staker将获得proxy token （liquid stakepool token）。这些token我们可以用来swap、traded、transferred。</p>
+<p><strong>收益</strong></p>
+<p>假设质押池初始时1sol&#x3D;1token<br>经过一定的epoch后1sol&#x3D;0.5token</p>
+<p>此时1token&#x3D;2sol</p>
+<p><strong>Solana Stake Pool Program</strong><br>一个标准质押池。实现了validator分配策略、费用、从池中委托&#x2F;提取资金的指令</p>
+<p><strong>ID</strong><br>SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy</p>
+<p><strong>官方文档</strong>：Solana Stake Pool Program Documentation</p>
+<p><strong>角色</strong><br>• Pool Manager：质押池的管理员及相关角色<br>• User Wallet：用户通过质押账户质押或者直接质押SOL<br>• Validator List：验证节点列表，validator通过vote account接收质押</p>
+<p><strong>Solana Stake Pool Program</strong></p>
+<p>热门流动性质押池</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Token</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Marinade</td>
+<td>mSOL</td>
+</tr>
+<tr>
+<td>Lido</td>
+<td>stSOL</td>
+</tr>
+<tr>
+<td>Jito</td>
+<td>jitoSOL</td>
+</tr>
+<tr>
+<td>Jpool</td>
+<td>jSOL</td>
+</tr>
+<tr>
+<td>Blaze Stake</td>
+<td>bSOL</td>
+</tr>
+<tr>
+<td>Socean</td>
+<td>ScnSOL</td>
+</tr>
+</tbody></table>
+<p><strong>如何创建质押池</strong></p>
+<p><strong>费用（收益）</strong><br>The stake pool program allows authorities to implement different types of fees for the pool:</p>
+<table>
+<thead>
+<tr>
+<th>Fee Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SOL Deposit</td>
+<td>% charged to users when a user deposits SOL into the pool</td>
+</tr>
+<tr>
+<td>Stake Deposit</td>
+<td>% charged to users when user delegates a stake account to the pool</td>
+</tr>
+<tr>
+<td>SOL Withdrawal</td>
+<td>% charged to users when a user withdrawals SOL from the pool</td>
+</tr>
+<tr>
+<td>Stake Withdrawal</td>
+<td>% charged to users when a user withdrawals SOL to an activated 34340L 2024</td>
+</tr>
+<tr>
+<td>Epoch (Stake Reward)</td>
+<td>% of the pool’s staking rewards that are charged to the pool at the end of each epoch</td>
+</tr>
+<tr>
+<td>Referral</td>
+<td>% of the pool’s deposit fee that is allocated to a partner application or wallet</td>
+</tr>
+</tbody></table>
+<p><strong>如何创建质押池</strong></p>
+<p><strong>Method 1- 使用 Solana CLI</strong></p>
+<p><strong>启动本地环境</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">solana-test-validator \</span><br><span class="line">--clone-upgradeable-program SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy \</span><br><span class="line">--clone-upgradeable-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s \</span><br><span class="line">--url mainnet-beta \</span><br><span class="line">--slots-per-epoch 32 \</span><br><span class="line">--quiet --reset</span><br><span class="line">solana config <span class="built_in">set</span> --url http://127.0.0.1:8899</span><br><span class="line">solana config <span class="built_in">set</span> --commitment confirmed</span><br></pre></td></tr></table></figure>
+
+<p><strong>必填参数</strong></p>
+<ul>
+<li>–epoch-fee-denominator：费用的底数。如果设置成100，所有费用都是百分数</li>
+<li>–epoch-fee-numerator：管理的手续费。如果validator收8%，stakepool收2%，对于100SOL的奖励，用户到手90.16 SOL</li>
+<li>–max-validators : stake pool中最大的validator</li>
+</ul>
+<p><strong>其他参数</strong></p>
+<ul>
+<li>–withdrawal-fee-［denominator|numerator］：提现的手续费</li>
+<li>–deposit-fee-［denominator|numerator］：质押的手续费</li>
+<li>–referral-fee：介绍费</li>
+<li>–manager <KEYPAIR>: stake pooliJ# [default: cli config keypair]</li>
+</ul>
+<p><strong>所有的账户地址我们都可以指定，不指定的话会创建新的地址</strong></p>
+<ul>
+<li>-validator-list-keypair <PATH>: validator list</li>
+<li>–mint-keypair <PATH>： mint账户使用的keypair ［default: new keypair]</li>
+<li>-reserve-keypair &lt;PATH› : pool reserve stake account</li>
+</ul>
+<p><strong>查看质押池</strong></p>
+<p>spl-stake-pool list -v <YOUR_STAKE_POOL_ADDRESS></p>
+<ul>
+<li>Stake Pool Account；质押池</li>
+<li>Validator List Account：验证节点列表</li>
+<li>Reserve Stake Account：持有还没有质押的sal，可以通过rebalanc&amp;的方式质押给validator</li>
+<li>Pool Token Mint Account : SPL token的mint account，代表着流动性质押置換的token</li>
+<li>Pool Fee Collection Account：为manager持有交易费</li>
+</ul>
+<p><strong>如何修改质押池</strong></p>
+<p><strong>修改manager</strong></p>
+<p>spl-stake-pool set-manager [FLAGS] [OPTIONS] <POOL_ADDRESS> &lt;—-new-manager «KEYPAIR&gt;|-new-fee-receiver «ADDRESS»&gt;</p>
+<p><strong>修改费用</strong></p>
+<p>spl-stake-pool set-fee (FLAGS] [OPTIONS] <POOL_ADDRESS> ‹FEE_TYPE&gt; «NUMERATOR&gt; «DENOMINATOR»</p>
+<p><strong>修改staker</strong><br>spl-stake-pool set-staker [FLAGS] [OPTIONS] <POOL_ADDRESS> [ADDRESSI]</p>
+<p><strong>添加validator</strong></p>
+<p>solana validators -u localhost<br>spl-stake-pool add-validator «YOUR_STAKE_POOL_ADDRESS&gt; «VOTE_ACCOUNT_ADDRESS&gt;<br>spl-stake-pool list -v <YOUR_STAKE_POOL_ADDRESS></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/18/Solana%E8%B4%A8%E6%8A%BC-native-stake/" rel="prev" title="Solana质押-native stake">
+                  <i class="fa fa-angle-left"></i> Solana质押-native stake
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
