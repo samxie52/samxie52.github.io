@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本教程详细介绍如何在Solana Anchor框架中实现NFT铸造功能，使用Metaplex Token Metadata程序来创建符合标准的NFT。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-mint">
+<meta property="og:url" content="http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91-nft-mint/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="本教程详细介绍如何在Solana Anchor框架中实现NFT铸造功能，使用Metaplex Token Metadata程序来创建符合标准的NFT。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-19T01:26:56.000Z">
+<meta property="article:modified_time" content="2025-09-19T08:59:48.363Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91-nft-mint/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91-nft-mint/","path":"2025/09/19/Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-mint/","title":"Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-mint"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-mint | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41-%E5%AE%9A%E4%B9%89NFT%E9%85%8D%E7%BD%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">步骤1: 定义NFT配置结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A42-%E5%AE%9E%E7%8E%B0NFT%E9%93%B8%E9%80%A0%E6%8C%87%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤2: 实现NFT铸造指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A43-%E6%B3%A8%E5%86%8CNFT%E9%93%B8%E9%80%A0%E6%8C%87%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">步骤3: 注册NFT铸造指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A44-%E5%AE%A2%E6%88%B7%E7%AB%AFNFT%E9%93%B8%E9%80%A0%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">步骤4: 客户端NFT铸造实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A45-%E5%AE%8C%E6%95%B4%E5%BA%94%E7%94%A8%E6%BC%94%E7%A4%BA%EF%BC%88%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">步骤5: 完整应用演示（示例代码结构）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%A6%81%E7%82%B9%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">技术要点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-NFT-vs-%E6%99%AE%E9%80%9AToken%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">6.1.</span> <span class="nav-text">1. NFT vs 普通Token的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Metaplex-Token-Metadata%E7%A8%8B%E5%BA%8F%E9%9B%86%E6%88%90"><span class="nav-number">6.2.</span> <span class="nav-text">2. Metaplex Token Metadata程序集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86%E5%92%8C%E9%AA%8C%E8%AF%81"><span class="nav-number">6.3.</span> <span class="nav-text">3. 账户管理和验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="nav-number">6.4.</span> <span class="nav-text">4. 两种实现方式对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">6.5.</span> <span class="nav-text">5. 安全考虑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Rust%E8%AF%AD%E6%B3%95%E8%A6%81%E7%82%B9%E8%A7%A3%E9%87%8A"><span class="nav-number">6.6.</span> <span class="nav-text">6. Rust语法要点解释</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#as-ref-vs-as-bytes-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">6.6.1.</span> <span class="nav-text">as_ref() vs as_bytes() 的使用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AD%97%E9%9D%A2%E9%87%8F-b"><span class="nav-number">6.6.2.</span> <span class="nav-text">字节字符串字面量 b&quot;...&quot;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%8F%A3%E8%AF%80"><span class="nav-number">6.6.3.</span> <span class="nav-text">记忆口诀</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91-nft-mint/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-mint | samxie52">
+      <meta itemprop="description" content="本教程详细介绍如何在Solana Anchor框架中实现NFT铸造功能，使用Metaplex Token Metadata程序来创建符合标准的NFT。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-mint
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-19 09:26:56 / 修改时间：16:59:48" itemprop="dateCreated datePublished" datetime="2025-09-19T09:26:56+08:00">2025-09-19</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">本教程详细介绍如何在Solana Anchor框架中实现NFT铸造功能，使用Metaplex Token Metadata程序来创建符合标准的NFT。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="步骤1-定义NFT配置结构"><a href="#步骤1-定义NFT配置结构" class="headerlink" title="步骤1: 定义NFT配置结构"></a>步骤1: 定义NFT配置结构</h2><p><strong>目的</strong>: 定义NFT的基本配置信息，包括名称、符号、元数据URL等静态配置。</p>
+<p><strong>文件位置</strong>: <code>../ibuidl-socail/programs/ibuidl-socail/src/state/nft.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT配置结构体</span></span><br><span class="line"><span class="comment">// 这个结构体不需要存储在链上，只是用于配置常量</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">IbuidlNft</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">IbuidlNft</span> &#123;</span><br><span class="line">    <span class="comment">// PDA种子前缀，用于生成NFT mint账户的确定性地址</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> SEED_PREFIX: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;mint_nft_v1&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NFT代币配置</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> TOKEN_DECIMALS: <span class="type">u8</span> = <span class="number">0</span>;           <span class="comment">// NFT小数位数为0（不可分割）</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> TOKEN_NAME: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;NYA&quot;</span>; <span class="comment">// NFT集合名称</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> TOKEN_SYMBOL: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;NYA&quot;</span>; <span class="comment">// NFT符号</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// NFT元数据JSON文件的URL</span></span><br><span class="line">    <span class="comment">// 这个JSON文件包含NFT的图片、描述等详细信息</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> TOKEN_URL: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> =</span><br><span class="line">        <span class="string">&quot;https://note-public-img.oss-cn-beijing.aliyuncs.com/nya/nya.json&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤2-实现NFT铸造指令"><a href="#步骤2-实现NFT铸造指令" class="headerlink" title="步骤2: 实现NFT铸造指令"></a>步骤2: 实现NFT铸造指令</h2><p><strong>目的</strong>: 实现完整的NFT铸造流程，包括创建mint账户、元数据账户、主版本账户，并铸造NFT给用户。</p>
+<p><strong>文件位置</strong>: <code>../ibuidl-socail/programs/ibuidl-socail/src/instructions/mpl_token_metadata/nft_mint.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"><span class="keyword">use</span> anchor_spl::&#123;</span><br><span class="line">    associated_token::AssociatedToken,</span><br><span class="line">    metadata::&#123;</span><br><span class="line">        <span class="comment">// Metaplex Token Metadata程序的相关结构和函数</span></span><br><span class="line">        create_master_edition_v3, create_metadata_accounts_v3,</span><br><span class="line">        mpl_token_metadata::&#123;</span><br><span class="line">            instructions::&#123;CreateV1CpiBuilder, MintV1CpiBuilder&#125;,</span><br><span class="line">            types::&#123;DataV2, PrintSupply&#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">        CreateMasterEditionV3, CreateMetadataAccountsV3, Metadata,</span><br><span class="line">    &#125;,</span><br><span class="line">    token::&#123;mint_to, Mint, MintTo, Token, TokenAccount&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> crate::state::IbuidlNft;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT铸造方法 V3 - 使用传统的CPI调用方式</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">nft_mint_v3</span>(ctx: Context&lt;NftMint&gt;, nft_id: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 构建PDA签名种子，用于程序代表mint账户进行签名</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">        IbuidlNft::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(),          <span class="comment">// &quot;mint_nft_v1&quot;</span></span><br><span class="line">        nft_id.<span class="title function_ invoke__">as_bytes</span>(),                          <span class="comment">// NFT的唯一ID</span></span><br><span class="line">        &amp;[ctx.bumps.nft_mint_account],             <span class="comment">// bump值，确保PDA有效</span></span><br><span class="line">    ]];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第一步：创建NFT元数据账户</span></span><br><span class="line">    <span class="comment">// 这个账户存储NFT的名称、符号、URI等信息</span></span><br><span class="line">    <span class="title function_ invoke__">create_metadata_accounts_v3</span>(</span><br><span class="line">        CpiContext::<span class="title function_ invoke__">new_with_signer</span>(</span><br><span class="line">            ctx.accounts.token_metadata_program.<span class="title function_ invoke__">to_account_info</span>(),  <span class="comment">// Metaplex程序</span></span><br><span class="line">            CreateMetadataAccountsV3 &#123;</span><br><span class="line">                metadata: ctx.accounts.metadata_account.<span class="title function_ invoke__">to_account_info</span>(),        <span class="comment">// 元数据账户</span></span><br><span class="line">                mint: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(),            <span class="comment">// mint账户</span></span><br><span class="line">                mint_authority: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(),   <span class="comment">// mint权限（PDA）</span></span><br><span class="line">                update_authority: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(), <span class="comment">// 更新权限（PDA）</span></span><br><span class="line">                payer: ctx.accounts.authority.<span class="title function_ invoke__">to_account_info</span>(),                   <span class="comment">// 费用支付者</span></span><br><span class="line">                system_program: ctx.accounts.system_program.<span class="title function_ invoke__">to_account_info</span>(),    <span class="comment">// 系统程序</span></span><br><span class="line">                rent: ctx.accounts.rent.<span class="title function_ invoke__">to_account_info</span>(),                        <span class="comment">// 租金sysvar</span></span><br><span class="line">            &#125;,</span><br><span class="line">            signer_seeds,  <span class="comment">// PDA签名种子</span></span><br><span class="line">        ),</span><br><span class="line">        DataV2 &#123;</span><br><span class="line">            <span class="comment">// NFT元数据</span></span><br><span class="line">            name: <span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125; #&#123;&#125;&quot;</span>, IbuidlNft::TOKEN_NAME.<span class="title function_ invoke__">to_string</span>(), nft_id), <span class="comment">// 动态生成名称</span></span><br><span class="line">            symbol: IbuidlNft::TOKEN_SYMBOL.<span class="title function_ invoke__">to_string</span>(),    <span class="comment">// 符号</span></span><br><span class="line">            uri: IbuidlNft::TOKEN_URL.<span class="title function_ invoke__">to_string</span>(),          <span class="comment">// 元数据JSON的URI</span></span><br><span class="line">            seller_fee_basis_points: <span class="number">0</span>,                     <span class="comment">// 版税费用（0表示无版税）</span></span><br><span class="line">            creators: <span class="literal">None</span>,                                 <span class="comment">// 创作者信息</span></span><br><span class="line">            collection: <span class="literal">None</span>,                               <span class="comment">// 所属集合</span></span><br><span class="line">            uses: <span class="literal">None</span>,                                     <span class="comment">// 使用限制</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="literal">false</span>, <span class="comment">// Is mutable - 元数据是否可变</span></span><br><span class="line">        <span class="literal">true</span>,  <span class="comment">// Update authority is signer - 更新权限是否为签名者</span></span><br><span class="line">        <span class="literal">None</span>,  <span class="comment">// Collection details - 集合详情</span></span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二步：铸造1个NFT代币给指定账户</span></span><br><span class="line">    <span class="title function_ invoke__">mint_to</span>(</span><br><span class="line">        CpiContext::<span class="title function_ invoke__">new_with_signer</span>(</span><br><span class="line">            ctx.accounts.token_program.<span class="title function_ invoke__">to_account_info</span>(),   <span class="comment">// SPL Token程序</span></span><br><span class="line">            MintTo &#123;</span><br><span class="line">                mint: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(),                    <span class="comment">// mint账户</span></span><br><span class="line">                to: ctx.accounts.nft_associated_token_account.<span class="title function_ invoke__">to_account_info</span>(),          <span class="comment">// 接收账户</span></span><br><span class="line">                authority: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(),               <span class="comment">// mint权限</span></span><br><span class="line">            &#125;,</span><br><span class="line">            signer_seeds,  <span class="comment">// PDA签名种子</span></span><br><span class="line">        ),</span><br><span class="line">        <span class="number">1</span>, <span class="comment">// 铸造数量：1个NFT（NFT不可分割）</span></span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三步：创建主版本账户，使其成为真正的NFT</span></span><br><span class="line">    <span class="comment">// 主版本账户限制供应量，确保这是唯一的NFT</span></span><br><span class="line">    <span class="title function_ invoke__">create_master_edition_v3</span>(</span><br><span class="line">        CpiContext::<span class="title function_ invoke__">new_with_signer</span>(</span><br><span class="line">            ctx.accounts.token_metadata_program.<span class="title function_ invoke__">to_account_info</span>(),  <span class="comment">// Metaplex程序</span></span><br><span class="line">            CreateMasterEditionV3 &#123;</span><br><span class="line">                edition: ctx.accounts.master_edition_account.<span class="title function_ invoke__">to_account_info</span>(),    <span class="comment">// 主版本账户</span></span><br><span class="line">                payer: ctx.accounts.authority.<span class="title function_ invoke__">to_account_info</span>(),                   <span class="comment">// 费用支付者</span></span><br><span class="line">                mint: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(),             <span class="comment">// mint账户</span></span><br><span class="line">                metadata: ctx.accounts.metadata_account.<span class="title function_ invoke__">to_account_info</span>(),         <span class="comment">// 元数据账户</span></span><br><span class="line">                mint_authority: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(),   <span class="comment">// mint权限</span></span><br><span class="line">                update_authority: ctx.accounts.nft_mint_account.<span class="title function_ invoke__">to_account_info</span>(), <span class="comment">// 更新权限</span></span><br><span class="line">                system_program: ctx.accounts.system_program.<span class="title function_ invoke__">to_account_info</span>(),    <span class="comment">// 系统程序</span></span><br><span class="line">                token_program: ctx.accounts.token_program.<span class="title function_ invoke__">to_account_info</span>(),      <span class="comment">// Token程序</span></span><br><span class="line">                rent: ctx.accounts.rent.<span class="title function_ invoke__">to_account_info</span>(),                        <span class="comment">// 租金sysvar</span></span><br><span class="line">            &#125;,</span><br><span class="line">            signer_seeds,  <span class="comment">// PDA签名种子</span></span><br><span class="line">        ),</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="number">1</span>), <span class="comment">// 最大供应量：1（确保唯一性）</span></span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    msg!(<span class="string">&quot;Token mint created successfully.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT铸造方法 V1 - 使用新的CPI Builder模式（推荐）</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">nft_mint_v1</span>(ctx: Context&lt;NftMint&gt;, nft_id: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 构建PDA签名种子</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">        IbuidlNft::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(),</span><br><span class="line">        nft_id.<span class="title function_ invoke__">as_bytes</span>(),</span><br><span class="line">        &amp;[ctx.bumps.nft_mint_account],</span><br><span class="line">    ]];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第一步：使用CreateV1CpiBuilder创建NFT</span></span><br><span class="line">    <span class="comment">// 这是Metaplex新推荐的方式，更简洁且功能更强大</span></span><br><span class="line">    CreateV1CpiBuilder::<span class="title function_ invoke__">new</span>(ctx.accounts.token_metadata_program.<span class="title function_ invoke__">as_ref</span>())</span><br><span class="line">        .<span class="title function_ invoke__">mint</span>(ctx.accounts.nft_mint_account.<span class="title function_ invoke__">as_ref</span>(), <span class="literal">true</span>)                    <span class="comment">// mint账户，第二个参数表示创建</span></span><br><span class="line">        .<span class="title function_ invoke__">metadata</span>(ctx.accounts.metadata_account.<span class="title function_ invoke__">as_ref</span>())                     <span class="comment">// 元数据账户</span></span><br><span class="line">        .<span class="title function_ invoke__">master_edition</span>(<span class="title function_ invoke__">Some</span>(ctx.accounts.master_edition_account.<span class="title function_ invoke__">as_ref</span>()))   <span class="comment">// 主版本账户</span></span><br><span class="line">        .<span class="title function_ invoke__">authority</span>(ctx.accounts.nft_mint_account.<span class="title function_ invoke__">as_ref</span>())                    <span class="comment">// mint权限</span></span><br><span class="line">        .<span class="title function_ invoke__">update_authority</span>(ctx.accounts.nft_mint_account.<span class="title function_ invoke__">as_ref</span>(), <span class="literal">true</span>)       <span class="comment">// 更新权限</span></span><br><span class="line">        .<span class="title function_ invoke__">payer</span>(ctx.accounts.authority.<span class="title function_ invoke__">as_ref</span>())                               <span class="comment">// 费用支付者</span></span><br><span class="line">        .<span class="title function_ invoke__">seller_fee_basis_points</span>(<span class="number">0</span>)                                           <span class="comment">// 版税费用</span></span><br><span class="line">        .<span class="title function_ invoke__">system_program</span>(ctx.accounts.system_program.<span class="title function_ invoke__">as_ref</span>())                 <span class="comment">// 系统程序</span></span><br><span class="line">        .<span class="title function_ invoke__">sysvar_instructions</span>(ctx.accounts.rent.<span class="title function_ invoke__">as_ref</span>())                      <span class="comment">// 指令sysvar</span></span><br><span class="line">        .<span class="title function_ invoke__">spl_token_program</span>(<span class="title function_ invoke__">Some</span>(ctx.accounts.token_program.<span class="title function_ invoke__">as_ref</span>()))         <span class="comment">// Token程序</span></span><br><span class="line">        .<span class="title function_ invoke__">name</span>(IbuidlNft::TOKEN_NAME.<span class="title function_ invoke__">to_string</span>())                             <span class="comment">// NFT名称</span></span><br><span class="line">        .<span class="title function_ invoke__">symbol</span>(IbuidlNft::TOKEN_SYMBOL.<span class="title function_ invoke__">to_string</span>())                         <span class="comment">// NFT符号</span></span><br><span class="line">        .<span class="title function_ invoke__">uri</span>(IbuidlNft::TOKEN_URL.<span class="title function_ invoke__">to_string</span>())                               <span class="comment">// 元数据URI</span></span><br><span class="line">        .<span class="title function_ invoke__">print_supply</span>(PrintSupply::Zero)                                      <span class="comment">// 打印供应量（0表示主版本）</span></span><br><span class="line">        .<span class="title function_ invoke__">invoke_signed</span>(signer_seeds)?;                                        <span class="comment">// 执行CPI调用</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二步：使用MintV1CpiBuilder铸造NFT</span></span><br><span class="line">    MintV1CpiBuilder::<span class="title function_ invoke__">new</span>(ctx.accounts.token_metadata_program.<span class="title function_ invoke__">as_ref</span>())</span><br><span class="line">        .<span class="title function_ invoke__">mint</span>(ctx.accounts.nft_mint_account.<span class="title function_ invoke__">as_ref</span>())                                        <span class="comment">// mint账户</span></span><br><span class="line">        .<span class="title function_ invoke__">metadata</span>(&amp;ctx.accounts.metadata_account.<span class="title function_ invoke__">to_account_info</span>())                         <span class="comment">// 元数据账户</span></span><br><span class="line">        .<span class="title function_ invoke__">master_edition</span>(<span class="title function_ invoke__">Some</span>(&amp;ctx.accounts.master_edition_account.<span class="title function_ invoke__">to_account_info</span>()))       <span class="comment">// 主版本账户</span></span><br><span class="line">        .<span class="title function_ invoke__">token</span>(&amp;ctx.accounts.nft_associated_token_account.<span class="title function_ invoke__">to_account_info</span>())                <span class="comment">// 代币账户</span></span><br><span class="line">        .<span class="title function_ invoke__">token_owner</span>(<span class="title function_ invoke__">Some</span>(ctx.accounts.authority.<span class="title function_ invoke__">as_ref</span>()))                                 <span class="comment">// 代币所有者</span></span><br><span class="line">        .<span class="title function_ invoke__">payer</span>(ctx.accounts.authority.<span class="title function_ invoke__">as_ref</span>())                                             <span class="comment">// 费用支付者</span></span><br><span class="line">        .<span class="title function_ invoke__">authority</span>(ctx.accounts.nft_mint_account.<span class="title function_ invoke__">as_ref</span>())                                  <span class="comment">// mint权限</span></span><br><span class="line">        .<span class="title function_ invoke__">system_program</span>(ctx.accounts.system_program.<span class="title function_ invoke__">as_ref</span>())                               <span class="comment">// 系统程序</span></span><br><span class="line">        .<span class="title function_ invoke__">sysvar_instructions</span>(ctx.accounts.rent.<span class="title function_ invoke__">as_ref</span>())                                    <span class="comment">// 指令sysvar</span></span><br><span class="line">        .<span class="title function_ invoke__">spl_token_program</span>(ctx.accounts.token_program.<span class="title function_ invoke__">as_ref</span>())                             <span class="comment">// Token程序</span></span><br><span class="line">        .<span class="title function_ invoke__">spl_ata_program</span>(ctx.accounts.associated_token_program.<span class="title function_ invoke__">as_ref</span>())                    <span class="comment">// 关联代币程序</span></span><br><span class="line">        .<span class="title function_ invoke__">amount</span>(<span class="number">1</span>)                                                                          <span class="comment">// 铸造数量</span></span><br><span class="line">        .<span class="title function_ invoke__">invoke_signed</span>(signer_seeds)?;                                                      <span class="comment">// 执行CPI调用</span></span><br><span class="line"></span><br><span class="line">    msg!(<span class="string">&quot;successfully mint nya nft!&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT铸造指令所需的账户结构</span></span><br><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="meta">#[instruction(nft_id: String)]</span>  <span class="comment">// 接收nft_id参数用于生成PDA</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">NftMint</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 主版本账户：用于标识这是一个NFT而不是普通的代币</span></span><br><span class="line">    <span class="comment">// PDA地址由Metaplex程序计算：[&quot;metadata&quot;, metaplex_program_id, mint_pubkey, &quot;edition&quot;]</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                           // 可变账户，因为需要初始化</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            b<span class="string">&quot;metadata&quot;</span>.as_ref(),                      // 固定前缀</span></span><br><span class="line"><span class="meta">            token_metadata_program.key().as_ref(),     // Metaplex程序ID</span></span><br><span class="line"><span class="meta">            nft_mint_account.key().as_ref(),          // mint账户地址</span></span><br><span class="line"><span class="meta">            b<span class="string">&quot;edition&quot;</span>.as_ref(),                       // <span class="string">&quot;edition&quot;</span>后缀</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                          <span class="comment">// 自动寻找bump值</span></span><br><span class="line">        seeds::program = token_metadata_program.<span class="title function_ invoke__">key</span>()  <span class="comment">// 指定PDA的程序ID</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="comment">/// CHECK: 使用UncheckedAccount因为这个账户由Metaplex程序管理</span></span><br><span class="line">    <span class="keyword">pub</span> master_edition_account: UncheckedAccount&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NFT元数据账户：存储NFT的名称、符号、URI等信息</span></span><br><span class="line">    <span class="comment">// PDA地址：[&quot;metadata&quot;, metaplex_program_id, mint_pubkey]</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                           // 可变账户，因为需要初始化</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            b<span class="string">&quot;metadata&quot;</span>.as_ref(),                      // 固定前缀</span></span><br><span class="line"><span class="meta">            token_metadata_program.key().as_ref(),     // Metaplex程序ID</span></span><br><span class="line"><span class="meta">            nft_mint_account.key().as_ref(),          // mint账户地址</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                          <span class="comment">// 自动寻找bump值</span></span><br><span class="line">        seeds::program = token_metadata_program.<span class="title function_ invoke__">key</span>()  <span class="comment">// 指定PDA的程序ID</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="comment">/// CHECK: 元数据账户地址通过PDA验证</span></span><br><span class="line">    <span class="keyword">pub</span> metadata_account: UncheckedAccount&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NFT mint账户：代币铸造账户</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init,                                          // 初始化新账户</span></span><br><span class="line"><span class="meta">        payer = authority,                             // 创建费用支付者</span></span><br><span class="line"><span class="meta">        mint::decimals = 0,                            // NFT小数位数为0</span></span><br><span class="line"><span class="meta">        mint::authority = nft_mint_account,            // mint权限为自身（PDA）</span></span><br><span class="line"><span class="meta">        mint::freeze_authority = nft_mint_account,     // 冻结权限为自身（PDA）</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            IbuidlNft::SEED_PREFIX.as_bytes(),         // <span class="string">&quot;mint_nft_v1&quot;</span></span></span><br><span class="line"><span class="meta">            &amp;nft_id.to_string().as_bytes(),            // NFT唯一ID</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump                                           <span class="comment">// 自动寻找bump值</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> nft_mint_account: Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关联代币账户：用户持有NFT的账户</span></span><br><span class="line">    <span class="comment">// 如果账户不存在会自动创建</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init_if_needed,                                // 如果不存在则创建</span></span><br><span class="line"><span class="meta">        payer = authority,                             // 创建费用支付者</span></span><br><span class="line"><span class="meta">        associated_token::mint = nft_mint_account,     // 关联到NFT mint</span></span><br><span class="line"><span class="meta">        associated_token::authority = authority,        // 账户所有者为用户</span></span><br><span class="line"><span class="meta">    )]</span></span><br><span class="line">    <span class="keyword">pub</span> nft_associated_token_account: Account&lt;<span class="symbol">&#x27;info</span>, TokenAccount&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Solana租金sysvar，用于计算账户租金</span></span><br><span class="line">    <span class="keyword">pub</span> rent: Sysvar&lt;<span class="symbol">&#x27;info</span>, Rent&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 交易发起者和费用支付者</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span>  <span class="comment">// 可变，因为需要支付交易费用</span></span><br><span class="line">    <span class="keyword">pub</span> authority: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 所需的程序账户</span></span><br><span class="line">    <span class="keyword">pub</span> token_metadata_program: Program&lt;<span class="symbol">&#x27;info</span>, Metadata&gt;,        <span class="comment">// Metaplex Token Metadata程序</span></span><br><span class="line">    <span class="keyword">pub</span> token_program: Program&lt;<span class="symbol">&#x27;info</span>, Token&gt;,                    <span class="comment">// SPL Token程序</span></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;,                  <span class="comment">// Solana系统程序</span></span><br><span class="line">    <span class="keyword">pub</span> associated_token_program: Program&lt;<span class="symbol">&#x27;info</span>, AssociatedToken&gt;, <span class="comment">// 关联代币程序</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤3-注册NFT铸造指令"><a href="#步骤3-注册NFT铸造指令" class="headerlink" title="步骤3: 注册NFT铸造指令"></a>步骤3: 注册NFT铸造指令</h2><p><strong>目的</strong>: 在主程序文件中注册NFT铸造指令，使其可以被客户端调用。</p>
+<p><strong>文件位置</strong>: <code>../ibuidl-socail/programs/ibuidl-socail/src/lib.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NFT铸造指令的公共接口</span></span><br><span class="line"><span class="comment">// 这个函数暴露给客户端，用于铸造NFT</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">nft_mint</span>(ctx: Context&lt;NftMint&gt;, nft_id: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 调用具体的实现逻辑，这里使用V3版本</span></span><br><span class="line">    <span class="comment">// 也可以改为nft_mint_v1(ctx, nft_id)来使用新版本的实现</span></span><br><span class="line">    instructions::mpl_token_metadata::nft_mint::<span class="title function_ invoke__">nft_mint_v3</span>(ctx, nft_id)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤4-客户端NFT铸造实现"><a href="#步骤4-客户端NFT铸造实现" class="headerlink" title="步骤4: 客户端NFT铸造实现"></a>步骤4: 客户端NFT铸造实现</h2><p><strong>目的</strong>: 在客户端实现NFT铸造功能，与链上程序交互发送铸造交易。</p>
+<p><strong>文件位置</strong>: <code>../ibuidl-socail/app/api/nft.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; program &#125; <span class="keyword">from</span> <span class="string">&quot;./wallet&quot;</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> anchor <span class="keyword">from</span> <span class="string">&quot;@coral-xyz/anchor&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端NFT铸造函数</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">nftMint</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">wallet</span>: anchor.<span class="title class_">Wallet</span>,      <span class="comment">// 用户钱包</span></span></span><br><span class="line"><span class="params">    <span class="attr">id</span>: <span class="built_in">string</span>,                 <span class="comment">// NFT的唯一ID</span></span></span><br><span class="line"><span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 调用链上程序的nftMint指令</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> program.<span class="property">methods</span>.<span class="title function_">nftMint</span>(id)  <span class="comment">// 传入NFT ID</span></span><br><span class="line">        .<span class="title function_">accounts</span>(&#123;&#125;)                         <span class="comment">// 账户由Anchor自动解析</span></span><br><span class="line">        .<span class="title function_">signers</span>([wallet.<span class="property">payer</span>])             <span class="comment">// 交易签名者</span></span><br><span class="line">        .<span class="title function_">rpc</span>();                              <span class="comment">// 通过RPC发送交易</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤5-完整应用演示（示例代码结构）"><a href="#步骤5-完整应用演示（示例代码结构）" class="headerlink" title="步骤5: 完整应用演示（示例代码结构）"></a>步骤5: 完整应用演示（示例代码结构）</h2><p><strong>目的</strong>: 展示如何在完整应用中使用NFT铸造功能。</p>
+<p><strong>文件位置</strong>: <code>../ibuidl-socail/app/index.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; nftMint &#125; <span class="keyword">from</span> <span class="string">&quot;./api/nft&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useDefaultWallet &#125; <span class="keyword">from</span> <span class="string">&quot;./app/wallet&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT铸造演示流程</span></span><br><span class="line">(<span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="comment">// 初始化用户钱包</span></span><br><span class="line">    <span class="keyword">const</span> wallet = <span class="title function_">useDefaultWallet</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Wallet address:&quot;</span>, wallet.<span class="property">publicKey</span>.<span class="title function_">toString</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生成唯一的NFT ID</span></span><br><span class="line">    <span class="keyword">const</span> nftId = <span class="title class_">Date</span>.<span class="title function_">now</span>().<span class="title function_">toString</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Minting NFT with ID:&quot;</span>, nftId);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 执行NFT铸造</span></span><br><span class="line">        <span class="keyword">const</span> txSignature = <span class="keyword">await</span> <span class="title function_">nftMint</span>(wallet, nftId);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;NFT minted successfully!&quot;</span>);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Transaction signature:&quot;</span>, txSignature);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 可以在这里添加更多逻辑，比如：</span></span><br><span class="line">        <span class="comment">// 1. 查询铸造后的NFT信息</span></span><br><span class="line">        <span class="comment">// 2. 更新用户界面</span></span><br><span class="line">        <span class="comment">// 3. 记录铸造日志等</span></span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;Failed to mint NFT:&quot;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<h2 id="技术要点总结"><a href="#技术要点总结" class="headerlink" title="技术要点总结"></a>技术要点总结</h2><h3 id="1-NFT-vs-普通Token的区别"><a href="#1-NFT-vs-普通Token的区别" class="headerlink" title="1. NFT vs 普通Token的区别"></a>1. NFT vs 普通Token的区别</h3><ul>
+<li><strong>供应量</strong>: NFT供应量为1，普通Token可以有大量供应</li>
+<li><strong>小数位数</strong>: NFT的decimals为0（不可分割），普通Token通常有6-9位小数</li>
+<li><strong>元数据</strong>: NFT有丰富的元数据（图片、描述等），普通Token通常只有基本信息</li>
+<li><strong>主版本</strong>: NFT需要创建master edition来限制供应量</li>
+</ul>
+<h3 id="2-Metaplex-Token-Metadata程序集成"><a href="#2-Metaplex-Token-Metadata程序集成" class="headerlink" title="2. Metaplex Token Metadata程序集成"></a>2. Metaplex Token Metadata程序集成</h3><ul>
+<li><strong>元数据账户</strong>: 存储NFT的名称、符号、URI等信息</li>
+<li><strong>主版本账户</strong>: 限制供应量，确保NFT的唯一性</li>
+<li><strong>PDA地址</strong>: 元数据和主版本账户都使用标准的PDA地址生成规则</li>
+</ul>
+<h3 id="3-账户管理和验证"><a href="#3-账户管理和验证" class="headerlink" title="3. 账户管理和验证"></a>3. 账户管理和验证</h3><ul>
+<li><strong>PDA</strong>: 使用program-derived addresses确保账户地址的唯一性和安全性</li>
+<li><strong>关联代币账户</strong>: 自动为用户创建用于持有NFT的代币账户</li>
+<li><strong>权限控制</strong>: mint和freeze权限都设置为PDA，确保程序控制</li>
+</ul>
+<h3 id="4-两种实现方式对比"><a href="#4-两种实现方式对比" class="headerlink" title="4. 两种实现方式对比"></a>4. 两种实现方式对比</h3><ul>
+<li><strong>V3方式</strong>: 使用传统的CPI函数调用，分步骤执行</li>
+<li><strong>V1方式</strong>: 使用新的CPI Builder模式，代码更简洁，功能更强大</li>
+</ul>
+<h3 id="5-安全考虑"><a href="#5-安全考虑" class="headerlink" title="5. 安全考虑"></a>5. 安全考虑</h3><ul>
+<li>使用PDA作为mint authority确保安全性</li>
+<li>通过seed validation防止账户冲突</li>
+<li>proper account validation确保所有账户都是正确的</li>
+</ul>
+<h3 id="6-Rust语法要点解释"><a href="#6-Rust语法要点解释" class="headerlink" title="6. Rust语法要点解释"></a>6. Rust语法要点解释</h3><h4 id="as-ref-vs-as-bytes-的使用场景"><a href="#as-ref-vs-as-bytes-的使用场景" class="headerlink" title="as_ref() vs as_bytes() 的使用场景"></a><code>as_ref()</code> vs <code>as_bytes()</code> 的使用场景</h4><p>在定义PDA seeds时，经常会遇到这两个方法，它们的使用取决于<strong>数据的原始类型</strong>：</p>
+<p><strong>判断标准</strong>：</p>
+<ul>
+<li><strong>文字类型</strong> → 使用 <code>as_bytes()</code></li>
+<li><strong>公钥类型</strong> → 使用 <code>as_ref()</code></li>
+<li><strong>字节数组</strong> → 直接使用</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 类型速查表</span></span><br><span class="line">| 原始类型 | 转换方法 | 举例 |</span><br><span class="line">|---------|---------|------|</span><br><span class="line">| `&amp;<span class="type">str</span>` | `.<span class="title function_ invoke__">as_bytes</span>()` | `<span class="string">&quot;metadata&quot;</span>.<span class="title function_ invoke__">as_bytes</span>()` |</span><br><span class="line">| `<span class="type">String</span>` | `.<span class="title function_ invoke__">as_bytes</span>()` | `nft_id.<span class="title function_ invoke__">to_string</span>().<span class="title function_ invoke__">as_bytes</span>()` |</span><br><span class="line">| `Pubkey` | `.<span class="title function_ invoke__">as_ref</span>()` | `pubkey.<span class="title function_ invoke__">key</span>().<span class="title function_ invoke__">as_ref</span>()` |</span><br><span class="line">| `&amp;[<span class="type">u8</span>]` | 直接使用 | `<span class="string">b&quot;metadata&quot;</span>` |</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际代码对比</span></span><br><span class="line">seeds = [</span><br><span class="line">    <span class="string">b&quot;metadata&quot;</span>,                        <span class="comment">// 字节字面量，直接使用</span></span><br><span class="line">    <span class="string">&quot;metadata&quot;</span>.<span class="title function_ invoke__">as_bytes</span>(),              <span class="comment">// 字符串转字节，用as_bytes()</span></span><br><span class="line">    token_program.<span class="title function_ invoke__">key</span>().<span class="title function_ invoke__">as_ref</span>(),       <span class="comment">// 公钥转字节，用as_ref()</span></span><br><span class="line">    nft_id.<span class="title function_ invoke__">to_string</span>().<span class="title function_ invoke__">as_bytes</span>(),      <span class="comment">// 字符串转字节，用as_bytes()</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h4 id="字节字符串字面量-b"><a href="#字节字符串字面量-b" class="headerlink" title="字节字符串字面量 b&quot;...&quot;"></a>字节字符串字面量 <code>b&quot;...&quot;</code></h4><p><code>b&quot;metadata&quot;</code> 是Rust的语法糖，直接创建字节数组：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这三种写法完全等价：</span></span><br><span class="line"><span class="string">b&quot;metadata&quot;</span>                    <span class="comment">// 推荐：直接字节数组</span></span><br><span class="line"><span class="string">&quot;metadata&quot;</span>.<span class="title function_ invoke__">as_bytes</span>()          <span class="comment">// 字符串转字节</span></span><br><span class="line">&amp;[<span class="number">109</span>, <span class="number">101</span>, <span class="number">116</span>, <span class="number">97</span>, <span class="number">100</span>, <span class="number">97</span>, <span class="number">116</span>, <span class="number">97</span>]  <span class="comment">// 直接写字节</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 在seeds中的最佳实践</span></span><br><span class="line">seeds = [</span><br><span class="line">    <span class="string">b&quot;metadata&quot;</span>,                       <span class="comment">// ✅ 简洁明了</span></span><br><span class="line">    <span class="comment">// &quot;metadata&quot;.as_bytes(),          // ✅ 也可以，但冗余</span></span><br><span class="line">    token_metadata_program.<span class="title function_ invoke__">key</span>().<span class="title function_ invoke__">as_ref</span>(), <span class="comment">// ✅ 公钥必须用as_ref()</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h4 id="记忆口诀"><a href="#记忆口诀" class="headerlink" title="记忆口诀"></a>记忆口诀</h4><ul>
+<li><strong>文字 → 字节</strong>：<code>as_bytes()</code></li>
+<li><strong>公钥 → 字节</strong>：<code>as_ref()</code>  </li>
+<li><strong>已是字节</strong>：直接用</li>
+</ul>
+<p>这个完整的NFT铸造教程展示了如何在Solana上使用Anchor框架和Metaplex标准创建符合规范的NFT，适合作为质押奖励、成就徽章或其他应用场景。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E8%BF%9B%E8%A1%8C%E6%B5%81%E5%8A%A8%E6%80%A7%E8%B4%A8%E6%8A%BC/" rel="prev" title="Solana质押-进行流动性质押">
+                  <i class="fa fa-angle-left"></i> Solana质押-进行流动性质押
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
