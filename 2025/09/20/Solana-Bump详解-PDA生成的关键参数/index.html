@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solana Bump详解 - PDA生成的关键参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana Bump详解 - PDA生成的关键参数">
+<meta property="og:url" content="http://example.com/2025/09/20/Solana-Bump%E8%AF%A6%E8%A7%A3-PDA%E7%94%9F%E6%88%90%E7%9A%84%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="Solana Bump详解 - PDA生成的关键参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-20T00:21:03.000Z">
+<meta property="article:modified_time" content="2025-09-20T00:21:19.991Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/20/Solana-Bump%E8%AF%A6%E8%A7%A3-PDA%E7%94%9F%E6%88%90%E7%9A%84%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/20/Solana-Bump%E8%AF%A6%E8%A7%A3-PDA%E7%94%9F%E6%88%90%E7%9A%84%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0/","path":"2025/09/20/Solana-Bump详解-PDA生成的关键参数/","title":"Solana Bump详解 - PDA生成的关键参数"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana Bump详解 - PDA生成的关键参数 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solana-Bump%E8%AF%A6%E8%A7%A3-PDA%E7%94%9F%E6%88%90%E7%9A%84%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">Solana Bump详解 - PDA生成的关键参数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A4%94-%E4%BB%80%E4%B9%88%E6%98%AF-Bump%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">🤔 什么是 Bump？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%8D-%E9%80%9A%E4%BF%97%E6%AF%94%E5%96%BB%E7%90%86%E8%A7%A3"><span class="nav-number">1.1.1.</span> <span class="nav-text">🔍 通俗比喻理解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%8A-Bump-%E7%94%9F%E6%88%90%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">📊 Bump 生成过程详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AF%BB%E6%89%BE-Bump-%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 寻找 Bump 的算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%9E%E9%99%85%E4%BE%8B%E5%AD%90"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 实际例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%97-Bump-%E4%B8%8E-Signer-seeds-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.</span> <span class="nav-text">🔗 Bump 与 Signer_seeds 的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%8C%E6%95%B4%E7%9A%84%E7%AD%BE%E5%90%8D%E8%BF%87%E7%A8%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 完整的签名过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81Bump%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 为什么需要Bump？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E5%AE%89%E5%85%A8%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">A. 安全性保证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E5%94%AF%E4%B8%80%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">B. 唯一性保证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="nav-number">1.4.</span> <span class="nav-text">🧩 实际应用场景分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF1%EF%BC%9AToken-Mint-Account"><span class="nav-number">1.4.1.</span> <span class="nav-text">场景1：Token Mint Account</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF2%EF%BC%9AStake-Info-Account"><span class="nav-number">1.4.2.</span> <span class="nav-text">场景2：Stake Info Account</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8E%AF-ctx-bumps-%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.5.</span> <span class="nav-text">🎯 ctx.bumps 详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ctx-bumps%EF%BC%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">什么是 ctx.bumps？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">完整的工作流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9A%A8-%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.6.</span> <span class="nav-text">🚨 常见错误和解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF1%EF%BC%9ABump%E5%80%BC%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.6.1.</span> <span class="nav-text">错误1：Bump值不匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF2%EF%BC%9A%E7%A7%8D%E5%AD%90%E9%A1%BA%E5%BA%8F%E5%BD%B1%E5%93%8DBump"><span class="nav-number">1.6.2.</span> <span class="nav-text">错误2：种子顺序影响Bump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF3%EF%BC%9A%E9%81%97%E6%BC%8FBump"><span class="nav-number">1.6.3.</span> <span class="nav-text">错误3：遗漏Bump</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%A7-%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7"><span class="nav-number">1.7.</span> <span class="nav-text">🔧 调试技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%89%93%E5%8D%B0Bump%E5%80%BC"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 打印Bump值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%AA%8C%E8%AF%81PDA%E5%9C%B0%E5%9D%80"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 验证PDA地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9F%A5%E6%89%BEBump"><span class="nav-number">1.7.3.</span> <span class="nav-text">3. 客户端查找Bump</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%9D-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.</span> <span class="nav-text">📝 最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%A7%8B%E7%BB%88%E4%BD%BF%E7%94%A8Anchor%E7%9A%84Bump%E7%AE%A1%E7%90%86"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 始终使用Anchor的Bump管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BF%9D%E6%8C%81%E7%A7%8D%E5%AD%90%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 保持种子一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%90%86%E8%A7%A3Bump%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="nav-number">1.8.3.</span> <span class="nav-text">3. 理解Bump的作用域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8E%89-%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">🎉 总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/20/Solana-Bump%E8%AF%A6%E8%A7%A3-PDA%E7%94%9F%E6%88%90%E7%9A%84%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana Bump详解 - PDA生成的关键参数 | samxie52">
+      <meta itemprop="description" content="Solana Bump详解 - PDA生成的关键参数">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana Bump详解 - PDA生成的关键参数
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-20 08:21:03 / 修改时间：08:21:19" itemprop="dateCreated datePublished" datetime="2025-09-20T08:21:03+08:00">2025-09-20</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">Solana Bump详解 - PDA生成的关键参数</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solana-Bump详解-PDA生成的关键参数"><a href="#Solana-Bump详解-PDA生成的关键参数" class="headerlink" title="Solana Bump详解 - PDA生成的关键参数"></a>Solana Bump详解 - PDA生成的关键参数</h1><h2 id="🤔-什么是-Bump？"><a href="#🤔-什么是-Bump？" class="headerlink" title="🤔 什么是 Bump？"></a>🤔 什么是 Bump？</h2><p><strong>Bump</strong> 是一个 <strong>0-255 之间的数字</strong>，用来确保 PDA（Program Derived Address）地址<strong>不在椭圆曲线上</strong>，从而让这个地址无法拥有对应的私钥。</p>
+<h3 id="🔍-通俗比喻理解"><a href="#🔍-通俗比喻理解" class="headerlink" title="🔍 通俗比喻理解"></a>🔍 通俗比喻理解</h3><p>想象你在玩一个”地址生成游戏”：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">游戏规则：</span><br><span class="line">1. 你有一些种子（seeds）：[&quot;mint_v9&quot;, program_id]</span><br><span class="line">2. 你需要找到一个&quot;魔法数字&quot;（bump），让这些材料组合后</span><br><span class="line">3. 生成一个&quot;特殊地址&quot;（这个地址没有私钥，只有程序能控制）</span><br><span class="line"></span><br><span class="line">过程：</span><br><span class="line">种子 + bump + 程序ID → 哈希运算 → 检查是否在椭圆曲线上</span><br><span class="line">如果在椭圆曲线上 → bump减1，重新计算</span><br><span class="line">如果不在椭圆曲线上 → 成功！这就是我们要的PDA</span><br></pre></td></tr></table></figure>
+
+<h2 id="📊-Bump-生成过程详解"><a href="#📊-Bump-生成过程详解" class="headerlink" title="📊 Bump 生成过程详解"></a>📊 Bump 生成过程详解</h2><h3 id="1-寻找-Bump-的算法"><a href="#1-寻找-Bump-的算法" class="headerlink" title="1. 寻找 Bump 的算法"></a>1. 寻找 Bump 的算法</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Solana 内部寻找 bump 的过程（简化版）</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">find_program_address</span>(seeds: &amp;[&amp;[<span class="type">u8</span>]], program_id: &amp;Pubkey) <span class="punctuation">-&gt;</span> (Pubkey, <span class="type">u8</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">bump</span> <span class="keyword">in</span> (<span class="number">1</span>..=<span class="number">255</span>).<span class="title function_ invoke__">rev</span>() &#123;  <span class="comment">// 从255开始向下尝试</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">seed_with_bump</span> = seeds.<span class="title function_ invoke__">to_vec</span>();</span><br><span class="line">        seed_with_bump.<span class="title function_ invoke__">push</span>(&amp;[bump]);  <span class="comment">// 把bump加到种子末尾</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 用种子+bump+程序ID计算哈希</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">potential_address</span> = <span class="title function_ invoke__">create_program_address</span>(&amp;seed_with_bump, program_id);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 检查这个地址是否&quot;合法&quot;（不在椭圆曲线上）</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Ok</span>(address) = potential_address &#123;</span><br><span class="line">            <span class="title function_ invoke__">return</span> (address, bump);  <span class="comment">// 找到了！返回地址和bump</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果不合法，继续尝试下一个bump值</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic!</span>(<span class="string">&quot;Could not find valid bump!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-实际例子"><a href="#2-实际例子" class="headerlink" title="2. 实际例子"></a>2. 实际例子</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设我们要为这些种子找到PDA</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">seeds</span> = [<span class="string">b&quot;mint_v9&quot;</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">program_id</span> = <span class="string">&quot;你的程序ID&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Solana会这样尝试：</span></span><br><span class="line"><span class="comment">// 尝试 bump = 255: 种子[&quot;mint_v9&quot;] + [255] + 程序ID → 哈希 → 检查 → 失败</span></span><br><span class="line"><span class="comment">// 尝试 bump = 254: 种子[&quot;mint_v9&quot;] + [254] + 程序ID → 哈希 → 检查 → 失败  </span></span><br><span class="line"><span class="comment">// 尝试 bump = 253: 种子[&quot;mint_v9&quot;] + [253] + 程序ID → 哈希 → 检查 → 成功！</span></span><br><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="comment">// 结果：PDA地址 = &quot;ABC123...&quot;, bump = 253</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="🔗-Bump-与-Signer-seeds-的关系"><a href="#🔗-Bump-与-Signer-seeds-的关系" class="headerlink" title="🔗 Bump 与 Signer_seeds 的关系"></a>🔗 Bump 与 Signer_seeds 的关系</h2><h3 id="1-完整的签名过程"><a href="#1-完整的签名过程" class="headerlink" title="1. 完整的签名过程"></a>1. 完整的签名过程</h3><p>当程序需要代表PDA签名时，必须提供<strong>完整的生成参数</strong>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 步骤1：账户定义时，Anchor自动找到bump</span></span><br><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    seeds = [b<span class="string">&quot;mint_v9&quot;</span>]</span>,    <span class="comment">// 种子</span></span><br><span class="line">    bump,                    <span class="comment">// Anchor自动计算并存储bump值</span></span><br><span class="line">)]</span><br><span class="line"><span class="keyword">pub</span> token_mint_account: Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;,</span><br><span class="line"></span><br><span class="line"><span class="comment">// 步骤2：使用时，必须提供相同的种子+bump</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),              <span class="comment">// 种子（必须与定义时一致）</span></span><br><span class="line">    &amp;[ctx.bumps.token_mint_account]   <span class="comment">// bump（必须是当时找到的那个值）</span></span><br><span class="line">]];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 步骤3：Solana验证</span></span><br><span class="line"><span class="comment">// Solana会用你提供的种子+bump+程序ID重新计算地址</span></span><br><span class="line"><span class="comment">// 如果计算出的地址与实际的token_mint_account地址一致 → 验证通过</span></span><br><span class="line"><span class="comment">// 如果不一致 → 签名失败</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-为什么需要Bump？"><a href="#2-为什么需要Bump？" class="headerlink" title="2. 为什么需要Bump？"></a>2. 为什么需要Bump？</h3><h4 id="A-安全性保证"><a href="#A-安全性保证" class="headerlink" title="A. 安全性保证"></a>A. 安全性保证</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">没有Bump的普通地址：</span><br><span class="line">地址 = 哈希(种子 + 程序ID)</span><br><span class="line">问题：可能会生成一个有私钥的地址！→ 不安全</span><br><span class="line"></span><br><span class="line">有Bump的PDA地址：  </span><br><span class="line">地址 = 哈希(种子 + bump + 程序ID)</span><br><span class="line">保证：这个地址一定没有私钥 → 安全</span><br></pre></td></tr></table></figure>
+
+<h4 id="B-唯一性保证"><a href="#B-唯一性保证" class="headerlink" title="B. 唯一性保证"></a>B. 唯一性保证</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">相同的种子 + 相同的程序ID → 永远得到相同的PDA地址和bump值</span><br><span class="line">这确保了确定性：同一个程序的同一组种子总是生成同一个地址</span><br></pre></td></tr></table></figure>
+
+<h2 id="🧩-实际应用场景分析"><a href="#🧩-实际应用场景分析" class="headerlink" title="🧩 实际应用场景分析"></a>🧩 实际应用场景分析</h2><h3 id="场景1：Token-Mint-Account"><a href="#场景1：Token-Mint-Account" class="headerlink" title="场景1：Token Mint Account"></a>场景1：Token Mint Account</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 定义阶段</span></span><br><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    seeds = [b<span class="string">&quot;mint_v9&quot;</span>]</span>,</span><br><span class="line">    bump,  <span class="comment">// 假设Anchor找到的bump是253</span></span><br><span class="line">)]</span><br><span class="line"><span class="keyword">pub</span> token_mint_account: Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;,</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 使用阶段  </span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),      <span class="comment">// 种子：&quot;mint_v9&quot;</span></span><br><span class="line">    &amp;[<span class="number">253</span>]                    <span class="comment">// bump：253（必须是之前找到的值）</span></span><br><span class="line">]];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. Solana内部验证过程</span></span><br><span class="line"><span class="comment">// 计算：哈希(&quot;mint_v9&quot; + [253] + 程序ID)</span></span><br><span class="line"><span class="comment">// 结果：如果等于token_mint_account的实际地址 → 验证通过</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="场景2：Stake-Info-Account"><a href="#场景2：Stake-Info-Account" class="headerlink" title="场景2：Stake Info Account"></a>场景2：Stake Info Account</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 定义阶段</span></span><br><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    seeds = [</span></span><br><span class="line"><span class="meta">        b<span class="string">&quot;stake_v1&quot;</span>,              // 种子1  </span></span><br><span class="line"><span class="meta">        nft_mint_account.key().as_ref(),  // 种子2</span></span><br><span class="line"><span class="meta">    ]</span>,</span><br><span class="line">    bump,  <span class="comment">// 假设Anchor找到的bump是177</span></span><br><span class="line">)]</span><br><span class="line"><span class="keyword">pub</span> stake_info: Account&lt;<span class="symbol">&#x27;info</span>, IbuidlStake&gt;,</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 使用阶段</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;stake_v1&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),        <span class="comment">// 种子1：&quot;stake_v1&quot;</span></span><br><span class="line">    nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),   <span class="comment">// 种子2：NFT mint地址</span></span><br><span class="line">    &amp;[<span class="number">177</span>]                       <span class="comment">// bump：177（必须是之前找到的值）</span></span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h2 id="🎯-ctx-bumps-详解"><a href="#🎯-ctx-bumps-详解" class="headerlink" title="🎯 ctx.bumps 详解"></a>🎯 ctx.bumps 详解</h2><h3 id="什么是-ctx-bumps？"><a href="#什么是-ctx-bumps？" class="headerlink" title="什么是 ctx.bumps？"></a>什么是 ctx.bumps？</h3><p><code>ctx.bumps</code> 是Anchor框架提供的一个便利工具，自动存储所有PDA账户的bump值：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Context</span>&lt;<span class="symbol">&#x27;a</span>, <span class="symbol">&#x27;b</span>, <span class="symbol">&#x27;c</span>, <span class="symbol">&#x27;info</span>, T&gt; &#123;</span><br><span class="line">    <span class="keyword">pub</span> accounts: T,</span><br><span class="line">    <span class="keyword">pub</span> program_id: &amp;<span class="symbol">&#x27;a</span> Pubkey,</span><br><span class="line">    <span class="keyword">pub</span> bumps: BTreeMap&lt;<span class="type">String</span>, <span class="type">u8</span>&gt;,  <span class="comment">// 🔑 这里存储所有账户的bump值</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用方式：</span></span><br><span class="line">ctx.bumps.token_mint_account  <span class="comment">// 获取token_mint_account的bump</span></span><br><span class="line">ctx.bumps.stake_info         <span class="comment">// 获取stake_info的bump</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="完整的工作流程"><a href="#完整的工作流程" class="headerlink" title="完整的工作流程"></a>完整的工作流程</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 阶段1：Anchor初始化时</span></span><br><span class="line"><span class="comment">// Anchor自动调用 find_program_address() 为每个PDA账户找到bump</span></span><br><span class="line"><span class="comment">// 并存储在 ctx.bumps 中</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 阶段2：程序执行时  </span></span><br><span class="line"><span class="comment">// 你从 ctx.bumps 中获取之前计算好的bump值</span></span><br><span class="line"><span class="comment">// 用来构建 signer_seeds</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 阶段3：Solana验证时</span></span><br><span class="line"><span class="comment">// Solana用你提供的种子+bump重新计算PDA地址</span></span><br><span class="line"><span class="comment">// 与实际账户地址比较，验证签名的合法性</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="🚨-常见错误和解决方案"><a href="#🚨-常见错误和解决方案" class="headerlink" title="🚨 常见错误和解决方案"></a>🚨 常见错误和解决方案</h2><h3 id="错误1：Bump值不匹配"><a href="#错误1：Bump值不匹配" class="headerlink" title="错误1：Bump值不匹配"></a>错误1：Bump值不匹配</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错误：使用硬编码的错误bump</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">wrong_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    &amp;[<span class="number">255</span>]  <span class="comment">// 硬编码255，但实际bump可能是253</span></span><br><span class="line">]];</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 正确：使用Anchor计算的bump</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">correct_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    &amp;[ctx.bumps.token_mint_account]  <span class="comment">// 使用正确的bump</span></span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h3 id="错误2：种子顺序影响Bump"><a href="#错误2：种子顺序影响Bump" class="headerlink" title="错误2：种子顺序影响Bump"></a>错误2：种子顺序影响Bump</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不同的种子顺序会产生不同的bump值！</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 顺序A：</span></span><br><span class="line">seeds = [<span class="string">b&quot;stake_v1&quot;</span>, nft_mint_key] → bump = <span class="number">177</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 顺序B：  </span></span><br><span class="line">seeds = [nft_mint_key, <span class="string">b&quot;stake_v1&quot;</span>] → bump = <span class="number">89</span>  <span class="comment">// 完全不同！</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="错误3：遗漏Bump"><a href="#错误3：遗漏Bump" class="headerlink" title="错误3：遗漏Bump"></a>错误3：遗漏Bump</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错误：忘记包含bump</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">incomplete_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    <span class="comment">// 遗漏了bump！</span></span><br><span class="line">]];</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 正确：包含完整的种子+bump</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">complete_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    &amp;[ctx.bumps.token_mint_account]</span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h2 id="🔧-调试技巧"><a href="#🔧-调试技巧" class="headerlink" title="🔧 调试技巧"></a>🔧 调试技巧</h2><h3 id="1-打印Bump值"><a href="#1-打印Bump值" class="headerlink" title="1. 打印Bump值"></a>1. 打印Bump值</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">msg!(<span class="string">&quot;Token mint bump: &#123;&#125;&quot;</span>, ctx.bumps.token_mint_account);</span><br><span class="line">msg!(<span class="string">&quot;Stake info bump: &#123;&#125;&quot;</span>, ctx.bumps.stake_info);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-验证PDA地址"><a href="#2-验证PDA地址" class="headerlink" title="2. 验证PDA地址"></a>2. 验证PDA地址</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 手动验证PDA地址是否正确</span></span><br><span class="line"><span class="keyword">let</span> (expected_address, expected_bump) = Pubkey::<span class="title function_ invoke__">find_program_address</span>(</span><br><span class="line">    &amp;[<span class="string">b&quot;mint_v9&quot;</span>],</span><br><span class="line">    &amp;ctx.program_id</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="built_in">assert_eq!</span>(expected_address, ctx.accounts.token_mint_account.<span class="title function_ invoke__">key</span>());</span><br><span class="line"><span class="built_in">assert_eq!</span>(expected_bump, ctx.bumps.token_mint_account);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-客户端查找Bump"><a href="#3-客户端查找Bump" class="headerlink" title="3. 客户端查找Bump"></a>3. 客户端查找Bump</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在客户端也可以计算PDA和bump</span></span><br><span class="line"><span class="keyword">const</span> [pda, bump] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">    [<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;mint_v9&quot;</span>)],</span><br><span class="line">    program.<span class="property">programId</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;PDA address:&quot;</span>, pda.<span class="title function_">toString</span>());</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Bump:&quot;</span>, bump);</span><br></pre></td></tr></table></figure>
+
+<h2 id="📝-最佳实践总结"><a href="#📝-最佳实践总结" class="headerlink" title="📝 最佳实践总结"></a>📝 最佳实践总结</h2><h3 id="1-始终使用Anchor的Bump管理"><a href="#1-始终使用Anchor的Bump管理" class="headerlink" title="1. 始终使用Anchor的Bump管理"></a>1. 始终使用Anchor的Bump管理</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ✅ 推荐：让Anchor自动管理bump</span></span><br><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    seeds = [b<span class="string">&quot;mint_v9&quot;</span>]</span>,</span><br><span class="line">    bump,  <span class="comment">// Anchor自动计算</span></span><br><span class="line">)]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用时：</span></span><br><span class="line">&amp;[ctx.bumps.token_mint_account]  <span class="comment">// 使用Anchor计算的值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-保持种子一致性"><a href="#2-保持种子一致性" class="headerlink" title="2. 保持种子一致性"></a>2. 保持种子一致性</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义时的种子顺序</span></span><br><span class="line">seeds = [<span class="string">b&quot;stake_v1&quot;</span>, nft_mint_account.<span class="title function_ invoke__">key</span>().<span class="title function_ invoke__">as_ref</span>()]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用时的种子顺序（必须完全一致）</span></span><br><span class="line">signer_seeds = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;stake_v1&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    &amp;[ctx.bumps.stake_info]</span><br><span class="line">]]</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-理解Bump的作用域"><a href="#3-理解Bump的作用域" class="headerlink" title="3. 理解Bump的作用域"></a>3. 理解Bump的作用域</h3><ul>
+<li><strong>每个PDA账户都有自己的bump值</strong></li>
+<li><strong>相同种子+程序ID &#x3D; 相同bump值</strong>（确定性）</li>
+<li><strong>不同种子组合 &#x3D; 不同bump值</strong></li>
+</ul>
+<h2 id="🎉-总结"><a href="#🎉-总结" class="headerlink" title="🎉 总结"></a>🎉 总结</h2><p><strong>Bump的本质</strong>：</p>
+<ul>
+<li>是一个0-255的数字，确保PDA地址无私钥</li>
+<li>是PDA生成算法的必要组成部分</li>
+<li>在账户创建时计算一次，使用时必须提供</li>
+</ul>
+<p><strong>与Signer_seeds的关系</strong>：</p>
+<ul>
+<li>Bump是signer_seeds的最后一个组成部分</li>
+<li>种子 + Bump + 程序ID &#x3D; 完整的PDA生成参数</li>
+<li>签名验证时，所有参数都必须与创建时一致</li>
+</ul>
+<p><strong>记忆口诀</strong>：</p>
+<blockquote>
+<p>🎯 种子找地址，Bump保安全<br>创建时计算，使用时提供<br>参数要一致，签名才有效</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/20/Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake/" rel="prev" title="Solana PDA签名种子详解 - stake vs unstake">
+                  <i class="fa fa-angle-left"></i> Solana PDA签名种子详解 - stake vs unstake
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

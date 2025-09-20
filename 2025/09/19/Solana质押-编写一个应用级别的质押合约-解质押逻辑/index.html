@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本教程将实现完整的NFT解质押系统，用户可以将质押的NFT取回，并实现惩罚机制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana质押-编写一个应用级别的质押合约-解质押逻辑">
+<meta property="og:url" content="http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%A7%A3%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="本教程将实现完整的NFT解质押系统，用户可以将质押的NFT取回，并实现惩罚机制">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-19T12:59:18.000Z">
+<meta property="article:modified_time" content="2025-09-20T00:11:38.404Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%A7%A3%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%A7%A3%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91/","path":"2025/09/19/Solana质押-编写一个应用级别的质押合约-解质押逻辑/","title":"Solana质押-编写一个应用级别的质押合约-解质押逻辑"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana质押-编写一个应用级别的质押合约-解质押逻辑 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41-%E6%89%A9%E5%B1%95%E8%B4%A8%E6%8A%BC%E4%BF%A1%E6%81%AF%E7%BB%93%E6%9E%84-%E6%B7%BB%E5%8A%A0%E6%83%A9%E7%BD%9A%E8%AE%A1%E7%AE%97"><span class="nav-number">2.</span> <span class="nav-text">步骤1: 扩展质押信息结构 - 添加惩罚计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A42-%E5%AE%9E%E7%8E%B0NFT%E8%A7%A3%E8%B4%A8%E6%8A%BC%E6%8C%87%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">步骤2: 实现NFT解质押指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A43-%E6%B3%A8%E5%86%8C%E8%A7%A3%E8%B4%A8%E6%8A%BC%E6%8C%87%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">步骤3: 注册解质押指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A44-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%A7%A3%E8%B4%A8%E6%8A%BC%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">步骤4: 客户端解质押实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A45-%E5%AE%8C%E6%95%B4%E5%BA%94%E7%94%A8%E6%BC%94%E7%A4%BA"><span class="nav-number">6.</span> <span class="nav-text">步骤5: 完整应用演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%A6%81%E7%82%B9%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90"><span class="nav-number">7.</span> <span class="nav-text">技术要点深度解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9D%83%E9%99%90%E9%AA%8C%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="nav-number">7.1.</span> <span class="nav-text">1. 权限验证机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E5%8F%8C%E9%87%8D%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-number">7.1.1.</span> <span class="nav-text">A. 双重权限检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-PDA%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6"><span class="nav-number">7.1.2.</span> <span class="nav-text">B. PDA权限控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%83%A9%E7%BD%9A%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="nav-number">7.2.</span> <span class="nav-text">2. 惩罚机制详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E7%BA%BF%E6%80%A7%E8%A1%B0%E5%87%8F%E5%85%AC%E5%BC%8F"><span class="nav-number">7.2.1.</span> <span class="nav-text">A. 线性衰减公式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E7%BB%8F%E6%B5%8E%E5%AD%A6%E8%80%83%E9%87%8F"><span class="nav-number">7.2.2.</span> <span class="nav-text">B. 经济学考量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BB%A3%E5%B8%81%E9%94%80%E6%AF%81%E6%9C%BA%E5%88%B6"><span class="nav-number">7.3.</span> <span class="nav-text">3. 代币销毁机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-Burn%E6%93%8D%E4%BD%9C"><span class="nav-number">7.3.1.</span> <span class="nav-text">A. Burn操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E7%BB%8F%E6%B5%8E%E5%BD%B1%E5%93%8D"><span class="nav-number">7.3.2.</span> <span class="nav-text">B. 经济影响</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AD%96%E7%95%A5"><span class="nav-number">7.4.</span> <span class="nav-text">4. 错误处理策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E9%A2%84%E6%A3%80%E6%9F%A5%E6%9C%BA%E5%88%B6"><span class="nav-number">7.4.1.</span> <span class="nav-text">A. 预检查机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E8%BE%B9%E7%95%8C%E6%9D%A1%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">7.4.2.</span> <span class="nav-text">B. 边界条件处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Gas%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">7.5.</span> <span class="nav-text">5. Gas优化策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E6%9D%A1%E4%BB%B6%E6%89%A7%E8%A1%8C"><span class="nav-number">7.5.1.</span> <span class="nav-text">A. 条件执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E8%B4%A6%E6%88%B7%E5%A4%8D%E7%94%A8"><span class="nav-number">7.5.2.</span> <span class="nav-text">B. 账户复用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">8.</span> <span class="nav-text">安全性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB%E9%98%B2%E6%8A%A4"><span class="nav-number">8.1.</span> <span class="nav-text">1. 重入攻击防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%E9%98%B2%E6%8A%A4"><span class="nav-number">8.2.</span> <span class="nav-text">2. 权限提升防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%95%B0%E5%80%BC%E6%BA%A2%E5%87%BA%E9%98%B2%E6%8A%A4"><span class="nav-number">8.3.</span> <span class="nav-text">3. 数值溢出防护</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD%E5%BB%BA%E8%AE%AE"><span class="nav-number">9.</span> <span class="nav-text">扩展功能建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%B8%90%E8%BF%9B%E5%BC%8F%E8%A7%A3%E8%B4%A8%E6%8A%BC"><span class="nav-number">9.1.</span> <span class="nav-text">1. 渐进式解质押</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8A%A8%E6%80%81%E6%83%A9%E7%BD%9A%E7%8E%87"><span class="nav-number">9.2.</span> <span class="nav-text">2. 动态惩罚率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A5%96%E5%8A%B1%E7%B4%AF%E7%A7%AF%E6%9C%BA%E5%88%B6"><span class="nav-number">9.3.</span> <span class="nav-text">3. 奖励累积机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C%E6%94%AF%E6%8C%81"><span class="nav-number">9.4.</span> <span class="nav-text">4. 批量操作支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">10.</span> <span class="nav-text">最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E5%85%A8%E4%BC%98%E5%85%88"><span class="nav-number">10.1.</span> <span class="nav-text">1. 安全优先</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C"><span class="nav-number">10.2.</span> <span class="nav-text">2. 用户体验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BB%8F%E6%B5%8E%E8%AE%BE%E8%AE%A1"><span class="nav-number">10.3.</span> <span class="nav-text">3. 经济设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">10.4.</span> <span class="nav-text">4. 可扩展性</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%A7%A3%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana质押-编写一个应用级别的质押合约-解质押逻辑 | samxie52">
+      <meta itemprop="description" content="本教程将实现完整的NFT解质押系统，用户可以将质押的NFT取回，并实现惩罚机制">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana质押-编写一个应用级别的质押合约-解质押逻辑
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-09-19 20:59:18" itemprop="dateCreated datePublished" datetime="2025-09-19T20:59:18+08:00">2025-09-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-20 08:11:38" itemprop="dateModified" datetime="2025-09-20T08:11:38+08:00">2025-09-20</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">本教程将实现完整的NFT解质押系统，用户可以将质押的NFT取回，并实现惩罚机制</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在上一篇教程中，我们实现了NFT质押功能。本篇将完成质押系统的另一半：<strong>解质押逻辑</strong>。解质押不仅仅是质押的逆向操作，还包含了一个重要的经济机制——<strong>早期解质押惩罚</strong>，这是DeFi协议中常见的设计模式。</p>
+<p><strong>解质押核心功能</strong>:</p>
+<ol>
+<li>验证用户权限（只有质押者才能解质押）</li>
+<li>将NFT从程序托管账户转回用户账户</li>
+<li>根据质押时长计算惩罚金额</li>
+<li>销毁相应数量的奖励代币作为惩罚</li>
+</ol>
+<h2 id="步骤1-扩展质押信息结构-添加惩罚计算"><a href="#步骤1-扩展质押信息结构-添加惩罚计算" class="headerlink" title="步骤1: 扩展质押信息结构 - 添加惩罚计算"></a>步骤1: 扩展质押信息结构 - 添加惩罚计算</h2><p><strong>目的</strong>: 在原有质押信息结构基础上，添加计算早期解质押惩罚的逻辑。</p>
+<p><strong>文件位置</strong>: <code>/programs/ibuidl-socail/src/state/stake.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::cmp::max;  <span class="comment">// 引入max函数，用于数值比较</span></span><br><span class="line"><span class="keyword">use</span> anchor_lang::&#123;prelude::*, solana_program::clock&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 质押信息结构体（与质押教程相同）</span></span><br><span class="line"><span class="meta">#[account]</span></span><br><span class="line"><span class="meta">#[derive(InitSpace)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">IbuidlStake</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> staker: Pubkey,           <span class="comment">// 质押者的公钥地址</span></span><br><span class="line">    <span class="keyword">pub</span> nft_mint_account: Pubkey, <span class="comment">// 被质押NFT的mint账户地址</span></span><br><span class="line">    <span class="keyword">pub</span> staked_at: <span class="type">u64</span>,          <span class="comment">// 质押时的epoch时间</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">IbuidlStake</span> &#123;</span><br><span class="line">    <span class="comment">// PDA种子前缀，与质押时保持一致</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> SEED_PREFIX: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;stake_v1&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建新的质押信息实例（与质押教程相同）</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(staker: Pubkey, nft_mint_account: Pubkey) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">clock</span> = clock::Clock::<span class="title function_ invoke__">get</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">staked_at</span> = clock.epoch;</span><br><span class="line">        <span class="keyword">Self</span> &#123;</span><br><span class="line">            staker,</span><br><span class="line">            nft_mint_account,</span><br><span class="line">            staked_at,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 🔑 核心新功能：计算早期解质押的惩罚金额</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">salvage_value</span>(&amp;<span class="keyword">self</span>, amount: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">        <span class="comment">// 获取当前区块链时间</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">clock</span> = Clock::<span class="title function_ invoke__">get</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">now</span> = clock.epoch;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 计算质押持续时间（以epoch为单位）</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">staked_duration</span> = now - <span class="keyword">self</span>.staked_at;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 惩罚公式：每个epoch减少2%，最多减少100%</span></span><br><span class="line">        <span class="comment">// 例如：</span></span><br><span class="line">        <span class="comment">// - 0 epoch: 100% 惩罚 (立即解质押损失100%)</span></span><br><span class="line">        <span class="comment">// - 1 epoch: 98% 惩罚</span></span><br><span class="line">        <span class="comment">// - 25 epoch: 50% 惩罚</span></span><br><span class="line">        <span class="comment">// - 50+ epoch: 0% 惩罚 (无损失)</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">penalty_rate</span> = <span class="title function_ invoke__">max</span>(<span class="number">0</span>, <span class="number">100</span> - staked_duration * <span class="number">2</span>) <span class="keyword">as</span> <span class="type">f64</span> / <span class="number">100.0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 计算需要销毁的代币数量</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">burn_amount</span> = (amount <span class="keyword">as</span> <span class="type">f64</span> * penalty_rate) <span class="keyword">as</span> <span class="type">u64</span>;</span><br><span class="line">        </span><br><span class="line">        burn_amount</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>惩罚机制设计解析</strong>:</p>
+<ul>
+<li><strong>线性递减</strong>: 惩罚随时间线性减少，鼓励长期质押</li>
+<li><strong>完全消除</strong>: 50个epoch后无惩罚，平衡用户体验</li>
+<li><strong>经济激励</strong>: 防止短期投机，稳定代币经济</li>
+</ul>
+<h2 id="步骤2-实现NFT解质押指令"><a href="#步骤2-实现NFT解质押指令" class="headerlink" title="步骤2: 实现NFT解质押指令"></a>步骤2: 实现NFT解质押指令</h2><p><strong>目的</strong>: 实现完整的解质押流程，包括权限验证、NFT转移、惩罚执行。</p>
+<p><strong>文件位置</strong>: <code>/programs/ibuidl-socail/src/instructions/nft_unstake.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"><span class="keyword">use</span> anchor_spl::&#123;</span><br><span class="line">    associated_token::AssociatedToken,</span><br><span class="line">    token::&#123;burn, transfer, Burn, Mint, Token, TokenAccount, Transfer&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> crate::state::IbuidlStake;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT解质押核心逻辑函数</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">unstake</span>(ctx: Context&lt;NftUnstake&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 🔒 第一步：权限验证</span></span><br><span class="line">    <span class="comment">// 验证质押信息中的NFT mint地址与当前操作的NFT匹配</span></span><br><span class="line">    require!(</span><br><span class="line">        &amp;ctx.accounts.stake_info.nft_mint_account.<span class="title function_ invoke__">key</span>() == &amp;ctx.accounts.nft_mint_account.<span class="title function_ invoke__">key</span>(),</span><br><span class="line">        UnstakeError::NoAuthority,  <span class="comment">// 如果不匹配，抛出无权限错误</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 验证调用者是原质押者</span></span><br><span class="line">    require!(</span><br><span class="line">        &amp;ctx.accounts.stake_info.staker.<span class="title function_ invoke__">key</span>() == &amp;ctx.accounts.authority.<span class="title function_ invoke__">key</span>(),</span><br><span class="line">        UnstakeError::NoAuthority,  <span class="comment">// 如果不是原质押者，抛出无权限错误</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    msg!(<span class="string">&quot;✅ Authority verification passed&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 🔐 第二步：准备PDA签名</span></span><br><span class="line">    <span class="comment">// 构建质押信息PDA的签名种子，用于程序代表PDA执行转账</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">nft_mint_account</span> = ctx.accounts.nft_mint_account.<span class="title function_ invoke__">key</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">        IbuidlStake::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(),  <span class="comment">// &quot;stake_v1&quot;</span></span><br><span class="line">        nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),            <span class="comment">// NFT mint地址</span></span><br><span class="line">        &amp;[ctx.bumps.stake_info],              <span class="comment">// bump值，确保PDA有效</span></span><br><span class="line">    ]];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 🔄 第三步：将NFT从程序托管账户转回用户账户</span></span><br><span class="line">    <span class="title function_ invoke__">transfer</span>(</span><br><span class="line">        CpiContext::<span class="title function_ invoke__">new</span>(</span><br><span class="line">            ctx.accounts.token_program.<span class="title function_ invoke__">to_account_info</span>(),  <span class="comment">// SPL Token程序</span></span><br><span class="line">            Transfer &#123;</span><br><span class="line">                from: ctx.accounts.program_receipt_nft_ata.<span class="title function_ invoke__">to_account_info</span>(), <span class="comment">// 源：程序托管账户</span></span><br><span class="line">                to: ctx.accounts.nft_associated_token_account.<span class="title function_ invoke__">to_account_info</span>(), <span class="comment">// 目标：用户NFT账户</span></span><br><span class="line">                authority: ctx.accounts.stake_info.<span class="title function_ invoke__">to_account_info</span>(),         <span class="comment">// 权限：质押信息PDA</span></span><br><span class="line">            &#125;,</span><br><span class="line">        )</span><br><span class="line">        .<span class="title function_ invoke__">with_signer</span>(signer_seeds), <span class="comment">// 使用PDA签名授权转账</span></span><br><span class="line">        <span class="number">1</span>, <span class="comment">// 转移数量：1个NFT</span></span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    msg!(<span class="string">&quot;🔄 NFT transferred back to user&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 💰 第四步：计算并执行惩罚</span></span><br><span class="line">    <span class="comment">// 基于原始奖励金额计算惩罚数量</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">original_reward</span> = <span class="number">4206000</span>;  <span class="comment">// 与质押时铸造的数量保持一致</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">penalty_amount</span> = ctx.accounts.stake_info.<span class="title function_ invoke__">salvage_value</span>(original_reward);</span><br><span class="line"></span><br><span class="line">    msg!(<span class="string">&quot;💸 Calculated penalty amount: &#123;&#125;&quot;</span>, penalty_amount);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果有惩罚金额，则销毁相应数量的奖励代币</span></span><br><span class="line">    <span class="keyword">if</span> penalty_amount &gt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">burn</span>(</span><br><span class="line">            CpiContext::<span class="title function_ invoke__">new</span>(</span><br><span class="line">                ctx.accounts.token_program.<span class="title function_ invoke__">to_account_info</span>(),  <span class="comment">// SPL Token程序</span></span><br><span class="line">                Burn &#123;</span><br><span class="line">                    mint: ctx.accounts.token_mint_account.<span class="title function_ invoke__">to_account_info</span>(),           <span class="comment">// 奖励代币mint</span></span><br><span class="line">                    from: ctx.accounts.associated_token_account.<span class="title function_ invoke__">to_account_info</span>(),     <span class="comment">// 用户奖励代币账户</span></span><br><span class="line">                    authority: ctx.accounts.authority.<span class="title function_ invoke__">to_account_info</span>(),               <span class="comment">// 销毁权限：用户</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ),</span><br><span class="line">            penalty_amount, <span class="comment">// 销毁的代币数量</span></span><br><span class="line">        )?;</span><br><span class="line"></span><br><span class="line">        msg!(<span class="string">&quot;🔥 Penalty tokens burned successfully&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        msg!(<span class="string">&quot;🎉 No penalty - full staking period completed!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义错误类型定义</span></span><br><span class="line"><span class="meta">#[error_code]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">UnstakeError</span> &#123;</span><br><span class="line">    <span class="meta">#[msg(<span class="string">&quot;User is not the authority&quot;</span>)]</span>  <span class="comment">// 用户无权限错误消息</span></span><br><span class="line">    NoAuthority,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT解质押指令所需的账户结构</span></span><br><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">NftUnstake</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 质押信息账户（必须与质押时创建的账户一致）</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                   // 可变，虽然本例中不修改，但保持一致性</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            IbuidlStake::SEED_PREFIX.as_bytes(), // <span class="string">&quot;stake_v1&quot;</span></span></span><br><span class="line"><span class="meta">            nft_mint_account.key().as_ref(),     // NFT mint地址作为种子</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                  <span class="comment">// 自动寻找bump值</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> stake_info: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, IbuidlStake&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 程序NFT托管账户（NFT将从这里转出）</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                   // 可变，NFT将被转出</span></span><br><span class="line"><span class="meta">        associated_token::mint = nft_mint_account,  // 关联到NFT mint</span></span><br><span class="line"><span class="meta">        associated_token::authority = stake_info    // 账户权限归质押信息PDA所有</span></span><br><span class="line"><span class="meta">    )]</span></span><br><span class="line">    <span class="keyword">pub</span> program_receipt_nft_ata: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, TokenAccount&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用户奖励代币账户（惩罚代币将从这里销毁）</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init_if_needed,                        // 如果不存在则创建（防止用户没有该代币账户）</span></span><br><span class="line"><span class="meta">        payer = authority,                     // 创建费用支付者</span></span><br><span class="line"><span class="meta">        associated_token::mint = token_mint_account, // 关联到奖励代币mint</span></span><br><span class="line"><span class="meta">        associated_token::authority = authority,     // 账户所有者为用户</span></span><br><span class="line"><span class="meta">    )]</span></span><br><span class="line">    <span class="keyword">pub</span> associated_token_account: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, TokenAccount&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 奖励代币的mint账户（用于销毁代币）</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                   // 可变，因为销毁代币会影响supply</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            b<span class="string">&quot;mint_v9&quot;</span>,                        // mint账户的种子</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,                                  <span class="comment">// 自动寻找bump值</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> token_mint_account: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 被解质押的NFT mint账户</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span>  <span class="comment">// 可变，保持与质押时的一致性</span></span><br><span class="line">    <span class="keyword">pub</span> nft_mint_account: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用户的NFT接收账户（NFT将转移到这里）</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,                                   // 可变，NFT将被转入</span></span><br><span class="line"><span class="meta">        associated_token::mint = nft_mint_account,  // 关联到NFT mint</span></span><br><span class="line"><span class="meta">        associated_token::authority = authority,    // 账户所有者为用户</span></span><br><span class="line"><span class="meta">    )]</span></span><br><span class="line">    <span class="keyword">pub</span> nft_associated_token_account: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, TokenAccount&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 交易发起者和费用支付者</span></span><br><span class="line">    <span class="meta">#[account(mut)]</span>  <span class="comment">// 可变，需要支付交易费用</span></span><br><span class="line">    <span class="keyword">pub</span> authority: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 所需的程序账户</span></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;,                    <span class="comment">// Solana系统程序</span></span><br><span class="line">    <span class="keyword">pub</span> token_program: Program&lt;<span class="symbol">&#x27;info</span>, Token&gt;,                      <span class="comment">// SPL Token程序</span></span><br><span class="line">    <span class="keyword">pub</span> associated_token_program: Program&lt;<span class="symbol">&#x27;info</span>, AssociatedToken&gt;, <span class="comment">// 关联代币程序</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解质押流程图解</strong>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">用户发起解质押请求</span><br><span class="line">    ↓</span><br><span class="line">验证用户权限（是否为原质押者）</span><br><span class="line">    ↓</span><br><span class="line">计算惩罚金额（基于质押时长）</span><br><span class="line">    ↓</span><br><span class="line">NFT从托管账户 → 用户账户</span><br><span class="line">    ↓</span><br><span class="line">销毁惩罚数量的奖励代币</span><br><span class="line">    ↓</span><br><span class="line">解质押完成</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤3-注册解质押指令"><a href="#步骤3-注册解质押指令" class="headerlink" title="步骤3: 注册解质押指令"></a>步骤3: 注册解质押指令</h2><p><strong>目的</strong>: 在主程序文件中注册NFT解质押指令，使其可以被客户端调用。</p>
+<p><strong>文件位置</strong>: <code>/programs/ibuidl-socail/src/lib.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NFT解质押指令的公共接口</span></span><br><span class="line"><span class="comment">// 这个函数暴露给客户端，用于解质押NFT</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">nft_unstake</span>(ctx: Context&lt;NftUnstake&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 调用具体的解质押实现逻辑</span></span><br><span class="line">    instructions::nft_unstake::<span class="title function_ invoke__">unstake</span>(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤4-客户端解质押实现"><a href="#步骤4-客户端解质押实现" class="headerlink" title="步骤4: 客户端解质押实现"></a>步骤4: 客户端解质押实现</h2><p><strong>目的</strong>: 在客户端实现解质押功能，与链上程序交互发送解质押交易。</p>
+<p><strong>文件位置</strong>: <code>/app/api/stake.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; program &#125; <span class="keyword">from</span> <span class="string">&quot;./wallet&quot;</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> anchor <span class="keyword">from</span> <span class="string">&quot;@coral-xyz/anchor&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端NFT解质押函数</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">nftUnstake</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">wallet</span>: anchor.<span class="title class_">Wallet</span>,      <span class="comment">// 用户钱包</span></span></span><br><span class="line"><span class="params">    <span class="attr">id</span>: <span class="built_in">string</span>,                 <span class="comment">// NFT的唯一ID</span></span></span><br><span class="line"><span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> program.<span class="property">methods</span>.<span class="title function_">nftUnstake</span>()  <span class="comment">// 调用解质押方法</span></span><br><span class="line">        .<span class="title function_">accounts</span>(&#123;</span><br><span class="line">            <span class="comment">// 指定NFT mint账户地址和权限账户</span></span><br><span class="line">            <span class="attr">nftMintAccount</span>: <span class="title function_">getNftMintAccount</span>(id),  <span class="comment">// NFT mint地址</span></span><br><span class="line">            <span class="attr">authority</span>: wallet.<span class="property">payer</span>.<span class="property">publicKey</span>,      <span class="comment">// 显式指定权限账户</span></span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_">signers</span>([wallet.<span class="property">payer</span>])                   <span class="comment">// 交易签名者</span></span><br><span class="line">        .<span class="title function_">rpc</span>();                                    <span class="comment">// 通过RPC发送交易</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据NFT ID计算NFT mint账户地址的工具函数</span></span><br><span class="line"><span class="comment">// 这个地址必须与铸造NFT时使用的相同PDA地址</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getNftMintAccount</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="attr">id</span>: <span class="built_in">string</span>,</span></span><br><span class="line"><span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 使用与NFT铸造时相同的种子生成PDA地址</span></span><br><span class="line">    <span class="keyword">const</span> [mintAccount] = anchor.<span class="property">web3</span>.<span class="property">PublicKey</span>.<span class="title function_">findProgramAddressSync</span>(</span><br><span class="line">        [</span><br><span class="line">            <span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;mint_nft_v1&quot;</span>),        <span class="comment">// 种子前缀（与NFT铸造时一致）</span></span><br><span class="line">            <span class="title class_">Buffer</span>.<span class="title function_">from</span>(id),                   <span class="comment">// NFT唯一ID</span></span><br><span class="line">        ],</span><br><span class="line">        program.<span class="property">programId</span>,                     <span class="comment">// 程序ID</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;🔍 NFT Mint Account:&quot;</span>, mintAccount.<span class="title function_">toString</span>());</span><br><span class="line">    <span class="keyword">return</span> mintAccount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>重要说明</strong>:</p>
+<ul>
+<li><code>authority: wallet.payer.publicKey</code>: 显式指定权限账户，确保权限验证正确</li>
+<li>种子生成必须与NFT铸造和质押时完全一致</li>
+</ul>
+<h2 id="步骤5-完整应用演示"><a href="#步骤5-完整应用演示" class="headerlink" title="步骤5: 完整应用演示"></a>步骤5: 完整应用演示</h2><p><strong>目的</strong>: 展示如何在完整应用中使用NFT解质押功能。</p>
+<p><strong>文件位置</strong>: <code>/app/index.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createProfile, getProfile &#125; <span class="keyword">from</span> <span class="string">&quot;./api/profile&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createTweet, getTweet, createLike &#125; <span class="keyword">from</span> <span class="string">&quot;./api/tweet&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useDefaultWallet, useVisitorWallet &#125; <span class="keyword">from</span> <span class="string">&quot;./api/wallet&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createTokenMintAccount &#125; <span class="keyword">from</span> <span class="string">&quot;./api/token&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; nftMint &#125; <span class="keyword">from</span> <span class="string">&quot;./api/nft&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; nftStake, nftUnstake &#125; <span class="keyword">from</span> <span class="string">&quot;./api/stake&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NFT解质押演示流程</span></span><br><span class="line">(<span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="comment">// 初始化钱包</span></span><br><span class="line">    <span class="keyword">const</span> defaultWallet = <span class="title function_">useDefaultWallet</span>();</span><br><span class="line">    <span class="keyword">const</span> visitorwallet = <span class="title function_">useVisitorWallet</span>();</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;🔑 Default wallet:&quot;</span>, defaultWallet.<span class="property">publicKey</span>.<span class="title function_">toString</span>());</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;🔑 Visitor wallet:&quot;</span>, visitorwallet.<span class="property">publicKey</span>.<span class="title function_">toString</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 演示完整的质押-解质押流程</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一步：质押NFT（如果尚未质押）</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;📥 Step 1: Staking NFT...&quot;</span>);</span><br><span class="line">        <span class="comment">// const nftStakeResult = await nftStake(defaultWallet, &quot;3&quot;);</span></span><br><span class="line">        <span class="comment">// console.log(&quot;✅ NFT staked successfully:&quot;, nftStakeResult);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 等待一段时间（在实际应用中，用户会在不同时间进行操作）</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;⏳ Waiting for some epochs to pass...&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 第二步：解质押NFT</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;📤 Step 2: Unstaking NFT...&quot;</span>);</span><br><span class="line">        <span class="keyword">const</span> nftUnstakeResult = <span class="keyword">await</span> <span class="title function_">nftUnstake</span>(defaultWallet, <span class="string">&quot;3&quot;</span>);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;✅ NFT unstaked successfully!&quot;</span>);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;📋 Transaction signature:&quot;</span>, nftUnstakeResult);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 解质押成功后的后续操作：</span></span><br><span class="line">        <span class="comment">// 1. 查询用户NFT余额（应该恢复到1个）</span></span><br><span class="line">        <span class="comment">// 2. 查询奖励代币余额（应该减少了惩罚金额）</span></span><br><span class="line">        <span class="comment">// 3. 清理质押信息账户（可选）</span></span><br><span class="line">        <span class="comment">// 4. 更新用户界面显示</span></span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&quot;❌ Failed to unstake NFT:&quot;</span>, error);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 常见错误处理：</span></span><br><span class="line">        <span class="comment">// - 用户不是原质押者</span></span><br><span class="line">        <span class="comment">// - NFT尚未质押</span></span><br><span class="line">        <span class="comment">// - 奖励代币余额不足支付惩罚</span></span><br><span class="line">        <span class="comment">// - 账户不存在或状态异常</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 根据错误类型提供相应的用户提示</span></span><br><span class="line">        <span class="keyword">if</span> (error.<span class="property">message</span>.<span class="title function_">includes</span>(<span class="string">&quot;NoAuthority&quot;</span>)) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;💡 Tip: Only the original staker can unstake this NFT&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (error.<span class="property">message</span>.<span class="title function_">includes</span>(<span class="string">&quot;InsufficientFunds&quot;</span>)) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;💡 Tip: Not enough reward tokens to pay the penalty&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+
+<h2 id="技术要点深度解析"><a href="#技术要点深度解析" class="headerlink" title="技术要点深度解析"></a>技术要点深度解析</h2><h3 id="1-权限验证机制"><a href="#1-权限验证机制" class="headerlink" title="1. 权限验证机制"></a>1. 权限验证机制</h3><h4 id="A-双重权限检查"><a href="#A-双重权限检查" class="headerlink" title="A. 双重权限检查"></a>A. 双重权限检查</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 检查1：NFT匹配验证</span></span><br><span class="line">require!(</span><br><span class="line">    &amp;ctx.accounts.stake_info.nft_mint_account.<span class="title function_ invoke__">key</span>() == &amp;ctx.accounts.nft_mint_account.<span class="title function_ invoke__">key</span>(),</span><br><span class="line">    UnstakeError::NoAuthority,</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查2：原质押者验证  </span></span><br><span class="line">require!(</span><br><span class="line">    &amp;ctx.accounts.stake_info.staker.<span class="title function_ invoke__">key</span>() == &amp;ctx.accounts.authority.<span class="title function_ invoke__">key</span>(),</span><br><span class="line">    UnstakeError::NoAuthority,</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p><strong>作用</strong>:</p>
+<ul>
+<li>防止用户解质押他人的NFT</li>
+<li>确保操作的NFT与质押记录匹配</li>
+<li>提供清晰的错误信息</li>
+</ul>
+<h4 id="B-PDA权限控制"><a href="#B-PDA权限控制" class="headerlink" title="B. PDA权限控制"></a>B. PDA权限控制</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">    IbuidlStake::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(),</span><br><span class="line">    nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    &amp;[ctx.bumps.stake_info],</span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<p><strong>重要性</strong>:</p>
+<ul>
+<li>只有程序能生成正确的PDA签名</li>
+<li>防止外部账户伪造权限</li>
+<li>确保资产安全转移</li>
+</ul>
+<h3 id="2-惩罚机制详解"><a href="#2-惩罚机制详解" class="headerlink" title="2. 惩罚机制详解"></a>2. 惩罚机制详解</h3><h4 id="A-线性衰减公式"><a href="#A-线性衰减公式" class="headerlink" title="A. 线性衰减公式"></a>A. 线性衰减公式</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">penalty_rate</span> = <span class="title function_ invoke__">max</span>(<span class="number">0</span>, <span class="number">100</span> - staked_duration * <span class="number">2</span>) <span class="keyword">as</span> <span class="type">f64</span> / <span class="number">100.0</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>数学模型</strong>:</p>
+<ul>
+<li>初始惩罚: 100%</li>
+<li>衰减速度: 每epoch减少2%</li>
+<li>零惩罚点: 50个epoch后</li>
+<li>最小惩罚: 0%</li>
+</ul>
+<h4 id="B-经济学考量"><a href="#B-经济学考量" class="headerlink" title="B. 经济学考量"></a>B. 经济学考量</h4><ul>
+<li><strong>短期投机成本</strong>: 早期解质押损失大</li>
+<li><strong>长期持有奖励</strong>: 时间越长损失越小</li>
+<li><strong>流动性平衡</strong>: 允许紧急退出但有成本</li>
+</ul>
+<h3 id="3-代币销毁机制"><a href="#3-代币销毁机制" class="headerlink" title="3. 代币销毁机制"></a>3. 代币销毁机制</h3><h4 id="A-Burn操作"><a href="#A-Burn操作" class="headerlink" title="A. Burn操作"></a>A. Burn操作</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">burn</span>(</span><br><span class="line">    CpiContext::<span class="title function_ invoke__">new</span>(<span class="comment">/* ... */</span>),</span><br><span class="line">    penalty_amount,</span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<p><strong>效果</strong>:</p>
+<ul>
+<li>永久减少代币总供应量</li>
+<li>对剩余持有者有通缩效应</li>
+<li>防止代币通胀</li>
+</ul>
+<h4 id="B-经济影响"><a href="#B-经济影响" class="headerlink" title="B. 经济影响"></a>B. 经济影响</h4><ul>
+<li><strong>供应减少</strong>: 销毁代币减少流通量</li>
+<li><strong>价值支撑</strong>: 通缩机制支撑代币价值</li>
+<li><strong>激励对齐</strong>: 鼓励长期持有</li>
+</ul>
+<h3 id="4-错误处理策略"><a href="#4-错误处理策略" class="headerlink" title="4. 错误处理策略"></a>4. 错误处理策略</h3><h4 id="A-预检查机制"><a href="#A-预检查机制" class="headerlink" title="A. 预检查机制"></a>A. 预检查机制</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    init_if_needed,</span></span><br><span class="line"><span class="meta">    payer = authority,</span></span><br><span class="line"><span class="meta">    associated_token::mint = token_mint_account,</span></span><br><span class="line"><span class="meta">    associated_token::authority = authority,</span></span><br><span class="line"><span class="meta">)]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>优势</strong>:</p>
+<ul>
+<li>自动创建缺失账户</li>
+<li>减少用户操作步骤</li>
+<li>提高交易成功率</li>
+</ul>
+<h4 id="B-边界条件处理"><a href="#B-边界条件处理" class="headerlink" title="B. 边界条件处理"></a>B. 边界条件处理</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> penalty_amount &gt; <span class="number">0</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">burn</span>(<span class="comment">/* ... */</span>)?;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    msg!(<span class="string">&quot;No penalty - full staking period completed!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-Gas优化策略"><a href="#5-Gas优化策略" class="headerlink" title="5. Gas优化策略"></a>5. Gas优化策略</h3><h4 id="A-条件执行"><a href="#A-条件执行" class="headerlink" title="A. 条件执行"></a>A. 条件执行</h4><ul>
+<li>只在有惩罚时执行burn操作</li>
+<li>减少不必要的计算和操作</li>
+</ul>
+<h4 id="B-账户复用"><a href="#B-账户复用" class="headerlink" title="B. 账户复用"></a>B. 账户复用</h4><ul>
+<li>复用质押时创建的账户</li>
+<li>减少账户创建成本</li>
+</ul>
+<h2 id="安全性分析"><a href="#安全性分析" class="headerlink" title="安全性分析"></a>安全性分析</h2><h3 id="1-重入攻击防护"><a href="#1-重入攻击防护" class="headerlink" title="1. 重入攻击防护"></a>1. 重入攻击防护</h3><ul>
+<li><strong>单一执行路径</strong>: 每个指令都是原子操作</li>
+<li><strong>状态一致性</strong>: 所有状态变更在单个交易中完成</li>
+</ul>
+<h3 id="2-权限提升防护"><a href="#2-权限提升防护" class="headerlink" title="2. 权限提升防护"></a>2. 权限提升防护</h3><ul>
+<li><strong>PDA控制</strong>: 关键操作由PDA控制，外部无法伪造</li>
+<li><strong>签名验证</strong>: 所有操作都需要正确的数字签名</li>
+</ul>
+<h3 id="3-数值溢出防护"><a href="#3-数值溢出防护" class="headerlink" title="3. 数值溢出防护"></a>3. 数值溢出防护</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::cmp::max;  <span class="comment">// 使用安全的数学操作</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">penalty_rate</span> = <span class="title function_ invoke__">max</span>(<span class="number">0</span>, <span class="number">100</span> - staked_duration * <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="扩展功能建议"><a href="#扩展功能建议" class="headerlink" title="扩展功能建议"></a>扩展功能建议</h2><h3 id="1-渐进式解质押"><a href="#1-渐进式解质押" class="headerlink" title="1. 渐进式解质押"></a>1. 渐进式解质押</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 允许部分解质押，按比例计算惩罚</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">partial_unstake</span>(&amp;<span class="keyword">self</span>, amount: <span class="type">u64</span>, total_staked: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">penalty_rate</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">calculate_penalty_rate</span>();</span><br><span class="line">    (amount <span class="keyword">as</span> <span class="type">f64</span> * penalty_rate) <span class="keyword">as</span> <span class="type">u64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-动态惩罚率"><a href="#2-动态惩罚率" class="headerlink" title="2. 动态惩罚率"></a>2. 动态惩罚率</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据网络状况调整惩罚参数</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">dynamic_penalty</span>(&amp;<span class="keyword">self</span>, network_load: <span class="type">f64</span>) <span class="punctuation">-&gt;</span> <span class="type">f64</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">base_penalty</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">calculate_base_penalty</span>();</span><br><span class="line">    base_penalty * (<span class="number">1.0</span> + network_load * <span class="number">0.1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-奖励累积机制"><a href="#3-奖励累积机制" class="headerlink" title="3. 奖励累积机制"></a>3. 奖励累积机制</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算并发放累积的质押奖励</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">calculate_rewards</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">duration</span> = Clock::<span class="title function_ invoke__">get</span>().<span class="title function_ invoke__">unwrap</span>().epoch - <span class="keyword">self</span>.staked_at;</span><br><span class="line">    duration * REWARD_PER_EPOCH</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-批量操作支持"><a href="#4-批量操作支持" class="headerlink" title="4. 批量操作支持"></a>4. 批量操作支持</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 支持批量解质押多个NFT</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">batch_unstake</span>(nft_ids: <span class="type">Vec</span>&lt;<span class="type">String</span>&gt;) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">id</span> <span class="keyword">in</span> nft_ids &#123;</span><br><span class="line">        <span class="comment">// 执行单个解质押操作</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践总结"><a href="#最佳实践总结" class="headerlink" title="最佳实践总结"></a>最佳实践总结</h2><h3 id="1-安全优先"><a href="#1-安全优先" class="headerlink" title="1. 安全优先"></a>1. 安全优先</h3><ul>
+<li>始终验证用户权限</li>
+<li>使用PDA控制关键资产</li>
+<li>实现完整的错误处理</li>
+</ul>
+<h3 id="2-用户体验"><a href="#2-用户体验" class="headerlink" title="2. 用户体验"></a>2. 用户体验</h3><ul>
+<li>提供清晰的错误信息</li>
+<li>自动处理账户创建</li>
+<li>支持条件性操作</li>
+</ul>
+<h3 id="3-经济设计"><a href="#3-经济设计" class="headerlink" title="3. 经济设计"></a>3. 经济设计</h3><ul>
+<li>平衡流动性和稳定性</li>
+<li>使用通缩机制支撑价值</li>
+<li>提供合理的退出成本</li>
+</ul>
+<h3 id="4-可扩展性"><a href="#4-可扩展性" class="headerlink" title="4. 可扩展性"></a>4. 可扩展性</h3><ul>
+<li>模块化设计便于扩展</li>
+<li>参数化配置支持调整</li>
+<li>版本化账户结构</li>
+</ul>
+<p>这个完整的NFT解质押教程展示了如何构建一个安全、公平且用户友好的解质押系统。通过合理的惩罚机制设计，既保护了协议的稳定性，又为用户提供了必要的流动性选择。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91-nft-stake/" rel="prev" title="Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-stake">
+                  <i class="fa fa-angle-left"></i> Solana质押-编写一个应用级别的质押合约-质押逻辑-nft-stake
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/20/Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake/" rel="next" title="Solana PDA签名种子详解 - stake vs unstake">
+                  Solana PDA签名种子详解 - stake vs unstake <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solana PDA签名种子详解 - stake vs unstake">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solana PDA签名种子详解 - stake vs unstake">
+<meta property="og:url" content="http://example.com/2025/09/20/Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="Solana PDA签名种子详解 - stake vs unstake">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-20T00:20:12.000Z">
+<meta property="article:modified_time" content="2025-09-20T00:20:36.840Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/20/Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/20/Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake/","path":"2025/09/20/Solana-PDA签名种子详解-stake-vs-unstake/","title":"Solana PDA签名种子详解 - stake vs unstake"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solana PDA签名种子详解 - stake vs unstake | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake"><span class="nav-number">1.</span> <span class="nav-text">Solana PDA签名种子详解 - stake vs unstake</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-signer-seeds-%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">核心问题：为什么 signer_seeds 不同？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Stake-%E6%96%B9%E6%B3%95%E4%B8%AD%E7%9A%84-signer-seeds"><span class="nav-number">1.1.1.</span> <span class="nav-text">Stake 方法中的 signer_seeds</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unstake-%E6%96%B9%E6%B3%95%E4%B8%AD%E7%9A%84-signer-seeds"><span class="nav-number">1.1.2.</span> <span class="nav-text">Unstake 方法中的 signer_seeds</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E4%BF%97%E7%90%86%E8%A7%A3%EF%BC%9A%E4%B8%8D%E5%90%8C%E7%9A%84%E2%80%9D%E9%92%A5%E5%8C%99%E2%80%9D%E5%BC%80%E4%B8%8D%E5%90%8C%E7%9A%84%E2%80%9D%E9%94%81%E2%80%9D"><span class="nav-number">1.2.</span> <span class="nav-text">通俗理解：不同的”钥匙”开不同的”锁”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%91-%E6%AF%94%E5%96%BB%E8%A7%A3%E9%87%8A"><span class="nav-number">1.2.1.</span> <span class="nav-text">🔑 比喻解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%93%8B-%E5%85%B7%E4%BD%93%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="nav-number">1.2.2.</span> <span class="nav-text">📋 具体场景分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stake%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%88%91%E4%BB%AC%E8%A6%81%E6%93%8D%E4%BD%9C%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Stake阶段：我们要操作什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unstake%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%88%91%E4%BB%AC%E8%A6%81%E6%93%8D%E4%BD%9C%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">Unstake阶段：我们要操作什么？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%EF%BC%9APDA%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">深入理解：PDA权限控制机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%8F%97-%E8%B4%A6%E6%88%B7%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.3.1.</span> <span class="nav-text">🏗 账户结构设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%84-%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%AF%B9%E6%AF%94"><span class="nav-number">1.3.2.</span> <span class="nav-text">🔄 操作流程对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stake%E6%B5%81%E7%A8%8B%EF%BC%9A%E8%B0%81%E9%9C%80%E8%A6%81%E7%AD%BE%E5%90%8D%EF%BC%9F"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Stake流程：谁需要签名？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unstake%E6%B5%81%E7%A8%8B%EF%BC%9A%E8%B0%81%E9%9C%80%E8%A6%81%E7%AD%BE%E5%90%8D%EF%BC%9F"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">Unstake流程：谁需要签名？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E4%BB%A3%E7%A0%81%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB"><span class="nav-number">1.4.</span> <span class="nav-text">实际代码对应关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Token-Mint-Account-%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">Token Mint Account 的定义和使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stake-Info-Account-%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text">Stake Info Account 的定义和使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9A%A8-%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.5.</span> <span class="nav-text">🚨 常见错误和解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF1%EF%BC%9A%E7%A7%8D%E5%AD%90%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.5.1.</span> <span class="nav-text">错误1：种子不匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF2%EF%BC%9Abump%E5%80%BC%E9%94%99%E8%AF%AF"><span class="nav-number">1.5.2.</span> <span class="nav-text">错误2：bump值错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF3%EF%BC%9A%E7%A7%8D%E5%AD%90%E9%A1%BA%E5%BA%8F%E9%94%99%E8%AF%AF"><span class="nav-number">1.5.3.</span> <span class="nav-text">错误3：种子顺序错误</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8E%AF-%E8%AE%B0%E5%BF%86%E6%8A%80%E5%B7%A7"><span class="nav-number">1.6.</span> <span class="nav-text">🎯 记忆技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E2%80%9C%E8%B0%81%E6%93%8D%E4%BD%9C%EF%BC%8C%E8%B0%81%E7%AD%BE%E5%90%8D%E2%80%9D%E5%8E%9F%E5%88%99"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. “谁操作，谁签名”原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E2%80%9C%E7%A7%8D%E5%AD%90%E5%BF%85%E9%A1%BB%E4%B8%80%E8%87%B4%E2%80%9D%E5%8E%9F%E5%88%99"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. “种子必须一致”原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E2%80%9C%E6%9D%83%E9%99%90%E5%AF%B9%E5%BA%94%E2%80%9D%E5%8E%9F%E5%88%99"><span class="nav-number">1.6.3.</span> <span class="nav-text">3. “权限对应”原则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/20/Solana-PDA%E7%AD%BE%E5%90%8D%E7%A7%8D%E5%AD%90%E8%AF%A6%E8%A7%A3-stake-vs-unstake/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solana PDA签名种子详解 - stake vs unstake | samxie52">
+      <meta itemprop="description" content="Solana PDA签名种子详解 - stake vs unstake">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solana PDA签名种子详解 - stake vs unstake
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-20 08:20:12 / 修改时间：08:20:36" itemprop="dateCreated datePublished" datetime="2025-09-20T08:20:12+08:00">2025-09-20</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">Solana PDA签名种子详解 - stake vs unstake</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solana-PDA签名种子详解-stake-vs-unstake"><a href="#Solana-PDA签名种子详解-stake-vs-unstake" class="headerlink" title="Solana PDA签名种子详解 - stake vs unstake"></a>Solana PDA签名种子详解 - stake vs unstake</h1><h2 id="核心问题：为什么-signer-seeds-不同？"><a href="#核心问题：为什么-signer-seeds-不同？" class="headerlink" title="核心问题：为什么 signer_seeds 不同？"></a>核心问题：为什么 signer_seeds 不同？</h2><p>让我们先看看两个方法中 <code>signer_seeds</code> 的具体差异：</p>
+<h3 id="Stake-方法中的-signer-seeds"><a href="#Stake-方法中的-signer-seeds" class="headerlink" title="Stake 方法中的 signer_seeds"></a>Stake 方法中的 signer_seeds</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// stake 方法中</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),                   <span class="comment">// 种子1: &quot;mint_v9&quot;</span></span><br><span class="line">    &amp;[ctx.bumps.token_mint_account]        <span class="comment">// 种子2: token_mint_account的bump值</span></span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h3 id="Unstake-方法中的-signer-seeds"><a href="#Unstake-方法中的-signer-seeds" class="headerlink" title="Unstake 方法中的 signer_seeds"></a>Unstake 方法中的 signer_seeds</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// unstake 方法中  </span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">    IbuidlStake::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(),   <span class="comment">// 种子1: &quot;stake_v1&quot;</span></span><br><span class="line">    nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),             <span class="comment">// 种子2: NFT mint地址</span></span><br><span class="line">    &amp;[ctx.bumps.stake_info],               <span class="comment">// 种子3: stake_info的bump值</span></span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h2 id="通俗理解：不同的”钥匙”开不同的”锁”"><a href="#通俗理解：不同的”钥匙”开不同的”锁”" class="headerlink" title="通俗理解：不同的”钥匙”开不同的”锁”"></a>通俗理解：不同的”钥匙”开不同的”锁”</h2><h3 id="🔑-比喻解释"><a href="#🔑-比喻解释" class="headerlink" title="🔑 比喻解释"></a>🔑 比喻解释</h3><p>想象一下：</p>
+<ul>
+<li><strong>PDA就像一个特殊的保险箱</strong>，只能通过特定的”密码组合”来打开</li>
+<li><strong>signer_seeds就是这个密码组合</strong></li>
+<li><strong>不同的保险箱需要不同的密码</strong></li>
+</ul>
+<p>在我们的系统中：</p>
+<ol>
+<li><strong>token_mint_account（奖励代币mint）</strong> &#x3D; 保险箱A，密码是 <code>[&quot;mint_v9&quot;, bump]</code></li>
+<li><strong>stake_info（质押信息账户）</strong> &#x3D; 保险箱B，密码是 <code>[&quot;stake_v1&quot;, nft_mint_address, bump]</code></li>
+</ol>
+<h3 id="📋-具体场景分析"><a href="#📋-具体场景分析" class="headerlink" title="📋 具体场景分析"></a>📋 具体场景分析</h3><h4 id="Stake阶段：我们要操作什么？"><a href="#Stake阶段：我们要操作什么？" class="headerlink" title="Stake阶段：我们要操作什么？"></a>Stake阶段：我们要操作什么？</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 我们要让 token_mint_account 铸造代币给用户</span></span><br><span class="line"><span class="title function_ invoke__">mint_to</span>(</span><br><span class="line">    CpiContext::<span class="title function_ invoke__">new</span>(<span class="comment">/*...*/</span>)</span><br><span class="line">    .<span class="title function_ invoke__">with_signer</span>(signer_seeds), <span class="comment">// 使用 token_mint_account 的签名</span></span><br><span class="line">    <span class="number">4206900</span>, <span class="comment">// 铸造数量</span></span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<p><strong>需要的权限</strong>：<code>token_mint_account</code>（奖励代币mint账户）的签名权限<br><strong>使用的种子</strong>：创建 <code>token_mint_account</code> 时使用的种子</p>
+<h4 id="Unstake阶段：我们要操作什么？"><a href="#Unstake阶段：我们要操作什么？" class="headerlink" title="Unstake阶段：我们要操作什么？"></a>Unstake阶段：我们要操作什么？</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 我们要让 stake_info 账户控制NFT转账</span></span><br><span class="line"><span class="title function_ invoke__">transfer</span>(</span><br><span class="line">    CpiContext::<span class="title function_ invoke__">new</span>(<span class="comment">/*...*/</span>)</span><br><span class="line">    .<span class="title function_ invoke__">with_signer</span>(signer_seeds), <span class="comment">// 使用 stake_info 的签名</span></span><br><span class="line">    <span class="number">1</span>, <span class="comment">// NFT数量</span></span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<p><strong>需要的权限</strong>：<code>stake_info</code>（质押信息账户）的签名权限<br><strong>使用的种子</strong>：创建 <code>stake_info</code> 时使用的种子</p>
+<h2 id="深入理解：PDA权限控制机制"><a href="#深入理解：PDA权限控制机制" class="headerlink" title="深入理解：PDA权限控制机制"></a>深入理解：PDA权限控制机制</h2><h3 id="🏗-账户结构设计"><a href="#🏗-账户结构设计" class="headerlink" title="🏗 账户结构设计"></a>🏗 账户结构设计</h3><p>让我画一个更直观的图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">质押系统架构：</span><br><span class="line"></span><br><span class="line">用户 (User)</span><br><span class="line">├── NFT账户 (user_nft_account)</span><br><span class="line">└── 奖励代币账户 (user_reward_account)</span><br><span class="line"></span><br><span class="line">程序控制的PDA账户：</span><br><span class="line">├── 奖励代币Mint (token_mint_account)</span><br><span class="line">│   ├── 种子: [&quot;mint_v9&quot;]</span><br><span class="line">│   ├── 权限: 可以铸造奖励代币</span><br><span class="line">│   └── 使用场景: Stake时铸造奖励</span><br><span class="line">│</span><br><span class="line">└── 质押信息 (stake_info) </span><br><span class="line">    ├── 种子: [&quot;stake_v1&quot;, nft_mint_address]</span><br><span class="line">    ├── 权限: 控制托管的NFT</span><br><span class="line">    ├── 数据: &#123;staker, nft_mint, staked_at&#125;</span><br><span class="line">    └── 使用场景: Unstake时转移NFT</span><br><span class="line">        │</span><br><span class="line">        └── 控制 → NFT托管账户 (program_receipt_nft_ata)</span><br></pre></td></tr></table></figure>
+
+<h3 id="🔄-操作流程对比"><a href="#🔄-操作流程对比" class="headerlink" title="🔄 操作流程对比"></a>🔄 操作流程对比</h3><h4 id="Stake流程：谁需要签名？"><a href="#Stake流程：谁需要签名？" class="headerlink" title="Stake流程：谁需要签名？"></a>Stake流程：谁需要签名？</h4><ol>
+<li>用户转NFT到托管账户 → 用户自己签名 ✅</li>
+<li><strong>程序铸造奖励代币</strong> → 需要 <code>token_mint_account</code> 签名 🔑</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这一步需要程序代替 token_mint_account 签名</span></span><br><span class="line"><span class="title function_ invoke__">mint_to</span>(</span><br><span class="line">    CpiContext::<span class="title function_ invoke__">new</span>(<span class="comment">/*...*/</span>, MintTo &#123;</span><br><span class="line">        authority: ctx.accounts.token_mint_account, <span class="comment">// 这个账户需要签名！</span></span><br><span class="line">        <span class="comment">/*...*/</span></span><br><span class="line">    &#125;).<span class="title function_ invoke__">with_signer</span>(&amp;[&amp;[</span><br><span class="line">        <span class="string">b&quot;mint_v9&quot;</span>,                    <span class="comment">// token_mint_account的种子</span></span><br><span class="line">        &amp;[ctx.bumps.token_mint_account] <span class="comment">// token_mint_account的bump</span></span><br><span class="line">    ]])</span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Unstake流程：谁需要签名？"><a href="#Unstake流程：谁需要签名？" class="headerlink" title="Unstake流程：谁需要签名？"></a>Unstake流程：谁需要签名？</h4><ol>
+<li><strong>程序转NFT回给用户</strong> → 需要 <code>stake_info</code> 签名 🔑</li>
+<li>用户销毁奖励代币 → 用户自己签名 ✅</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这一步需要程序代替 stake_info 签名</span></span><br><span class="line"><span class="title function_ invoke__">transfer</span>(</span><br><span class="line">    CpiContext::<span class="title function_ invoke__">new</span>(<span class="comment">/*...*/</span>, Transfer &#123;</span><br><span class="line">        authority: ctx.accounts.stake_info, <span class="comment">// 这个账户需要签名！</span></span><br><span class="line">        <span class="comment">/*...*/</span></span><br><span class="line">    &#125;).<span class="title function_ invoke__">with_signer</span>(&amp;[&amp;[</span><br><span class="line">        IbuidlStake::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(), <span class="comment">// stake_info的种子1</span></span><br><span class="line">        nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),           <span class="comment">// stake_info的种子2  </span></span><br><span class="line">        &amp;[ctx.bumps.stake_info]              <span class="comment">// stake_info的bump</span></span><br><span class="line">    ]])</span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实际代码对应关系"><a href="#实际代码对应关系" class="headerlink" title="实际代码对应关系"></a>实际代码对应关系</h2><h3 id="Token-Mint-Account-的定义和使用"><a href="#Token-Mint-Account-的定义和使用" class="headerlink" title="Token Mint Account 的定义和使用"></a>Token Mint Account 的定义和使用</h3><p><strong>定义时（在账户结构中）：</strong></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    mut,</span></span><br><span class="line"><span class="meta">    seeds = [b<span class="string">&quot;mint_v9&quot;</span>]</span>,     <span class="comment">// ← 这里定义了种子</span></span><br><span class="line">    bump,</span><br><span class="line">)]</span><br><span class="line"><span class="keyword">pub</span> token_mint_account: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, Mint&gt;&gt;,</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用时（在stake方法中）：</strong></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),              <span class="comment">// ← 必须与定义时一致</span></span><br><span class="line">    &amp;[ctx.bumps.token_mint_account]   <span class="comment">// ← 对应的bump值</span></span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h3 id="Stake-Info-Account-的定义和使用"><a href="#Stake-Info-Account-的定义和使用" class="headerlink" title="Stake Info Account 的定义和使用"></a>Stake Info Account 的定义和使用</h3><p><strong>定义时（在账户结构中）：</strong></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    init_if_needed,</span></span><br><span class="line"><span class="meta">    seeds = [</span></span><br><span class="line"><span class="meta">        IbuidlStake::SEED_PREFIX.as_bytes(), // <span class="string">&quot;stake_v1&quot;</span></span></span><br><span class="line"><span class="meta">        nft_mint_account.key().as_ref(),     // NFT mint地址</span></span><br><span class="line"><span class="meta">    ]</span>,</span><br><span class="line">    bump,</span><br><span class="line">)]</span><br><span class="line"><span class="keyword">pub</span> stake_info: <span class="type">Box</span>&lt;Account&lt;<span class="symbol">&#x27;info</span>, IbuidlStake&gt;&gt;,</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用时（在unstake方法中）：</strong></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">signer_seeds</span>: &amp;[&amp;[&amp;[<span class="type">u8</span>]]] = &amp;[&amp;[</span><br><span class="line">    IbuidlStake::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(), <span class="comment">// ← 必须与定义时一致</span></span><br><span class="line">    nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),           <span class="comment">// ← 必须与定义时一致  </span></span><br><span class="line">    &amp;[ctx.bumps.stake_info],             <span class="comment">// ← 对应的bump值</span></span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h2 id="🚨-常见错误和解决方案"><a href="#🚨-常见错误和解决方案" class="headerlink" title="🚨 常见错误和解决方案"></a>🚨 常见错误和解决方案</h2><h3 id="错误1：种子不匹配"><a href="#错误1：种子不匹配" class="headerlink" title="错误1：种子不匹配"></a>错误1：种子不匹配</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错误：种子与账户定义不匹配</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">wrong_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;wrong_seed&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),  <span class="comment">// 与账户定义的种子不同！</span></span><br><span class="line">    &amp;[ctx.bumps.token_mint_account]</span><br><span class="line">]];</span><br><span class="line"><span class="comment">// 结果：交易失败，无法生成正确的签名</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="错误2：bump值错误"><a href="#错误2：bump值错误" class="headerlink" title="错误2：bump值错误"></a>错误2：bump值错误</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错误：使用错误的bump值</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">wrong_seeds</span> = &amp;[&amp;[</span><br><span class="line">    <span class="string">b&quot;mint_v9&quot;</span>.<span class="title function_ invoke__">as_ref</span>(),</span><br><span class="line">    &amp;[<span class="number">255</span>] <span class="comment">// 硬编码的错误bump值！</span></span><br><span class="line">]];</span><br><span class="line"><span class="comment">// 结果：无法生成有效的PDA签名</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="错误3：种子顺序错误"><a href="#错误3：种子顺序错误" class="headerlink" title="错误3：种子顺序错误"></a>错误3：种子顺序错误</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错误：种子顺序与定义时不同</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">wrong_order</span> = &amp;[&amp;[</span><br><span class="line">    nft_mint_account.<span class="title function_ invoke__">as_ref</span>(),           <span class="comment">// 顺序反了！</span></span><br><span class="line">    IbuidlStake::SEED_PREFIX.<span class="title function_ invoke__">as_bytes</span>(), </span><br><span class="line">    &amp;[ctx.bumps.stake_info]</span><br><span class="line">]];</span><br></pre></td></tr></table></figure>
+
+<h2 id="🎯-记忆技巧"><a href="#🎯-记忆技巧" class="headerlink" title="🎯 记忆技巧"></a>🎯 记忆技巧</h2><h3 id="1-“谁操作，谁签名”原则"><a href="#1-“谁操作，谁签名”原则" class="headerlink" title="1. “谁操作，谁签名”原则"></a>1. “谁操作，谁签名”原则</h3><ul>
+<li><strong>Stake</strong>: 程序要代替 <code>token_mint_account</code> 铸造代币 → 用 <code>token_mint_account</code> 的种子</li>
+<li><strong>Unstake</strong>: 程序要代替 <code>stake_info</code> 转移NFT → 用 <code>stake_info</code> 的种子</li>
+</ul>
+<h3 id="2-“种子必须一致”原则"><a href="#2-“种子必须一致”原则" class="headerlink" title="2. “种子必须一致”原则"></a>2. “种子必须一致”原则</h3><ul>
+<li>PDA账户的种子在<strong>定义时</strong>和<strong>使用时</strong>必须完全一致</li>
+<li>包括：种子内容、种子顺序、bump值</li>
+</ul>
+<h3 id="3-“权限对应”原则"><a href="#3-“权限对应”原则" class="headerlink" title="3. “权限对应”原则"></a>3. “权限对应”原则</h3><ul>
+<li>哪个PDA账户拥有操作权限，就用哪个账户的种子来签名</li>
+<li>NFT托管账户的<code>authority</code>是<code>stake_info</code> → 用<code>stake_info</code>的种子</li>
+<li>代币mint的<code>authority</code>是<code>token_mint_account</code> → 用<code>token_mint_account</code>的种子</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>核心答案</strong>：</p>
+<ul>
+<li><strong>Stake</strong> 需要 <code>token_mint_account</code> 的签名权限来铸造代币</li>
+<li><strong>Unstake</strong> 需要 <code>stake_info</code> 的签名权限来转移NFT  </li>
+<li>不同的PDA账户有不同的种子，所以 <code>signer_seeds</code> 必须对应</li>
+</ul>
+<p><strong>通俗比喻</strong>：<br>就像你有两把不同的钥匙：</p>
+<ul>
+<li>一把钥匙（mint种子）开银行金库，用来取钱（铸造代币）</li>
+<li>另一把钥匙（stake种子）开保险箱，用来取NFT（转移资产）</li>
+</ul>
+<p>用错钥匙就打不开对应的锁！🔐</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/19/Solana%E8%B4%A8%E6%8A%BC-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A8%E6%8A%BC%E5%90%88%E7%BA%A6-%E8%A7%A3%E8%B4%A8%E6%8A%BC%E9%80%BB%E8%BE%91/" rel="prev" title="Solana质押-编写一个应用级别的质押合约-解质押逻辑">
+                  <i class="fa fa-angle-left"></i> Solana质押-编写一个应用级别的质押合约-解质押逻辑
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/20/Solana-Bump%E8%AF%A6%E8%A7%A3-PDA%E7%94%9F%E6%88%90%E7%9A%84%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0/" rel="next" title="Solana Bump详解 - PDA生成的关键参数">
+                  Solana Bump详解 - PDA生成的关键参数 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
