@@ -129,7 +129,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -147,6 +147,155 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/11/Rust%E8%BF%9B%E9%98%B6-%E5%B9%B6%E5%8F%91-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | samxie52">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/09/11/Rust%E8%BF%9B%E9%98%B6-%E5%B9%B6%E5%8F%91-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/" class="post-title-link" itemprop="url">Rust进阶-并发-共享内存</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-11 10:32:58 / 修改时间：11:00:25" itemprop="dateCreated datePublished" datetime="2025-09-11T10:32:58+08:00">2025-09-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="使用共享来实现并发"><a href="#使用共享来实现并发" class="headerlink" title="使用共享来实现并发"></a>使用共享来实现并发</h3><ul>
+<li>Go语言的名言:不要用共享内存来通信,要用通信来共享为存</li>
+<li>Rust支持通过共享状态来实现并发</li>
+<li>Channel类似单所有权:一旦将值的所有权转移至Channeel,就无法使用它了</li>
+<li>共享内存并发类似多所有权:多个线程可以同时访问同一块内存</li>
+</ul>
+<h3 id="使用Mutex来每次只允许一个线程来访问数据"><a href="#使用Mutex来每次只允许一个线程来访问数据" class="headerlink" title="使用Mutex来每次只允许一个线程来访问数据"></a>使用Mutex来每次只允许一个线程来访问数据</h3><ul>
+<li>Mutex是mutualexclusion(互斥锁)的简写</li>
+<li>在同一时刻,Mutex只允许一个线程来访问某些数据</li>
+<li>想要访问数据:<ul>
+<li>线程必须首先获取互斥锁(lock)</li>
+<li>lock数据结构是mutex的一部分,它能跟踪谁对数据拥有独占访问权</li>
+<li>mutex通常被描述为:通过锁定系统来保护它所持有白的数据</li>
+</ul>
+</li>
+</ul>
+<h4 id="Mutex的两条规则"><a href="#Mutex的两条规则" class="headerlink" title="Mutex的两条规则"></a>Mutex的两条规则</h4><ul>
+<li>在使用数据之前，必须尝试获取所（lock）。</li>
+<li>使用完mutex锁保护的数据，必须对数据进行解锁，以便其他线程可以获取锁；</li>
+</ul>
+<h4 id="Mutex-de-API"><a href="#Mutex-de-API" class="headerlink" title="Mutex de API"></a>Mutex<T> de API</h4><ul>
+<li><p>通过Mutex::new(data)来创建Mutex<T></p>
+<ul>
+<li>Mutex<T>是智能指针</li>
+</ul>
+</li>
+<li><p>访问数据前，通过lock方法获取锁</p>
+<ul>
+<li>会阻塞当前线程</li>
+<li>lock可能会失败<br>  -返回的是MutexGuard智能指针（实现Deref trait and Drop trait）</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">m</span> = Mutex::<span class="title function_ invoke__">new</span>(<span class="number">5</span>);</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">num</span> = m.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    *num = <span class="number">6</span>;</span><br><span class="line">    <span class="comment">//num离开作用域,自动解锁</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, *num);</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="使用Arc和Mutex来实现线程安全的计数器"><a href="#使用Arc和Mutex来实现线程安全的计数器" class="headerlink" title="使用Arc和Mutex来实现线程安全的计数器"></a>使用Arc<T>和Mutex<T>来实现线程安全的计数器</h3><ul>
+<li>Arc<T>是原子引用计数(atomic reference counting)的缩写</li>
+<li>Arc<T>和Mutex<T>组合使用可以实现线程安全的计数器</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">counter</span> = Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(<span class="number">0</span>));</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handles</span> = <span class="built_in">vec!</span>[];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">counter</span> = Arc::<span class="title function_ invoke__">clone</span>(&amp;counter);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">handle</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">num</span> = counter.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">            *num += <span class="number">1</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        handles.<span class="title function_ invoke__">push</span>(handle);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">handle</span> <span class="keyword">in</span> handles &#123;</span><br><span class="line">        handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Result: &#123;&#125;&quot;</span>, *counter.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="RefCell-Rc-vs-Arc-Mutex"><a href="#RefCell-Rc-vs-Arc-Mutex" class="headerlink" title="RefCell&#x2F;Rc  vs Arc&#x2F;Mutex"></a>RefCell<T>&#x2F;Rc<T>  vs Arc<T>&#x2F;Mutex<T></h3><ul>
+<li>Mutex<T>提供了内部可变性,和 Cell 家族一样。</li>
+<li>我们使用 Refcell<T> 来改变 Rc<T> 里面的内容。</li>
+<li>我们使用 Mutex<T>来改变 Arc<T>里面的内容。</li>
+<li>注意:Mutex<T>有死锁风险</li>
+</ul>
+<h3 id="Send-and-Sync-trait"><a href="#Send-and-Sync-trait" class="headerlink" title="Send and Sync trait"></a>Send and Sync trait</h3><ul>
+<li>Rust语言的并发特性较少,目前讲的并发特新都来自标准库(而不是语言本身)</li>
+<li>无需局限于标准库的并发,可以自己实现并发</li>
+<li>但在Rust语言中有两个并发概念:<ul>
+<li>std::marker::Sync 和std::marker::Send 这两个 trait</li>
+</ul>
+</li>
+</ul>
+<h4 id="Send：-允许线程间转移所有权"><a href="#Send：-允许线程间转移所有权" class="headerlink" title="Send： 允许线程间转移所有权"></a>Send： 允许线程间转移所有权</h4><ul>
+<li>实现Send trait的类型可在线程间转移所有权</li>
+<li>Rust中几乎所有的类型都实现了Send<ul>
+<li>但 Rc<T>没有实现Send,它只用于单线程情景</li>
+</ul>
+</li>
+<li>任何完全由Send类型组成的类型也被标记为Send</li>
+<li>除了原始指针之外,几乎所有的基础类型都是Send</li>
+</ul>
+<h4 id="Sync：-允许线程间共享引用"><a href="#Sync：-允许线程间共享引用" class="headerlink" title="Sync： 允许线程间共享引用"></a>Sync： 允许线程间共享引用</h4><ul>
+<li>实现Sync的类型可以安全的被多个线程引用</li>
+<li>也就是说:如果T是Sync,那么&amp;T就是Send<ul>
+<li>引用可以被安全的送往另一个线程</li>
+</ul>
+</li>
+<li>基础类型都是Sync。</li>
+<li>完全由Sync类型组成的类型也是Sync<ul>
+<li>但，RC<T>不是Sync的</li>
+<li>RefCell<T>和 Cell<T>家族也不是Sync的</li>
+<li>而，Mutex<T>是Sync的</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1035,83 +1184,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/09/08/Rust%E8%BF%9B%E9%98%B6-%E6%B3%9B%E5%9E%8B/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="samxie">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="samxie52">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | samxie52">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/" class="post-title-link" itemprop="url">Rust基础 - 模块化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-09-07 14:23:41 / 修改时间：15:02:36" itemprop="dateCreated datePublished" datetime="2025-09-07T14:23:41+08:00">2025-09-07</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>模块化是Rust中组织代码的重要方式</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/09/07/Rust%E5%9F%BA%E7%A1%80-%E6%A8%A1%E5%9D%97%E5%8C%96/">
                 阅读全文 &raquo;
               </a>
             </div>
