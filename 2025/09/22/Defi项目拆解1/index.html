@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="深入解析Raydium CP-Swap协议中create_amm_config方法的完整实现，包括流程逻辑、涉及的结构体和方法，适合Rust、Solana、Anchor入门学习者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeFi项目拆解1 - Raydium CP-Swap create_amm_config 方法详解">
+<meta property="og:url" content="http://example.com/2025/09/22/Defi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A31/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="深入解析Raydium CP-Swap协议中create_amm_config方法的完整实现，包括流程逻辑、涉及的结构体和方法，适合Rust、Solana、Anchor入门学习者">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-22T08:53:58.000Z">
+<meta property="article:modified_time" content="2025-09-23T01:51:48.753Z">
+<meta property="article:author" content="samxie">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/22/Defi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A31/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/22/Defi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A31/","path":"2025/09/22/Defi项目拆解1/","title":"DeFi项目拆解1 - Raydium CP-Swap create_amm_config 方法详解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>DeFi项目拆解1 - Raydium CP-Swap create_amm_config 方法详解 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">方法概览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#create-amm-config-%E5%9C%A8%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">create_amm_config 在协议中的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E7%AD%BE%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">方法签名解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">核心流程分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8F%82%E6%95%B0%E9%AA%8C%E8%AF%81%E9%98%B6%E6%AE%B5"><span class="nav-number">3.1.</span> <span class="nav-text">1. 参数验证阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E6%80%BB%E8%B4%B9%E7%8E%87%E9%99%90%E5%88%B6"><span class="nav-number">3.1.1.</span> <span class="nav-text">A. 总费率限制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E5%8D%8F%E8%AE%AE%E8%B4%B9%E7%8E%87%E9%99%90%E5%88%B6"><span class="nav-number">3.1.2.</span> <span class="nav-text">B. 协议费率限制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-%E8%B4%B9%E7%8E%87%E5%88%86%E9%85%8D%E9%99%90%E5%88%B6"><span class="nav-number">3.1.3.</span> <span class="nav-text">C. 费率分配限制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%B4%A6%E6%88%B7%E9%AA%8C%E8%AF%81%E9%98%B6%E6%AE%B5"><span class="nav-number">3.2.</span> <span class="nav-text">2. 账户验证阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E6%89%80%E6%9C%89%E8%80%85%E6%9D%83%E9%99%90%E9%AA%8C%E8%AF%81"><span class="nav-number">3.2.1.</span> <span class="nav-text">A. 所有者权限验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-PDA%E9%85%8D%E7%BD%AE%E8%B4%A6%E6%88%B7%E5%88%9B%E5%BB%BA"><span class="nav-number">3.2.2.</span> <span class="nav-text">B. PDA配置账户创建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%98%B6%E6%AE%B5"><span class="nav-number">3.3.</span> <span class="nav-text">3. 配置数据写入阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E8%8E%B7%E5%8F%96%E5%8F%AF%E5%8F%98%E5%BC%95%E7%94%A8"><span class="nav-number">3.3.1.</span> <span class="nav-text">A. 获取可变引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E8%AE%BE%E7%BD%AE%E6%B2%BB%E7%90%86%E6%9D%83%E9%99%90"><span class="nav-number">3.3.2.</span> <span class="nav-text">B. 设置治理权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-%E8%AE%BE%E7%BD%AEPDA%E5%8F%82%E6%95%B0"><span class="nav-number">3.3.3.</span> <span class="nav-text">C. 设置PDA参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#D-%E8%AE%BE%E7%BD%AE%E8%B4%B9%E7%8E%87%E5%8F%82%E6%95%B0"><span class="nav-number">3.3.4.</span> <span class="nav-text">D. 设置费率参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#E-%E8%AE%BE%E7%BD%AE%E6%8E%A7%E5%88%B6%E6%A0%87%E5%BF%97"><span class="nav-number">3.3.5.</span> <span class="nav-text">E. 设置控制标志</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%89%E5%8F%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AF%A6%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">涉及的数据结构详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AmmConfig-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">4.1.</span> <span class="nav-text">AmmConfig 结构体</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%9F%BA%E7%A1%80%E6%8E%A7%E5%88%B6%E5%AD%97%E6%AE%B5"><span class="nav-number">4.1.1.</span> <span class="nav-text">1. 基础控制字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%B4%B9%E7%8E%87%E9%85%8D%E7%BD%AE%E5%AD%97%E6%AE%B5"><span class="nav-number">4.1.2.</span> <span class="nav-text">2. 费率配置字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6%E5%AD%97%E6%AE%B5"><span class="nav-number">4.1.3.</span> <span class="nav-text">3. 权限控制字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%89%A9%E5%B1%95%E5%AD%97%E6%AE%B5"><span class="nav-number">4.1.4.</span> <span class="nav-text">4. 扩展字段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E8%AE%A1%E7%AE%97"><span class="nav-number">4.2.</span> <span class="nav-text">存储空间计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%B9%E7%8E%87%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">费率计算机制详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B9%E7%8E%87%E5%B8%B8%E9%87%8F%E5%AE%9A%E4%B9%89"><span class="nav-number">5.1.</span> <span class="nav-text">费率常量定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B9%E7%8E%87%E8%AE%A1%E7%AE%97%E5%87%BD%E6%95%B0"><span class="nav-number">5.2.</span> <span class="nav-text">费率计算函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BA%A4%E6%98%93%E8%B4%B9%E8%AE%A1%E7%AE%97"><span class="nav-number">5.2.1.</span> <span class="nav-text">1. 交易费计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%8D%8F%E8%AE%AE%E8%B4%B9%E8%AE%A1%E7%AE%97"><span class="nav-number">5.2.2.</span> <span class="nav-text">2. 协议费计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E8%80%85%E8%B4%B9%E8%AE%A1%E7%AE%97"><span class="nav-number">5.2.3.</span> <span class="nav-text">3. 创建者费计算</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E8%B4%B9%E7%8E%87%E5%88%86%E9%85%8D%E7%A4%BA%E4%BE%8B"><span class="nav-number">5.3.</span> <span class="nav-text">完整费率分配示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">6.</span> <span class="nav-text">实际使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8D%8F%E8%AE%AE%E5%88%9D%E5%A7%8B%E5%8C%96%E5%9C%BA%E6%99%AF"><span class="nav-number">6.1.</span> <span class="nav-text">1. 协议初始化场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%B9%E6%AE%8A%E6%B1%A0%E7%B1%BB%E5%9E%8B%E9%85%8D%E7%BD%AE"><span class="nav-number">6.2.</span> <span class="nav-text">2. 特殊池类型配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E8%A6%81%E7%82%B9%E5%9B%9E%E9%A1%BE"><span class="nav-number">7.1.</span> <span class="nav-text">核心要点回顾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E4%BB%B7%E5%80%BC"><span class="nav-number">7.2.</span> <span class="nav-text">学习价值</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/22/Defi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A31/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="DeFi项目拆解1 - Raydium CP-Swap create_amm_config 方法详解 | samxie52">
+      <meta itemprop="description" content="深入解析Raydium CP-Swap协议中create_amm_config方法的完整实现，包括流程逻辑、涉及的结构体和方法，适合Rust、Solana、Anchor入门学习者">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DeFi项目拆解1 - Raydium CP-Swap create_amm_config 方法详解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-09-22 16:53:58" itemprop="dateCreated datePublished" datetime="2025-09-22T16:53:58+08:00">2025-09-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-23 09:51:48" itemprop="dateModified" datetime="2025-09-23T09:51:48+08:00">2025-09-23</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">深入解析Raydium CP-Swap协议中create_amm_config方法的完整实现，包括流程逻辑、涉及的结构体和方法，适合Rust、Solana、Anchor入门学习者</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>什么是 create_amm_config？</strong></p>
+<p><code>create_amm_config</code> 是 Raydium CP-Swap 协议中的核心管理功能，用于创建和配置自动做市商(AMM)的基础参数。这个方法定义了交易池的费率结构、协议治理权限和创建新池子的成本等关键配置。</p>
+<p><strong>本文学习目标</strong>：</p>
+<ul>
+<li>理解 AMM 配置在 DeFi 协议中的重要性</li>
+<li>掌握 Anchor 框架中账户验证和 PDA 的使用</li>
+<li>学习 Solana 程序中的权限管理和费率计算</li>
+<li>了解 DeFi 协议的治理机制设计</li>
+</ul>
+<p><strong>适用人群</strong>：</p>
+<ul>
+<li>Rust 编程初学者</li>
+<li>Solana 开发入门者  </li>
+<li>Anchor 框架学习者</li>
+<li>DeFi 协议研究者</li>
+</ul>
+<h2 id="方法概览"><a href="#方法概览" class="headerlink" title="方法概览"></a>方法概览</h2><h3 id="create-amm-config-在协议中的位置"><a href="#create-amm-config-在协议中的位置" class="headerlink" title="create_amm_config 在协议中的位置"></a>create_amm_config 在协议中的位置</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Raydium CP-Swap 协议架构</span><br><span class="line">├── 管理功能 (Admin Functions)</span><br><span class="line">│   ├── create_amm_config ← 本文重点</span><br><span class="line">│   ├── update_amm_config</span><br><span class="line">│   └── update_pool_status</span><br><span class="line">├── 流动性功能 (Liquidity Functions)</span><br><span class="line">│   ├── initialize</span><br><span class="line">│   ├── deposit</span><br><span class="line">│   └── withdraw</span><br><span class="line">└── 交易功能 (Trading Functions)</span><br><span class="line">    ├── swap_base_input</span><br><span class="line">    └── swap_base_output</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法签名解析"><a href="#方法签名解析" class="headerlink" title="方法签名解析"></a>方法签名解析</h3><p><strong>文件位置</strong>: <code>../raydium-cp-swap/programs/cp-swap/src/lib.rs</code> (第58-80行)</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_amm_config</span>(</span><br><span class="line">    ctx: Context&lt;CreateAmmConfig&gt;,    <span class="comment">// 账户上下文</span></span><br><span class="line">    index: <span class="type">u16</span>,                       <span class="comment">// 配置索引</span></span><br><span class="line">    trade_fee_rate: <span class="type">u64</span>,             <span class="comment">// 交易费率</span></span><br><span class="line">    protocol_fee_rate: <span class="type">u64</span>,          <span class="comment">// 协议费率  </span></span><br><span class="line">    fund_fee_rate: <span class="type">u64</span>,              <span class="comment">// 基金费率</span></span><br><span class="line">    create_pool_fee: <span class="type">u64</span>,            <span class="comment">// 创建池子费用</span></span><br><span class="line">    creator_fee_rate: <span class="type">u64</span>,           <span class="comment">// 创建者费率</span></span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数详解</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ctx</code></td>
+<td><code>Context&lt;CreateAmmConfig&gt;</code></td>
+<td>Anchor账户上下文，包含所有必需的账户</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td><code>u16</code></td>
+<td>配置索引，支持多个配置共存</td>
+<td><code>0</code>, <code>1</code>, <code>2</code></td>
+</tr>
+<tr>
+<td><code>trade_fee_rate</code></td>
+<td><code>u64</code></td>
+<td>交易费率，以百万分之一为单位</td>
+<td><code>2500</code> (0.25%)</td>
+</tr>
+<tr>
+<td><code>protocol_fee_rate</code></td>
+<td><code>u64</code></td>
+<td>协议费率，从交易费中提取的比例</td>
+<td><code>100000</code> (10%)</td>
+</tr>
+<tr>
+<td><code>fund_fee_rate</code></td>
+<td><code>u64</code></td>
+<td>基金费率，用于协议发展基金</td>
+<td><code>50000</code> (5%)</td>
+</tr>
+<tr>
+<td><code>create_pool_fee</code></td>
+<td><code>u64</code></td>
+<td>创建新池子需要支付的费用</td>
+<td><code>1000000000</code> (1 SOL)</td>
+</tr>
+<tr>
+<td><code>creator_fee_rate</code></td>
+<td><code>u64</code></td>
+<td>创建者费率，奖励池子创建者</td>
+<td><code>500</code> (0.05%)</td>
+</tr>
+</tbody></table>
+<h2 id="核心流程分析"><a href="#核心流程分析" class="headerlink" title="核心流程分析"></a>核心流程分析</h2><h3 id="1-参数验证阶段"><a href="#1-参数验证阶段" class="headerlink" title="1. 参数验证阶段"></a>1. 参数验证阶段</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第67-70行：费率验证逻辑</span></span><br><span class="line"><span class="built_in">assert!</span>(trade_fee_rate + creator_fee_rate &lt; FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line"><span class="built_in">assert!</span>(protocol_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line"><span class="built_in">assert!</span>(fund_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line"><span class="built_in">assert!</span>(fund_fee_rate + protocol_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br></pre></td></tr></table></figure>
+
+<p><strong>验证规则解析</strong>：</p>
+<h4 id="A-总费率限制"><a href="#A-总费率限制" class="headerlink" title="A. 总费率限制"></a>A. 总费率限制</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">assert!</span>(trade_fee_rate + creator_fee_rate &lt; FEE_RATE_DENOMINATOR_VALUE);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>目的</strong>: 确保交易费率和创建者费率之和不超过100%</li>
+<li><strong><code>FEE_RATE_DENOMINATOR_VALUE</code></strong>: 值为 <code>1_000_000</code>，代表100%</li>
+<li><strong>实际意义</strong>: 防止费率设置过高，保护用户利益</li>
+</ul>
+<p><strong>示例计算</strong>:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">trade_fee_rate = 2500 (0.25%)</span><br><span class="line">creator_fee_rate = 500 (0.05%)</span><br><span class="line">总和 = 3000 (0.3%) &lt; 1_000_000 (100%) ✅</span><br><span class="line"></span><br><span class="line">如果设置：</span><br><span class="line">trade_fee_rate = 800_000 (80%)</span><br><span class="line">creator_fee_rate = 300_000 (30%)  </span><br><span class="line">总和 = 1_100_000 (110%) &gt; 1_000_000 ❌ 会失败</span><br></pre></td></tr></table></figure>
+
+<h4 id="B-协议费率限制"><a href="#B-协议费率限制" class="headerlink" title="B. 协议费率限制"></a>B. 协议费率限制</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">assert!</span>(protocol_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line"><span class="built_in">assert!</span>(fund_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>目的</strong>: 确保单个费率不超过100%</li>
+<li><strong>实际意义</strong>: 协议费和基金费是从交易费中提取的比例，不能超过100%</li>
+</ul>
+<h4 id="C-费率分配限制"><a href="#C-费率分配限制" class="headerlink" title="C. 费率分配限制"></a>C. 费率分配限制</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">assert!</span>(fund_fee_rate + protocol_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>目的</strong>: 确保协议费和基金费的总和不超过100%</li>
+<li><strong>实际意义</strong>: 从交易费中提取的总比例不能超过交易费本身</li>
+</ul>
+<p><strong>费率分配示例</strong>:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">假设用户交易产生 100 USDC 的费用：</span><br><span class="line"></span><br><span class="line">trade_fee_rate = 2500 (0.25%)</span><br><span class="line">protocol_fee_rate = 100000 (10% of trade fee)</span><br><span class="line">fund_fee_rate = 50000 (5% of trade fee)</span><br><span class="line"></span><br><span class="line">实际分配：</span><br><span class="line">- 协议费: 100 * 10% = 10 USDC</span><br><span class="line">- 基金费: 100 * 5% = 5 USDC  </span><br><span class="line">- 流动性提供者: 100 - 10 - 5 = 85 USDC</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-账户验证阶段"><a href="#2-账户验证阶段" class="headerlink" title="2. 账户验证阶段"></a>2. 账户验证阶段</h3><p><strong>文件位置</strong>: <code>../raydium-cp-swap/programs/cp-swap/src/instructions/admin/create_config.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="meta">#[instruction(index: u16)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CreateAmmConfig</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">/// 协议所有者账户</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        mut,</span></span><br><span class="line"><span class="meta">        address = crate::admin::ID @ ErrorCode::InvalidOwner</span></span><br><span class="line"><span class="meta">    )]</span></span><br><span class="line">    <span class="keyword">pub</span> owner: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// AMM配置状态账户</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init,</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            AMM_CONFIG_SEED.as_bytes(),</span></span><br><span class="line"><span class="meta">            &amp;index.to_be_bytes()</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,</span><br><span class="line">        payer = owner,</span><br><span class="line">        space = AmmConfig::LEN</span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> amm_config: Account&lt;<span class="symbol">&#x27;info</span>, AmmConfig&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>账户验证详解</strong>：</p>
+<h4 id="A-所有者权限验证"><a href="#A-所有者权限验证" class="headerlink" title="A. 所有者权限验证"></a>A. 所有者权限验证</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    mut,</span></span><br><span class="line"><span class="meta">    address = crate::admin::ID @ ErrorCode::InvalidOwner</span></span><br><span class="line"><span class="meta">)]</span></span><br><span class="line"><span class="keyword">pub</span> owner: Signer&lt;<span class="symbol">&#x27;info</span>&gt;,</span><br></pre></td></tr></table></figure>
+
+<p><strong>验证机制</strong>：</p>
+<ul>
+<li><strong><code>mut</code></strong>: 账户需要可变权限（支付创建费用）</li>
+<li><strong><code>address = crate::admin::ID</code></strong>: 硬编码管理员地址验证</li>
+<li><strong><code>@ ErrorCode::InvalidOwner</code></strong>: 自定义错误信息</li>
+<li><strong><code>Signer&lt;&#39;info&gt;</code></strong>: 必须提供有效签名</li>
+</ul>
+<p><strong>管理员地址配置</strong>:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lib.rs 第27-33行</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> admin &#123;</span><br><span class="line">    <span class="keyword">use</span> super::&#123;pubkey, Pubkey&#125;;</span><br><span class="line">    <span class="meta">#[cfg(feature = <span class="string">&quot;devnet&quot;</span>)]</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> ID: Pubkey = pubkey!(<span class="string">&quot;DRayqG9RXYi8WHgWEmRQGrUWRWbhjYWYkCRJDd6JBBak&quot;</span>);</span><br><span class="line">    <span class="meta">#[cfg(not(feature = <span class="string">&quot;devnet&quot;</span>))]</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> ID: Pubkey = pubkey!(<span class="string">&quot;GThUX1Atko4tqhN2NaiTazWSeFWMuiUvfFnyJyUghFMJ&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="B-PDA配置账户创建"><a href="#B-PDA配置账户创建" class="headerlink" title="B. PDA配置账户创建"></a>B. PDA配置账户创建</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[account(</span></span><br><span class="line"><span class="meta">    init,</span></span><br><span class="line"><span class="meta">    seeds = [</span></span><br><span class="line"><span class="meta">        AMM_CONFIG_SEED.as_bytes(),</span></span><br><span class="line"><span class="meta">        &amp;index.to_be_bytes()</span></span><br><span class="line"><span class="meta">    ]</span>,</span><br><span class="line">    bump,</span><br><span class="line">    payer = owner,</span><br><span class="line">    space = AmmConfig::LEN</span><br><span class="line">)]</span><br><span class="line"><span class="keyword">pub</span> amm_config: Account&lt;<span class="symbol">&#x27;info</span>, AmmConfig&gt;,</span><br></pre></td></tr></table></figure>
+
+<p><strong>PDA生成机制</strong>：</p>
+<ul>
+<li><strong><code>init</code></strong>: 创建新账户</li>
+<li><strong><code>seeds</code></strong>: PDA种子组合<ul>
+<li><code>AMM_CONFIG_SEED</code>: 常量字符串 <code>&quot;amm_config&quot;</code></li>
+<li><code>index.to_be_bytes()</code>: 配置索引的大端字节表示</li>
+</ul>
+</li>
+<li><strong><code>bump</code></strong>: 自动寻找有效的bump值</li>
+<li><strong><code>payer = owner</code></strong>: 管理员支付账户创建费用</li>
+<li><strong><code>space = AmmConfig::LEN</code></strong>: 预分配存储空间</li>
+</ul>
+<p><strong>PDA地址计算示例</strong>:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对于 index = 0 的配置</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">seeds</span> = [</span><br><span class="line">    <span class="string">b&quot;amm_config&quot;</span>,           <span class="comment">// AMM_CONFIG_SEED</span></span><br><span class="line">    &amp;<span class="number">0u16</span>.<span class="title function_ invoke__">to_be_bytes</span>(),     <span class="comment">// [0, 0]</span></span><br><span class="line">];</span><br><span class="line"><span class="keyword">let</span> (pda_address, bump) = Pubkey::<span class="title function_ invoke__">find_program_address</span>(&amp;seeds, &amp;program_id);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-配置数据写入阶段"><a href="#3-配置数据写入阶段" class="headerlink" title="3. 配置数据写入阶段"></a>3. 配置数据写入阶段</h3><p><strong>文件位置</strong>: <code>../raydium-cp-swap/programs/cp-swap/src/instructions/admin/create_config.rs</code> (第32-53行)</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_amm_config</span>(</span><br><span class="line">    ctx: Context&lt;CreateAmmConfig&gt;,</span><br><span class="line">    index: <span class="type">u16</span>,</span><br><span class="line">    trade_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    protocol_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    fund_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    create_pool_fee: <span class="type">u64</span>,</span><br><span class="line">    creator_fee_rate: <span class="type">u64</span>,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">amm_config</span> = ctx.accounts.amm_config.<span class="title function_ invoke__">deref_mut</span>();</span><br><span class="line">    amm_config.protocol_owner = ctx.accounts.owner.<span class="title function_ invoke__">key</span>();</span><br><span class="line">    amm_config.bump = ctx.bumps.amm_config;</span><br><span class="line">    amm_config.disable_create_pool = <span class="literal">false</span>;</span><br><span class="line">    amm_config.index = index;</span><br><span class="line">    amm_config.trade_fee_rate = trade_fee_rate;</span><br><span class="line">    amm_config.protocol_fee_rate = protocol_fee_rate;</span><br><span class="line">    amm_config.fund_fee_rate = fund_fee_rate;</span><br><span class="line">    amm_config.create_pool_fee = create_pool_fee;</span><br><span class="line">    amm_config.fund_owner = ctx.accounts.owner.<span class="title function_ invoke__">key</span>();</span><br><span class="line">    amm_config.creator_fee_rate = creator_fee_rate;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>数据写入流程</strong>：</p>
+<h4 id="A-获取可变引用"><a href="#A-获取可变引用" class="headerlink" title="A. 获取可变引用"></a>A. 获取可变引用</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">amm_config</span> = ctx.accounts.amm_config.<span class="title function_ invoke__">deref_mut</span>();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>deref_mut()</code></strong>: 获取账户数据的可变引用</li>
+<li><strong>作用</strong>: 允许修改账户中存储的数据</li>
+</ul>
+<h4 id="B-设置治理权限"><a href="#B-设置治理权限" class="headerlink" title="B. 设置治理权限"></a>B. 设置治理权限</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">amm_config.protocol_owner = ctx.accounts.owner.<span class="title function_ invoke__">key</span>();</span><br><span class="line">amm_config.fund_owner = ctx.accounts.owner.<span class="title function_ invoke__">key</span>();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>protocol_owner</code></strong>: 协议费收取者，通常是DAO或多签账户</li>
+<li><strong><code>fund_owner</code></strong>: 基金费收取者，用于协议发展</li>
+<li><strong>初始设置</strong>: 两者都设为创建者，后续可通过治理修改</li>
+</ul>
+<h4 id="C-设置PDA参数"><a href="#C-设置PDA参数" class="headerlink" title="C. 设置PDA参数"></a>C. 设置PDA参数</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">amm_config.bump = ctx.bumps.amm_config;</span><br><span class="line">amm_config.index = index;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>bump</code></strong>: 存储PDA的bump值，用于后续签名验证</li>
+<li><strong><code>index</code></strong>: 配置索引，支持多配置管理</li>
+</ul>
+<h4 id="D-设置费率参数"><a href="#D-设置费率参数" class="headerlink" title="D. 设置费率参数"></a>D. 设置费率参数</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">amm_config.trade_fee_rate = trade_fee_rate;</span><br><span class="line">amm_config.protocol_fee_rate = protocol_fee_rate;</span><br><span class="line">amm_config.fund_fee_rate = fund_fee_rate;</span><br><span class="line">amm_config.create_pool_fee = create_pool_fee;</span><br><span class="line">amm_config.creator_fee_rate = creator_fee_rate;</span><br></pre></td></tr></table></figure>
+
+<h4 id="E-设置控制标志"><a href="#E-设置控制标志" class="headerlink" title="E. 设置控制标志"></a>E. 设置控制标志</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">amm_config.disable_create_pool = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>作用</strong>: 控制是否允许创建新的交易池</li>
+<li><strong>初始值</strong>: <code>false</code>，允许创建</li>
+<li><strong>治理用途</strong>: 可通过治理投票暂停新池创建</li>
+</ul>
+<h2 id="涉及的数据结构详解"><a href="#涉及的数据结构详解" class="headerlink" title="涉及的数据结构详解"></a>涉及的数据结构详解</h2><h3 id="AmmConfig-结构体"><a href="#AmmConfig-结构体" class="headerlink" title="AmmConfig 结构体"></a>AmmConfig 结构体</h3><p><strong>文件位置</strong>: <code>../raydium-cp-swap/programs/cp-swap/src/states/config.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[account]</span></span><br><span class="line"><span class="meta">#[derive(Default, Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">AmmConfig</span> &#123;</span><br><span class="line">    <span class="comment">/// PDA的bump值</span></span><br><span class="line">    <span class="keyword">pub</span> bump: <span class="type">u8</span>,</span><br><span class="line">    <span class="comment">/// 控制是否可以创建新池</span></span><br><span class="line">    <span class="keyword">pub</span> disable_create_pool: <span class="type">bool</span>,</span><br><span class="line">    <span class="comment">/// 配置索引</span></span><br><span class="line">    <span class="keyword">pub</span> index: <span class="type">u16</span>,</span><br><span class="line">    <span class="comment">/// 交易费率，以百万分之一为单位</span></span><br><span class="line">    <span class="keyword">pub</span> trade_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    <span class="comment">/// 协议费率</span></span><br><span class="line">    <span class="keyword">pub</span> protocol_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    <span class="comment">/// 基金费率，以百万分之一为单位</span></span><br><span class="line">    <span class="keyword">pub</span> fund_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    <span class="comment">/// 创建新池的费用</span></span><br><span class="line">    <span class="keyword">pub</span> create_pool_fee: <span class="type">u64</span>,</span><br><span class="line">    <span class="comment">/// 协议费所有者地址</span></span><br><span class="line">    <span class="keyword">pub</span> protocol_owner: Pubkey,</span><br><span class="line">    <span class="comment">/// 基金费所有者地址</span></span><br><span class="line">    <span class="keyword">pub</span> fund_owner: Pubkey,</span><br><span class="line">    <span class="comment">/// 池创建者费率，以百万分之一为单位</span></span><br><span class="line">    <span class="keyword">pub</span> creator_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    <span class="comment">/// 填充字段，为未来扩展预留空间</span></span><br><span class="line">    <span class="keyword">pub</span> padding: [<span class="type">u64</span>; <span class="number">15</span>],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>字段详细说明</strong>：</p>
+<h4 id="1-基础控制字段"><a href="#1-基础控制字段" class="headerlink" title="1. 基础控制字段"></a>1. 基础控制字段</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> bump: <span class="type">u8</span>,                    <span class="comment">// PDA bump值 (1字节)</span></span><br><span class="line"><span class="keyword">pub</span> disable_create_pool: <span class="type">bool</span>,   <span class="comment">// 池创建开关 (1字节)  </span></span><br><span class="line"><span class="keyword">pub</span> index: <span class="type">u16</span>,                  <span class="comment">// 配置索引 (2字节)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-费率配置字段"><a href="#2-费率配置字段" class="headerlink" title="2. 费率配置字段"></a>2. 费率配置字段</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> trade_fee_rate: <span class="type">u64</span>,      <span class="comment">// 交易费率 (8字节)</span></span><br><span class="line"><span class="keyword">pub</span> protocol_fee_rate: <span class="type">u64</span>,   <span class="comment">// 协议费率 (8字节)</span></span><br><span class="line"><span class="keyword">pub</span> fund_fee_rate: <span class="type">u64</span>,       <span class="comment">// 基金费率 (8字节)</span></span><br><span class="line"><span class="keyword">pub</span> creator_fee_rate: <span class="type">u64</span>,    <span class="comment">// 创建者费率 (8字节)</span></span><br><span class="line"><span class="keyword">pub</span> create_pool_fee: <span class="type">u64</span>,     <span class="comment">// 创建池费用 (8字节)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-权限控制字段"><a href="#3-权限控制字段" class="headerlink" title="3. 权限控制字段"></a>3. 权限控制字段</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> protocol_owner: Pubkey,   <span class="comment">// 协议所有者 (32字节)</span></span><br><span class="line"><span class="keyword">pub</span> fund_owner: Pubkey,       <span class="comment">// 基金所有者 (32字节)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-扩展字段"><a href="#4-扩展字段" class="headerlink" title="4. 扩展字段"></a>4. 扩展字段</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> padding: [<span class="type">u64</span>; <span class="number">15</span>],       <span class="comment">// 预留空间 (120字节)</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>作用</strong>: 为未来功能扩展预留存储空间</li>
+<li><strong>重要性</strong>: 避免升级时需要迁移所有现有账户</li>
+</ul>
+<h3 id="存储空间计算"><a href="#存储空间计算" class="headerlink" title="存储空间计算"></a>存储空间计算</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">AmmConfig</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> LEN: <span class="type">usize</span> = <span class="number">8</span> + <span class="number">1</span> + <span class="number">1</span> + <span class="number">2</span> + <span class="number">4</span> * <span class="number">8</span> + <span class="number">32</span> * <span class="number">2</span> + <span class="number">8</span> + <span class="number">8</span> * <span class="number">15</span>;</span><br><span class="line">    <span class="comment">//                     ^   ^   ^   ^     ^       ^       ^      ^</span></span><br><span class="line">    <span class="comment">//                     |   |   |   |     |       |       |      └─ padding (120)</span></span><br><span class="line">    <span class="comment">//                     |   |   |   |     |       |       └─ creator_fee_rate (8)</span></span><br><span class="line">    <span class="comment">//                     |   |   |   |     |       └─ owners (64)</span></span><br><span class="line">    <span class="comment">//                     |   |   |   |     └─ fee rates (32)</span></span><br><span class="line">    <span class="comment">//                     |   |   |   └─ index (2)</span></span><br><span class="line">    <span class="comment">//                     |   |   └─ disable_create_pool (1)</span></span><br><span class="line">    <span class="comment">//                     |   └─ bump (1)</span></span><br><span class="line">    <span class="comment">//                     └─ discriminator (8)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>总计</strong>: 216字节</p>
+<h2 id="费率计算机制详解"><a href="#费率计算机制详解" class="headerlink" title="费率计算机制详解"></a>费率计算机制详解</h2><h3 id="费率常量定义"><a href="#费率常量定义" class="headerlink" title="费率常量定义"></a>费率常量定义</h3><p><strong>文件位置</strong>: <code>../raydium-cp-swap/programs/cp-swap/src/curve/fees.rs</code></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> FEE_RATE_DENOMINATOR_VALUE: <span class="type">u64</span> = <span class="number">1_000_000</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>含义</strong>: </p>
+<ul>
+<li>费率计算的分母</li>
+<li><code>1_000_000</code> 代表 100%</li>
+<li>所有费率都以此为基准进行百分比计算</li>
+</ul>
+<h3 id="费率计算函数"><a href="#费率计算函数" class="headerlink" title="费率计算函数"></a>费率计算函数</h3><h4 id="1-交易费计算"><a href="#1-交易费计算" class="headerlink" title="1. 交易费计算"></a>1. 交易费计算</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">trading_fee</span>(amount: <span class="type">u128</span>, trade_fee_rate: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="type">u128</span>&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">ceil_div</span>(</span><br><span class="line">        amount,</span><br><span class="line">        <span class="type">u128</span>::<span class="title function_ invoke__">from</span>(trade_fee_rate),</span><br><span class="line">        <span class="type">u128</span>::<span class="title function_ invoke__">from</span>(FEE_RATE_DENOMINATOR_VALUE),</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>计算公式</strong>: <code>fee = ceil(amount * trade_fee_rate / 1_000_000)</code></p>
+<p><strong>示例计算</strong>:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">交易金额: 1000 USDC</span><br><span class="line">交易费率: 2500 (0.25%)</span><br><span class="line"></span><br><span class="line">计算: ceil(1000 * 2500 / 1_000_000) = ceil(2.5) = 3 USDC</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-协议费计算"><a href="#2-协议费计算" class="headerlink" title="2. 协议费计算"></a>2. 协议费计算</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">protocol_fee</span>(amount: <span class="type">u128</span>, protocol_fee_rate: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="type">u128</span>&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">floor_div</span>(</span><br><span class="line">        amount,</span><br><span class="line">        <span class="type">u128</span>::<span class="title function_ invoke__">from</span>(protocol_fee_rate),</span><br><span class="line">        <span class="type">u128</span>::<span class="title function_ invoke__">from</span>(FEE_RATE_DENOMINATOR_VALUE),</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>计算公式</strong>: <code>protocol_fee = floor(trading_fee * protocol_fee_rate / 1_000_000)</code></p>
+<h4 id="3-创建者费计算"><a href="#3-创建者费计算" class="headerlink" title="3. 创建者费计算"></a>3. 创建者费计算</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">creator_fee</span>(amount: <span class="type">u128</span>, creator_fee_rate: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="type">u128</span>&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">ceil_div</span>(</span><br><span class="line">        amount,</span><br><span class="line">        <span class="type">u128</span>::<span class="title function_ invoke__">from</span>(creator_fee_rate),</span><br><span class="line">        <span class="type">u128</span>::<span class="title function_ invoke__">from</span>(FEE_RATE_DENOMINATOR_VALUE),</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="完整费率分配示例"><a href="#完整费率分配示例" class="headerlink" title="完整费率分配示例"></a>完整费率分配示例</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">假设一笔 10,000 USDC 的交易：</span><br><span class="line"></span><br><span class="line">配置参数:</span><br><span class="line">- trade_fee_rate: 2500 (0.25%)</span><br><span class="line">- protocol_fee_rate: 100000 (10% of trade fee)</span><br><span class="line">- fund_fee_rate: 50000 (5% of trade fee)  </span><br><span class="line">- creator_fee_rate: 500 (0.05%)</span><br><span class="line"></span><br><span class="line">计算过程:</span><br><span class="line">1. 交易费: ceil(10000 * 2500 / 1000000) = 25 USDC</span><br><span class="line">2. 创建者费: ceil(10000 * 500 / 1000000) = 5 USDC</span><br><span class="line">3. 协议费: floor(25 * 100000 / 1000000) = 2.5 USDC</span><br><span class="line">4. 基金费: floor(25 * 50000 / 1000000) = 1.25 USDC</span><br><span class="line"></span><br><span class="line">最终分配:</span><br><span class="line">- 用户支付总费用: 25 + 5 = 30 USDC</span><br><span class="line">- 协议收取: 2.5 USDC</span><br><span class="line">- 基金收取: 1.25 USDC  </span><br><span class="line">- 创建者收取: 5 USDC</span><br><span class="line">- 流动性提供者: 25 - 2.5 - 1.25 = 21.25 USDC</span><br></pre></td></tr></table></figure>
+
+<h2 id="实际使用场景"><a href="#实际使用场景" class="headerlink" title="实际使用场景"></a>实际使用场景</h2><h3 id="1-协议初始化场景"><a href="#1-协议初始化场景" class="headerlink" title="1. 协议初始化场景"></a>1. 协议初始化场景</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建主配置 (index = 0)</span></span><br><span class="line"><span class="title function_ invoke__">create_amm_config</span>(</span><br><span class="line">    ctx,</span><br><span class="line">    <span class="number">0</span>,                    <span class="comment">// 主配置索引</span></span><br><span class="line">    <span class="number">2500</span>,                <span class="comment">// 0.25% 交易费</span></span><br><span class="line">    <span class="number">100000</span>,              <span class="comment">// 10% 协议费</span></span><br><span class="line">    <span class="number">50000</span>,               <span class="comment">// 5% 基金费  </span></span><br><span class="line">    <span class="number">1_000_000_000</span>,       <span class="comment">// 1 SOL 创建池费用</span></span><br><span class="line">    <span class="number">500</span>                  <span class="comment">// 0.05% 创建者费</span></span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-特殊池类型配置"><a href="#2-特殊池类型配置" class="headerlink" title="2. 特殊池类型配置"></a>2. 特殊池类型配置</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建稳定币专用配置 (index = 1)</span></span><br><span class="line"><span class="title function_ invoke__">create_amm_config</span>(</span><br><span class="line">    ctx,</span><br><span class="line">    <span class="number">1</span>,                    <span class="comment">// 稳定币配置索引</span></span><br><span class="line">    <span class="number">500</span>,                 <span class="comment">// 0.05% 低交易费</span></span><br><span class="line">    <span class="number">200000</span>,              <span class="comment">// 20% 协议费</span></span><br><span class="line">    <span class="number">100000</span>,              <span class="comment">// 10% 基金费</span></span><br><span class="line">    <span class="number">500_000_000</span>,         <span class="comment">// 0.5 SOL 创建费</span></span><br><span class="line">    <span class="number">100</span>                  <span class="comment">// 0.01% 创建者费</span></span><br><span class="line">)?;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="核心要点回顾"><a href="#核心要点回顾" class="headerlink" title="核心要点回顾"></a>核心要点回顾</h3><ol>
+<li><strong>参数验证</strong>: 通过多层断言确保费率设置的合理性</li>
+<li><strong>权限控制</strong>: 使用硬编码管理员地址和PDA机制保证安全性</li>
+<li><strong>数据结构</strong>: AmmConfig结构体设计考虑了扩展性和存储效率</li>
+<li><strong>费率计算</strong>: 基于百万分之一的精确费率计算系统</li>
+</ol>
+<h3 id="学习价值"><a href="#学习价值" class="headerlink" title="学习价值"></a>学习价值</h3><p>通过分析 <code>create_amm_config</code> 方法，我们学到了：</p>
+<ul>
+<li><strong>Anchor框架</strong>: 账户验证、PDA生成、错误处理的最佳实践</li>
+<li><strong>Solana编程</strong>: 程序状态管理、权限控制、存储优化</li>
+<li><strong>DeFi设计</strong>: 费率结构、治理机制、协议经济学</li>
+</ul>
+<p>这个方法虽然功能相对简单，但体现了现代DeFi协议在安全性、可扩展性和治理方面的深度思考，为理解更复杂的DeFi协议奠定了坚实基础。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/22/Solana%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7-UMI%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/" rel="prev" title="Solana开发工具-UMI使用指南-从入门到实战">
+                  <i class="fa fa-angle-left"></i> Solana开发工具-UMI使用指南-从入门到实战
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/23/Defi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A32/" rel="next" title="DeFi项目拆解2 - Raydium CP-Swap 流动性管理三核心方法详解">
+                  DeFi项目拆解2 - Raydium CP-Swap 流动性管理三核心方法详解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

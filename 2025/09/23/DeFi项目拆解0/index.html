@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="从零开始理解DeFi、Solana、Rust、Anchor和Raydium，通过直观的图表和流程图深入浅出地介绍去中心化金融的核心概念、自动做市商机制和完整的协议运作流程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeFi项目拆解0 - 去中心化金融与AMM协议入门指南">
+<meta property="og:url" content="http://example.com/2025/09/23/DeFi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A30/index.html">
+<meta property="og:site_name" content="samxie52">
+<meta property="og:description" content="从零开始理解DeFi、Solana、Rust、Anchor和Raydium，通过直观的图表和流程图深入浅出地介绍去中心化金融的核心概念、自动做市商机制和完整的协议运作流程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-23T02:19:45.000Z">
+<meta property="article:modified_time" content="2025-09-23T02:26:30.678Z">
+<meta property="article:author" content="samxie">
+<meta property="article:tag" content="DeFi">
+<meta property="article:tag" content="Solana">
+<meta property="article:tag" content="Rust">
+<meta property="article:tag" content="Anchor">
+<meta property="article:tag" content="Raydium">
+<meta property="article:tag" content="AMM">
+<meta property="article:tag" content="入门指南">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/09/23/DeFi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A30/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/09/23/DeFi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A30/","path":"2025/09/23/DeFi项目拆解0/","title":"DeFi项目拆解0 - 去中心化金融与AMM协议入门指南"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>DeFi项目拆解0 - 去中心化金融与AMM协议入门指南 | samxie52</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">samxie52</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%9ADeFi%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">第一部分：DeFi基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BC%A0%E7%BB%9F%E9%87%91%E8%9E%8D-vs-%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E9%87%91%E8%9E%8D"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 传统金融 vs 去中心化金融</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-DeFi%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 DeFi的核心价值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-DeFi%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 DeFi生态系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%81%9A%E5%B8%82%E5%95%86%EF%BC%88AMM%EF%BC%89%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">第二部分：自动做市商（AMM）原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%87%AA%E5%8A%A8%E5%81%9A%E5%B8%82%E5%95%86%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 什么是自动做市商？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%81%92%E5%AE%9A%E4%B9%98%E7%A7%AF%E5%85%AC%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 恒定乘积公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%B5%81%E5%8A%A8%E6%80%A7%E6%8F%90%E4%BE%9B%E8%80%85%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 流动性提供者的角色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%EF%BC%9ASolana%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.</span> <span class="nav-text">第三部分：Solana生态系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9Solana%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 为什么选择Solana？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Solana%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 Solana技术栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Anchor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 Anchor框架简介</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%EF%BC%9ARaydium%E5%8D%8F%E8%AE%AE%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">第四部分：Raydium协议深度解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Raydium%E5%8D%8F%E8%AE%AE%E6%9E%B6%E6%9E%84"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 Raydium协议架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%8D%8F%E8%AE%AE%E8%BF%90%E4%BD%9C%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 协议运作完整流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B51%EF%BC%9A%E5%8D%8F%E8%AE%AE%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%88%E7%AE%A1%E7%90%86%E5%91%98%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-number">5.2.1.</span> <span class="nav-text">阶段1：协议初始化（管理员操作）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B52%EF%BC%9A%E6%B5%81%E5%8A%A8%E6%80%A7%E6%B1%A0%E5%88%9B%E5%BB%BA%EF%BC%88%E6%B1%A0%E5%AD%90%E5%88%9B%E5%BB%BA%E8%80%85%EF%BC%89"><span class="nav-number">5.2.2.</span> <span class="nav-text">阶段2：流动性池创建（池子创建者）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B53%EF%BC%9A%E6%B5%81%E5%8A%A8%E6%80%A7%E7%AE%A1%E7%90%86%EF%BC%88%E6%B5%81%E5%8A%A8%E6%80%A7%E6%8F%90%E4%BE%9B%E8%80%85%EF%BC%89"><span class="nav-number">5.2.3.</span> <span class="nav-text">阶段3：流动性管理（流动性提供者）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B54%EF%BC%9A%E4%BB%A3%E5%B8%81%E4%BA%A4%E6%98%93%EF%BC%88%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%EF%BC%89"><span class="nav-number">5.2.4.</span> <span class="nav-text">阶段4：代币交易（普通用户）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E8%B4%B9%E7%94%A8%E5%88%86%E9%85%8D%E6%9C%BA%E5%88%B6"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 费用分配机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%EF%BC%9ADeFi%E7%9A%84%E6%9C%BA%E9%81%87%E4%B8%8E%E6%8C%91%E6%88%98"><span class="nav-number">6.</span> <span class="nav-text">第五部分：DeFi的机遇与挑战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-DeFi%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 DeFi的优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E9%9D%A2%E4%B8%B4%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 面临的挑战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E6%9C%AA%E6%9D%A5%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF"><span class="nav-number">6.3.</span> <span class="nav-text">5.3 未来发展趋势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E8%A6%81%E7%82%B9%E5%9B%9E%E9%A1%BE"><span class="nav-number">7.1.</span> <span class="nav-text">核心要点回顾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E4%BB%B7%E5%80%BC"><span class="nav-number">7.2.</span> <span class="nav-text">学习价值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%95%E6%9C%9B%E6%9C%AA%E6%9D%A5"><span class="nav-number">7.3.</span> <span class="nav-text">展望未来</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">samxie</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/23/DeFi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A30/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="samxie">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="samxie52">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="DeFi项目拆解0 - 去中心化金融与AMM协议入门指南 | samxie52">
+      <meta itemprop="description" content="从零开始理解DeFi、Solana、Rust、Anchor和Raydium，通过直观的图表和流程图深入浅出地介绍去中心化金融的核心概念、自动做市商机制和完整的协议运作流程">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DeFi项目拆解0 - 去中心化金融与AMM协议入门指南
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-09-23 10:19:45 / 修改时间：10:26:30" itemprop="dateCreated datePublished" datetime="2025-09-23T10:19:45+08:00">2025-09-23</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+            <div class="post-description">从零开始理解DeFi、Solana、Rust、Anchor和Raydium，通过直观的图表和流程图深入浅出地介绍去中心化金融的核心概念、自动做市商机制和完整的协议运作流程</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>什么是去中心化金融（DeFi）？</strong></p>
+<p>去中心化金融（Decentralized Finance，简称DeFi）是一种基于区块链技术的金融服务体系，它通过智能合约自动执行金融交易，无需传统的中介机构如银行、券商或交易所。</p>
+<p><strong>本文学习目标</strong>：</p>
+<ul>
+<li>理解DeFi的基本概念和价值主张</li>
+<li>掌握自动做市商（AMM）的工作原理</li>
+<li>了解Solana生态系统和技术栈</li>
+<li>认识Raydium协议的完整运作流程</li>
+<li>建立对区块链金融创新的整体认知</li>
+</ul>
+<p><strong>适用人群</strong>：</p>
+<ul>
+<li>区块链和加密货币初学者</li>
+<li>传统金融从业者转型DeFi</li>
+<li>对去中心化技术感兴趣的投资者</li>
+<li>希望了解新兴金融科技的学习者</li>
+</ul>
+<h2 id="第一部分：DeFi基础概念"><a href="#第一部分：DeFi基础概念" class="headerlink" title="第一部分：DeFi基础概念"></a>第一部分：DeFi基础概念</h2><h3 id="1-1-传统金融-vs-去中心化金融"><a href="#1-1-传统金融-vs-去中心化金融" class="headerlink" title="1.1 传统金融 vs 去中心化金融"></a>1.1 传统金融 vs 去中心化金融</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">传统金融体系                    去中心化金融体系</span><br><span class="line">┌─────────────────┐            ┌─────────────────┐</span><br><span class="line">│   中央银行      │            │   区块链网络    │</span><br><span class="line">│   ↓            │            │   ↓            │</span><br><span class="line">│   商业银行      │    VS      │   智能合约      │</span><br><span class="line">│   ↓            │            │   ↓            │</span><br><span class="line">│   金融产品      │            │   DeFi协议      │</span><br><span class="line">│   ↓            │            │   ↓            │</span><br><span class="line">│   用户服务      │            │   直接服务      │</span><br><span class="line">└─────────────────┘            └─────────────────┘</span><br><span class="line"></span><br><span class="line">特点对比：</span><br><span class="line">传统金融：中心化、需要许可、监管严格、效率较低</span><br><span class="line">DeFi：去中心化、无需许可、透明开放、24/7运行</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-DeFi的核心价值"><a href="#1-2-DeFi的核心价值" class="headerlink" title="1.2 DeFi的核心价值"></a>1.2 DeFi的核心价值</h3><p><strong>1. 无需许可（Permissionless）</strong></p>
+<ul>
+<li>任何人都可以使用DeFi服务，无需银行账户或身份验证</li>
+<li>全球任何地方都能访问，打破地理限制</li>
+</ul>
+<p><strong>2. 透明性（Transparency）</strong></p>
+<ul>
+<li>所有交易记录在区块链上公开可查</li>
+<li>智能合约代码开源，运行逻辑完全透明</li>
+</ul>
+<p><strong>3. 可组合性（Composability）</strong></p>
+<ul>
+<li>DeFi协议可以像乐高积木一样组合</li>
+<li>创造出更复杂的金融产品和服务</li>
+</ul>
+<p><strong>4. 自主托管（Self-Custody）</strong></p>
+<ul>
+<li>用户完全控制自己的资产</li>
+<li>无需信任第三方机构</li>
+</ul>
+<h3 id="1-3-DeFi生态系统"><a href="#1-3-DeFi生态系统" class="headerlink" title="1.3 DeFi生态系统"></a>1.3 DeFi生态系统</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">DeFi生态系统架构</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                    应用层 (DApps)                        │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │    DEX      │ │   借贷协议   │ │   衍生品    │        │</span><br><span class="line">│  │  (Raydium)  │ │ (Compound)  │ │ (Perpetual) │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                    协议层 (Protocols)                    │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │    AMM      │ │   预言机    │ │   跨链桥    │        │</span><br><span class="line">│  │   协议      │ │  (Chainlink) │ │  (Wormhole) │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                   基础设施层                             │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   区块链    │ │   钱包      │ │   开发工具   │        │</span><br><span class="line">│  │  (Solana)   │ │ (Phantom)   │ │  (Anchor)   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="第二部分：自动做市商（AMM）原理"><a href="#第二部分：自动做市商（AMM）原理" class="headerlink" title="第二部分：自动做市商（AMM）原理"></a>第二部分：自动做市商（AMM）原理</h2><h3 id="2-1-什么是自动做市商？"><a href="#2-1-什么是自动做市商？" class="headerlink" title="2.1 什么是自动做市商？"></a>2.1 什么是自动做市商？</h3><p>自动做市商（Automated Market Maker，AMM）是DeFi中的核心创新，它用算法替代了传统的订单簿交易模式。</p>
+<p><strong>传统交易所 vs AMM对比</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">传统订单簿模式                    AMM模式</span><br><span class="line">┌─────────────────┐            ┌─────────────────┐</span><br><span class="line">│   买单队列      │            │   流动性池      │</span><br><span class="line">│   $100 - 10个   │            │   Token A       │</span><br><span class="line">│   $99  - 20个   │            │      +          │</span><br><span class="line">│   $98  - 15个   │    VS      │   Token B       │</span><br><span class="line">│   ─────────────  │            │      ↓          │</span><br><span class="line">│   卖单队列      │            │   算法定价      │</span><br><span class="line">│   $101 - 8个    │            │   自动交易      │</span><br><span class="line">│   $102 - 12个   │            │                 │</span><br><span class="line">└─────────────────┘            └─────────────────┘</span><br><span class="line"></span><br><span class="line">优势对比：</span><br><span class="line">传统模式：需要买卖双方匹配、可能缺乏流动性</span><br><span class="line">AMM模式：始终有流动性、价格自动调整、24/7可交易</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-恒定乘积公式"><a href="#2-2-恒定乘积公式" class="headerlink" title="2.2 恒定乘积公式"></a>2.2 恒定乘积公式</h3><p>AMM的核心是恒定乘积公式：<strong>x × y &#x3D; k</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">恒定乘积原理图解</span><br><span class="line"></span><br><span class="line">初始状态：</span><br><span class="line">┌─────────────────────────────────┐</span><br><span class="line">│  流动性池                        │</span><br><span class="line">│  ┌─────────┐    ┌─────────┐     │</span><br><span class="line">│  │ Token A │    │ Token B │     │</span><br><span class="line">│  │  1000   │ ×  │  4000   │ = k │</span><br><span class="line">│  └─────────┘    └─────────┘     │</span><br><span class="line">│  k = 4,000,000 (恒定值)         │</span><br><span class="line">└─────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">交易后：</span><br><span class="line">┌─────────────────────────────────┐</span><br><span class="line">│  用户买入Token B                 │</span><br><span class="line">│  投入100个Token A               │</span><br><span class="line">│  ┌─────────┐    ┌─────────┐     │</span><br><span class="line">│  │Token A  │    │Token B  │     │</span><br><span class="line">│  │ 1100    │ ×  │ 3636    │ = k │</span><br><span class="line">│  └─────────┘    └─────────┘     │</span><br><span class="line">│  k = 4,000,000 (保持不变)       │</span><br><span class="line">│  用户获得: 4000-3636=364个Token B│</span><br><span class="line">└─────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong>价格发现机制</strong>：</p>
+<ul>
+<li>当某种代币被大量购买时，其价格上涨</li>
+<li>当某种代币被大量出售时，其价格下跌</li>
+<li>价格变化鼓励套利者平衡市场</li>
+</ul>
+<h3 id="2-3-流动性提供者的角色"><a href="#2-3-流动性提供者的角色" class="headerlink" title="2.3 流动性提供者的角色"></a>2.3 流动性提供者的角色</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">流动性提供者参与流程</span><br><span class="line"></span><br><span class="line">1. 提供流动性</span><br><span class="line">┌─────────────────┐</span><br><span class="line">│  用户投入：      │</span><br><span class="line">│  100 USDC      │</span><br><span class="line">│  +             │</span><br><span class="line">│  0.2 SOL       │</span><br><span class="line">│  ↓             │</span><br><span class="line">│  获得LP代币     │</span><br><span class="line">└─────────────────┘</span><br><span class="line"></span><br><span class="line">2. 赚取收益</span><br><span class="line">┌─────────────────┐</span><br><span class="line">│  交易费用分成    │</span><br><span class="line">│  每笔交易0.25%  │</span><br><span class="line">│  +             │</span><br><span class="line">│  可能的代币奖励  │</span><br><span class="line">│  ↓             │</span><br><span class="line">│  被动收入       │</span><br><span class="line">└─────────────────┘</span><br><span class="line"></span><br><span class="line">3. 承担风险</span><br><span class="line">┌─────────────────┐</span><br><span class="line">│  无常损失       │</span><br><span class="line">│  价格波动导致    │</span><br><span class="line">│  相对损失       │</span><br><span class="line">│  +             │</span><br><span class="line">│  智能合约风险    │</span><br><span class="line">└─────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="第三部分：Solana生态系统"><a href="#第三部分：Solana生态系统" class="headerlink" title="第三部分：Solana生态系统"></a>第三部分：Solana生态系统</h2><h3 id="3-1-为什么选择Solana？"><a href="#3-1-为什么选择Solana？" class="headerlink" title="3.1 为什么选择Solana？"></a>3.1 为什么选择Solana？</h3><p>Solana是一个高性能的区块链平台，特别适合DeFi应用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">区块链性能对比</span><br><span class="line">┌─────────────┬──────────┬──────────┬──────────┐</span><br><span class="line">│   指标      │ Ethereum │ Solana   │ 传统系统  │</span><br><span class="line">├─────────────┼──────────┼──────────┼──────────┤</span><br><span class="line">│ 交易速度    │ 15 TPS   │65,000TPS │数万TPS   │</span><br><span class="line">│ 交易费用    │ $10-100  │ $0.001   │ 免费     │</span><br><span class="line">│ 确认时间    │ 1-5分钟  │ 400毫秒  │ 即时     │</span><br><span class="line">│ 开发语言    │ Solidity │ Rust     │ 多种     │</span><br><span class="line">│ 生态成熟度  │ 很高     │ 快速增长 │ 完善     │</span><br><span class="line">└─────────────┴──────────┴──────────┴──────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong>Solana的技术优势</strong>：</p>
+<ol>
+<li><strong>历史证明（Proof of History）</strong>：创新的共识机制</li>
+<li><strong>并行处理</strong>：多个交易可以同时处理</li>
+<li><strong>低成本</strong>：交易费用极低，适合高频交易</li>
+<li><strong>开发友好</strong>：使用Rust语言，性能和安全性兼备</li>
+</ol>
+<h3 id="3-2-Solana技术栈"><a href="#3-2-Solana技术栈" class="headerlink" title="3.2 Solana技术栈"></a>3.2 Solana技术栈</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Solana开发技术栈</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                    前端应用层                            │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │ React/Vue   │ │ TypeScript  │ │ Web3.js     │        │</span><br><span class="line">│  │ 用户界面    │ │ 类型安全    │ │ 区块链交互   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                   智能合约层                             │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   Anchor    │ │    Rust     │ │   Program   │        │</span><br><span class="line">│  │   框架      │ │   编程语言   │ │   智能合约   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                    区块链层                              │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   Solana    │ │   Validator │ │    RPC      │        │</span><br><span class="line">│  │   网络      │ │   验证节点   │ │   接口      │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-Anchor框架简介"><a href="#3-3-Anchor框架简介" class="headerlink" title="3.3 Anchor框架简介"></a>3.3 Anchor框架简介</h3><p>Anchor是Solana上最流行的智能合约开发框架，类似于以太坊的Hardhat：</p>
+<p><strong>Anchor的优势</strong>：</p>
+<ul>
+<li><strong>类型安全</strong>：自动生成TypeScript客户端</li>
+<li><strong>账户验证</strong>：内置安全检查机制</li>
+<li><strong>开发效率</strong>：简化复杂的Solana开发流程</li>
+<li><strong>测试工具</strong>：完整的测试和部署工具链</li>
+</ul>
+<h2 id="第四部分：Raydium协议深度解析"><a href="#第四部分：Raydium协议深度解析" class="headerlink" title="第四部分：Raydium协议深度解析"></a>第四部分：Raydium协议深度解析</h2><h3 id="4-1-Raydium协议架构"><a href="#4-1-Raydium协议架构" class="headerlink" title="4.1 Raydium协议架构"></a>4.1 Raydium协议架构</h3><p>基于前面三篇拆解文档，Raydium CP-Swap协议的完整架构如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Raydium CP-Swap 协议完整架构</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                    用户交互层                            │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   Web界面   │ │   钱包集成   │ │   移动端    │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                    业务逻辑层                            │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   管理功能   │ │   流动性功能 │ │   交易功能   │        │</span><br><span class="line">│  │create_config│ │init/deposit │ │swap_input   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                    核心算法层                            │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   费用计算   │ │   恒定乘积   │ │   价格预言机 │        │</span><br><span class="line">│  │   多层分配   │ │   x*y=k     │ │   TWAP机制  │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                    数据存储层                            │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │  AMM配置    │ │   池子状态   │ │   观察数据   │        │</span><br><span class="line">│  │  费率参数   │ │   流动性池   │ │   价格历史   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">├─────────────────────────────────────────────────────────┤</span><br><span class="line">│                   Solana区块链                           │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   账户模型   │ │   程序执行   │ │   共识机制   │        │</span><br><span class="line">│  │   PDA系统   │ │   并行处理   │ │   PoH+PoS   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-协议运作完整流程"><a href="#4-2-协议运作完整流程" class="headerlink" title="4.2 协议运作完整流程"></a>4.2 协议运作完整流程</h3><p>让我们通过一个完整的用户旅程来理解Raydium协议：</p>
+<h4 id="阶段1：协议初始化（管理员操作）"><a href="#阶段1：协议初始化（管理员操作）" class="headerlink" title="阶段1：协议初始化（管理员操作）"></a>阶段1：协议初始化（管理员操作）</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">协议启动流程</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│ 1. 创建AMM配置 (create_amm_config)                       │</span><br><span class="line">│    ┌─────────────────────────────────────────────────┐  │</span><br><span class="line">│    │ • 设置交易费率：0.25%                            │  │</span><br><span class="line">│    │ • 设置协议费率：10%                              │  │</span><br><span class="line">│    │ • 设置基金费率：5%                               │  │</span><br><span class="line">│    │ • 设置创建者费率：0.05%                          │  │</span><br><span class="line">│    │ • 设置池子创建费用：0.1 SOL                      │  │</span><br><span class="line">│    └─────────────────────────────────────────────────┘  │</span><br><span class="line">│                           ↓                             │</span><br><span class="line">│ 2. 生成PDA账户                                          │</span><br><span class="line">│    • 权限账户 (authority)                               │</span><br><span class="line">│    • 配置存储账户                                       │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h4 id="阶段2：流动性池创建（池子创建者）"><a href="#阶段2：流动性池创建（池子创建者）" class="headerlink" title="阶段2：流动性池创建（池子创建者）"></a>阶段2：流动性池创建（池子创建者）</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">流动性池创建流程</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│ 1. 初始化池子 (initialize)                              │</span><br><span class="line">│    ┌─────────────────────────────────────────────────┐  │</span><br><span class="line">│    │ 输入：1000 USDC + 2 SOL                         │  │</span><br><span class="line">│    │ 计算：√(1000 × 2) = 44.72 LP代币                │  │</span><br><span class="line">│    │ 分配：44.72 - 0.1 = 44.62 LP给创建者            │  │</span><br><span class="line">│    │ 锁定：0.1 LP永久锁定                            │  │</span><br><span class="line">│    └─────────────────────────────────────────────────┘  │</span><br><span class="line">│                           ↓                             │</span><br><span class="line">│ 2. 创建相关账户                                         │</span><br><span class="line">│    • LP代币mint                                        │</span><br><span class="line">│    • 代币金库 (Token Vaults)                           │</span><br><span class="line">│    • 价格观察账户                                       │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h4 id="阶段3：流动性管理（流动性提供者）"><a href="#阶段3：流动性管理（流动性提供者）" class="headerlink" title="阶段3：流动性管理（流动性提供者）"></a>阶段3：流动性管理（流动性提供者）</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">流动性提供者操作流程</span><br><span class="line">┌─────────────────┐</span><br><span class="line">│ 添加流动性 (deposit)                                    │</span><br><span class="line">│ ┌─────────────────┐              ┌─────────────────┐    │</span><br><span class="line">│ │ 用户投入：       │              │ 系统计算：       │    │</span><br><span class="line">│ │ 100 USDC        │    ────→     │ 需要0.2 SOL     │    │</span><br><span class="line">│ │ (固定数量)      │              │ 获得8.94 LP     │    │</span><br><span class="line">│ └─────────────────┘              └─────────────────┘    │</span><br><span class="line">│                           ↓                             │</span><br><span class="line">│ 移除流动性 (withdraw)                                   │</span><br><span class="line">│ ┌─────────────────┐              ┌─────────────────┐    │</span><br><span class="line">│ │ 用户销毁：       │              │ 系统返还：       │    │</span><br><span class="line">│ │ 5 LP代币        │    ────→     │ 55.9 USDC       │    │</span><br><span class="line">│ │ (固定数量)      │              │ 0.112 SOL       │    │</span><br><span class="line">│ └─────────────────┘              └─────────────────┘    │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h4 id="阶段4：代币交易（普通用户）"><a href="#阶段4：代币交易（普通用户）" class="headerlink" title="阶段4：代币交易（普通用户）"></a>阶段4：代币交易（普通用户）</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">代币交易流程对比</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│ 基于输入的交易 (swap_base_input)                        │</span><br><span class="line">│ ┌─────────────────┐              ┌─────────────────┐    │</span><br><span class="line">│ │ 用户操作：       │              │ 系统计算：       │    │</span><br><span class="line">│ │ 卖出100 USDC    │    ────→     │ 获得0.196 SOL   │    │</span><br><span class="line">│ │ 最少要0.19 SOL  │              │ 扣除各种费用     │    │</span><br><span class="line">│ └─────────────────┘              └─────────────────┘    │</span><br><span class="line">│                           ↓                             │</span><br><span class="line">│ 基于输出的交易 (swap_base_output)                       │</span><br><span class="line">│ ┌─────────────────┐              ┌─────────────────┐    │</span><br><span class="line">│ │ 用户操作：       │              │ 系统计算：       │    │</span><br><span class="line">│ │ 买入0.2 SOL     │    ────→     │ 需要102.1 USDC  │    │</span><br><span class="line">│ │ 最多付105 USDC  │              │ 包含各种费用     │    │</span><br><span class="line">│ └─────────────────┘              └─────────────────┘    │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-费用分配机制"><a href="#4-3-费用分配机制" class="headerlink" title="4.3 费用分配机制"></a>4.3 费用分配机制</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">费用分配流程图</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                 用户交易100 USDC                         │</span><br><span class="line">│                         ↓                               │</span><br><span class="line">│              收取0.25%交易费 = 0.25 USDC                │</span><br><span class="line">│                         ↓                               │</span><br><span class="line">│    ┌─────────────────────┼─────────────────────┐        │</span><br><span class="line">│    ↓                     ↓                     ↓        │</span><br><span class="line">│ 协议费                基金费               流动性提供者    │</span><br><span class="line">│ 0.025 USDC           0.0125 USDC           0.2125 USDC  │</span><br><span class="line">│ (10%)                (5%)                  (85%)       │</span><br><span class="line">│    ↓                     ↓                     ↓        │</span><br><span class="line">│ 协议发展             生态建设               交易奖励      │</span><br><span class="line">│                                                        │</span><br><span class="line">│ 额外：创建者费 0.05 USDC (如果启用)                     │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="第五部分：DeFi的机遇与挑战"><a href="#第五部分：DeFi的机遇与挑战" class="headerlink" title="第五部分：DeFi的机遇与挑战"></a>第五部分：DeFi的机遇与挑战</h2><h3 id="5-1-DeFi的优势"><a href="#5-1-DeFi的优势" class="headerlink" title="5.1 DeFi的优势"></a>5.1 DeFi的优势</h3><p><strong>1. 金融包容性</strong></p>
+<ul>
+<li>全球任何人都可以参与，无需银行账户</li>
+<li>降低金融服务的门槛</li>
+</ul>
+<p><strong>2. 创新速度</strong></p>
+<ul>
+<li>快速迭代和实验新的金融产品</li>
+<li>可组合性带来无限可能</li>
+</ul>
+<p><strong>3. 透明度</strong></p>
+<ul>
+<li>所有操作公开透明</li>
+<li>用户可以验证协议的运行</li>
+</ul>
+<p><strong>4. 效率提升</strong></p>
+<ul>
+<li>自动化执行，减少人工干预</li>
+<li>24&#x2F;7不间断服务</li>
+</ul>
+<h3 id="5-2-面临的挑战"><a href="#5-2-面临的挑战" class="headerlink" title="5.2 面临的挑战"></a>5.2 面临的挑战</h3><p><strong>1. 技术风险</strong></p>
+<ul>
+<li>智能合约漏洞</li>
+<li>网络拥堵和高费用</li>
+</ul>
+<p><strong>2. 监管不确定性</strong></p>
+<ul>
+<li>各国监管政策不明确</li>
+<li>合规要求不断变化</li>
+</ul>
+<p><strong>3. 用户体验</strong></p>
+<ul>
+<li>操作复杂，学习门槛高</li>
+<li>私钥管理责任重大</li>
+</ul>
+<p><strong>4. 市场风险</strong></p>
+<ul>
+<li>价格波动剧烈</li>
+<li>无常损失等新型风险</li>
+</ul>
+<h3 id="5-3-未来发展趋势"><a href="#5-3-未来发展趋势" class="headerlink" title="5.3 未来发展趋势"></a>5.3 未来发展趋势</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">DeFi发展趋势图</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                    发展阶段                              │</span><br><span class="line">│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │</span><br><span class="line">│  │   DeFi 1.0  │ │   DeFi 2.0  │ │   DeFi 3.0  │        │</span><br><span class="line">│  │   基础协议   │ │   跨链整合   │ │   主流采用   │        │</span><br><span class="line">│  └─────────────┘ └─────────────┘ └─────────────┘        │</span><br><span class="line">│         ↓               ↓               ↓                │</span><br><span class="line">│  • AMM协议        • 多链生态      • 机构采用              │</span><br><span class="line">│  • 借贷协议       • Layer2扩展    • 监管合规              │</span><br><span class="line">│  • 收益农场       • 更好UX       • 传统金融整合          │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="核心要点回顾"><a href="#核心要点回顾" class="headerlink" title="核心要点回顾"></a>核心要点回顾</h3><p>通过对Raydium CP-Swap协议的深入分析，我们了解了：</p>
+<ol>
+<li><strong>DeFi的本质</strong>：用代码和算法替代传统金融中介</li>
+<li><strong>AMM机制</strong>：通过恒定乘积公式实现自动化做市</li>
+<li><strong>Solana优势</strong>：高性能、低成本的区块链基础设施</li>
+<li><strong>协议设计</strong>：从配置管理到流动性管理再到交易执行的完整流程</li>
+</ol>
+<h3 id="学习价值"><a href="#学习价值" class="headerlink" title="学习价值"></a>学习价值</h3><p><strong>对投资者</strong>：</p>
+<ul>
+<li>理解DeFi产品的运作机制</li>
+<li>评估风险和收益的来源</li>
+<li>做出更明智的投资决策</li>
+</ul>
+<p><strong>对开发者</strong>：</p>
+<ul>
+<li>掌握现代DeFi协议的设计模式</li>
+<li>了解Solana生态的技术栈</li>
+<li>为构建下一代金融应用打下基础</li>
+</ul>
+<p><strong>对传统金融从业者</strong>：</p>
+<ul>
+<li>认识金融科技的发展方向</li>
+<li>理解区块链技术的实际应用</li>
+<li>为行业转型做好准备</li>
+</ul>
+<h3 id="展望未来"><a href="#展望未来" class="headerlink" title="展望未来"></a>展望未来</h3><p>DeFi作为金融创新的前沿，正在重新定义我们对金融服务的理解。虽然目前还面临诸多挑战，但其透明、开放、无需许可的特性，为构建更公平、更高效的金融体系提供了可能。</p>
+<p>随着技术的不断成熟和监管框架的完善，DeFi有望成为未来金融体系的重要组成部分，为全球用户提供更好的金融服务。</p>
+<hr>
+<p><em>本文是DeFi项目拆解系列的入门指南，更多技术细节请参考：</em></p>
+<ul>
+<li><em>DeFi项目拆解1：Raydium CP-Swap 管理功能详解</em></li>
+<li><em>DeFi项目拆解2：Raydium CP-Swap 流动性管理详解</em></li>
+<li><em>DeFi项目拆解3：Raydium CP-Swap 交易核心方法详解</em></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeFi/" rel="tag"># DeFi</a>
+              <a href="/tags/Solana/" rel="tag"># Solana</a>
+              <a href="/tags/Rust/" rel="tag"># Rust</a>
+              <a href="/tags/Anchor/" rel="tag"># Anchor</a>
+              <a href="/tags/Raydium/" rel="tag"># Raydium</a>
+              <a href="/tags/AMM/" rel="tag"># AMM</a>
+              <a href="/tags/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" rel="tag"># 入门指南</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/09/23/Defi%E9%A1%B9%E7%9B%AE%E6%8B%86%E8%A7%A33/" rel="prev" title="DeFi项目拆解3 - Raydium CP-Swap 交易核心方法详解">
+                  <i class="fa fa-angle-left"></i> DeFi项目拆解3 - Raydium CP-Swap 交易核心方法详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">samxie</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
